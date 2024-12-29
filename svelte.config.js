@@ -18,7 +18,7 @@ const config = {
 			},
 			routes: {
 				include: ['/*'],
-				exclude: ['<all>'],
+				exclude: ['<all>']
 			},
 		}),
 		csrf: {
@@ -28,11 +28,13 @@ const config = {
 			directives: {
 				'script-src': ['self'],
 				/** @todo Remove unsplash and tailwind when hitting prod */
-				'img-src': ['self', ' https://images.unsplash.com', 'data:', 'https://tailwindui.com'],
-				'worker-src': ['self', 'blob:'],
+				'img-src': ['self', 'https://images.unsplash.com', 'data:', 'https://tailwindui.com'],
+				'worker-src': ['self', 'blob:']
 			},
 		},
-		version: 0.01
+		version: {
+			name: "buscamos-casa 0.01"
+		}
 	},
 
 	extensions: ['.svelte', '.svx']

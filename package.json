@@ -62,7 +62,6 @@
 		"wrangler": "^3.99.0"
 	},
 	"dependencies": {
-		"@libsql/client": "^0.9.0",
 		"@node-rs/argon2": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
