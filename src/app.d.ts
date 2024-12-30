@@ -17,6 +17,39 @@ declare global {
 			};
 		}
 	}
+
+	namespace Auth {
+		interface GoogleIdTokenPayload {
+			iss: string;
+			azp: string;
+			aud: string;
+			sub: string;
+			hd: string;
+			email: string;
+			email_verified: boolean;
+			at_hash: string;
+			name: string;
+			picture: string;
+			given_name: string;
+			family_name: string;
+			iat: number;
+			exp: number;
+		  };
+		  
+		  interface FacebookUserPayload {
+			  id: string;
+			  name: string;
+			  picture: {
+				data: {
+				  height: number;
+				  is_silhouette: boolean;
+				  url: string;
+				  width: number;
+				};
+			  };
+			  email: string;
+			};
+	}
 }
 
 export {};

@@ -22,7 +22,8 @@
 		"build-storybook": "storybook build",
 		"apply": "wrangler d1 migrations apply DB --local",
 		"apply:preview": "wrangler DB migrations apply DB --env preview",
-		"apply:production": "wrangler DB migrations apply DB --env production"
+		"apply:production": "wrangler DB migrations apply DB --env production",
+		"db:apply": "pnpm run db:generate && pnpm run apply"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.3",

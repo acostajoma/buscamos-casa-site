@@ -1,12 +1,11 @@
 import {
 	createSession,
 	generateSessionToken,
-	google,
+	facebook,
 	setSessionTokenCookie,
 	generateUserId
 } from '$lib/server/auth';
 import * as table from '$lib/server/db/schema';
-import { decodeIdToken } from 'arctic';
 
 import { error, type RequestEvent } from '@sveltejs/kit';
 import { type OAuth2Tokens, OAuth2RequestError, ArcticFetchError  } from 'arctic';
@@ -15,9 +14,8 @@ import { eq } from 'drizzle-orm';
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
-	const storedState = event.cookies.get('google_oauth_state') ?? null;
-	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
-	if (code === null || state === null || storedState === null || codeVerifier === null) {
+	const storedState = event.cookies.get('facebook_oauth_state') ?? null;
+	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400
 		});
@@ -30,7 +28,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	let tokens: OAuth2Tokens;
 	try {
-		tokens = await google.validateAuthorizationCode(code, codeVerifier);
+		tokens = await facebook.validateAuthorizationCode(code);
 	} catch (e) {
 		if (e instanceof OAuth2RequestError) {
 			// Invalid authorization code, credentials, or redirect URI
@@ -48,16 +46,29 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			status: 400
 		});
 	}
-	const claims = decodeIdToken(tokens.idToken()) as Auth.GoogleIdTokenPayload;
-	const googleUserId = claims.sub;
-	const email = claims.email;
+	
+	let user;
+	try {
+		const accessToken = tokens.accessToken()
+		const url = new URL("https://graph.facebook.com/me");
+		url.searchParams.set("access_token", accessToken);
+		url.searchParams.set("fields", ["id", "name", "picture", "email"].join(","));
+		const response = await fetch(url);
+		user = await response.json() as Auth.FacebookUserPayload;
+	} catch (e) {
+		console.error(e)
+		return new Response(null, {
+			status: 400
+		});
+	}
 
+	const {id: facebookUserId, email} = user
 	const { db } = event.locals;
 	try {
 		const existingUser = await db
 			.select()
 			.from(table.user)
-			.where(eq(table.user.googleId, googleUserId));
+			.where(eq(table.user.facebookId, facebookUserId));
 		
 		
 		if (existingUser && existingUser.length > 0) {
@@ -82,7 +93,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	try {
 		const [user] = await db
 			.insert(table.user)
-			.values({ id: newUserId, googleId: googleUserId, email })
+			.values({ id: newUserId, facebookId: facebookUserId, email })
 			.returning({ id: table.user.id });
 
 		const sessionToken = generateSessionToken();

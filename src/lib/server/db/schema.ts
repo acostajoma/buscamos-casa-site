@@ -3,7 +3,8 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	googleId: text('google_id').unique(),
-	googleName: text('google_name')
+	facebookId: text('facebook_id').unique(),
+	email: text('email').notNull().unique(),
 });
 
 export const session = sqliteTable('session', {

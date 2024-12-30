@@ -15,6 +15,27 @@
       "when": 1735537516638,
       "tag": "0001_condemned_warhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1735572225840,
+      "tag": "0002_lucky_lord_hawal",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1735572352681,
+      "tag": "0003_nostalgic_omega_flight",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1735579051811,
+      "tag": "0004_outstanding_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }
