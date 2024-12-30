@@ -1,6 +1,6 @@
-import { mdsvex } from 'mdsvex';
 import adapter from '@sveltejs/adapter-cloudflare';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { mdsvex } from 'mdsvex';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -10,19 +10,19 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			platformProxy : {
+			platformProxy: {
 				configPath: 'wrangler.toml',
 				environment: undefined,
 				experimentalJsonConfig: false,
-				persist: false,
+				persist: false
 			},
 			routes: {
 				include: ['/*'],
 				exclude: ['<all>']
-			},
+			}
 		}),
 		csrf: {
-			checkOrigin : true,
+			checkOrigin: true
 		},
 		csp: {
 			directives: {
@@ -30,10 +30,10 @@ const config = {
 				/** @todo Remove unsplash and tailwind when hitting prod */
 				'img-src': ['self', 'https://images.unsplash.com', 'data:', 'https://tailwindui.com'],
 				'worker-src': ['self', 'blob:']
-			},
+			}
 		},
 		version: {
-			name: "buscamos-casa 0.01"
+			name: 'buscamos-casa 0.01'
 		}
 	},
 

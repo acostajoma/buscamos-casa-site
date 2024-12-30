@@ -1,21 +1,24 @@
-import type { RequestEvent } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
-import { sha256 } from '@oslojs/crypto/sha2';
-import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 import * as table from '$lib/server/db/schema';
+import { sha256 } from '@oslojs/crypto/sha2';
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
+import type { RequestEvent } from '@sveltejs/kit';
+import { Google } from 'arctic';
+import { eq } from 'drizzle-orm';
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
+const DEV_GOOGLE_CALLBACK = 'http://localhost:5173/login/google/callback';
 
 export const sessionCookieName = 'auth-session';
 
 export function generateSessionToken() {
-	const bytes = crypto.getRandomValues(new Uint8Array(18));
-	const token = encodeBase64url(bytes);
+	const bytes = crypto.getRandomValues(new Uint8Array(20));
+	const token = encodeBase32LowerCaseNoPadding(bytes);
 	return token;
 }
 
-export async function createSession( db: DrizzleD1Database, token: string, userId: string) {
+export async function createSession(db: DrizzleD1Database, token: string, userId: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: table.Session = {
 		id: sessionId,
@@ -31,7 +34,7 @@ export async function validateSessionToken(db: DrizzleD1Database, token: string)
 	const [result] = await db
 		.select({
 			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username },
+			user: { id: table.user.id },
 			session: table.session
 		})
 		.from(table.session)
@@ -69,6 +72,8 @@ export async function invalidateSession(db: DrizzleD1Database, sessionId: string
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
 	event.cookies.set(sessionCookieName, token, {
+		httpOnly: true,
+		sameSite: 'lax',
 		expires: expiresAt,
 		path: '/'
 	});
@@ -76,6 +81,11 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
 
 export function deleteSessionTokenCookie(event: RequestEvent) {
 	event.cookies.delete(sessionCookieName, {
+		httpOnly: true,
+		sameSite: 'lax',
+		maxAge: 0,
 		path: '/'
 	});
 }
+
+export const google = new Google(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DEV_GOOGLE_CALLBACK);

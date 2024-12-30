@@ -17,8 +17,12 @@
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"apply": "wrangler d1 migrations apply DB --local",
+		"apply:preview": "wrangler DB migrations apply DB --env preview",
+		"apply:production": "wrangler DB migrations apply DB --env production"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.3",
@@ -65,6 +69,8 @@
 		"@node-rs/argon2": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"arctic": "^2.3.3",
+		"dotenv": "^16.4.7",
 		"drizzle-orm": "^0.33.0"
 	}
 }
