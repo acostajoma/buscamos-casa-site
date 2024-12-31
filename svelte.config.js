@@ -28,7 +28,13 @@ const config = {
 			directives: {
 				'script-src': ['self'],
 				/** @todo Remove unsplash and tailwind when hitting prod */
-				'img-src': ['self', 'https://images.unsplash.com', 'data:', 'https://tailwindui.com'],
+				'img-src': [
+					'self',
+					'https://images.unsplash.com',
+					'data:',
+					'https://tailwindui.com',
+					'https://imagedelivery.net'
+				],
 				'worker-src': ['self', 'blob:']
 			}
 		},
