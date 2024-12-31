@@ -8,7 +8,7 @@ declare global {
 		interface Locals {
 			user: import('$lib/server/auth').SessionValidationResult['user'];
 			session: import('$lib/server/auth').SessionValidationResult['session'];
-			db: DrizzleD1Database
+			db: DrizzleD1Database;
 		}
 
 		interface Platform {
@@ -34,21 +34,23 @@ declare global {
 			family_name: string;
 			iat: number;
 			exp: number;
-		  };
-		  
-		  interface FacebookUserPayload {
-			  id: string;
-			  name: string;
-			  picture: {
+		}
+
+		interface FacebookUserPayload {
+			id: string;
+			name: string;
+			picture: {
 				data: {
-				  height: number;
-				  is_silhouette: boolean;
-				  url: string;
-				  width: number;
+					height: number;
+					is_silhouette: boolean;
+					url: string;
+					width: number;
 				};
-			  };
-			  email: string;
 			};
+			email: string;
+		}
+
+		type ClientNames = 'Facebook' | 'Google';
 	}
 }
 

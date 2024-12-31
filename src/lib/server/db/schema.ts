@@ -1,18 +1,29 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	googleId: text('google_id').unique(),
 	facebookId: text('facebook_id').unique(),
-	email: text('email').notNull().unique(),
+	email: text('email').notNull().unique()
 });
 
-export const session = sqliteTable('session', {
+export const session = sqliteTable(
+	'session',
+	{
+		id: text('id').primaryKey(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id),
+		expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+	},
+	(table) => {
+		return { userIdIdx: index('user_id_idx').on(table.userId) };
+	}
+);
+
+export const userData = sqliteTable('user_data', {
 	id: text('id').primaryKey(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+	name: text('name')
 });
 
 export type Session = typeof session.$inferSelect;

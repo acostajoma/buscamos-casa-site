@@ -1,101 +1,44 @@
-import {
-	createSession,
-	generateSessionToken,
-	google,
-	setSessionTokenCookie,
-	generateUserId
-} from '$lib/server/auth';
-import * as table from '$lib/server/db/schema';
+import { getOAuthToken, setSessionIfUserExists } from '$lib/server/auth';
 import { decodeIdToken } from 'arctic';
 
+import { createUserAndSession } from '$lib/server/auth';
 import { error, type RequestEvent } from '@sveltejs/kit';
-import { type OAuth2Tokens, OAuth2RequestError, ArcticFetchError  } from 'arctic';
-import { eq } from 'drizzle-orm';
 
 export async function GET(event: RequestEvent): Promise<Response> {
-	const code = event.url.searchParams.get('code');
-	const state = event.url.searchParams.get('state');
-	const storedState = event.cookies.get('google_oauth_state') ?? null;
-	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
-	if (code === null || state === null || storedState === null || codeVerifier === null) {
-		return new Response(null, {
-			status: 400
-		});
-	}
-	if (state !== storedState) {
+	const stateCookieName = 'google_oauth_state';
+	const codeVerifierCookieName = 'google_code_verifier';
+	const tokens = await getOAuthToken(event, 'Google', stateCookieName, codeVerifierCookieName);
+
+	if (!tokens) {
 		return new Response(null, {
 			status: 400
 		});
 	}
 
-	let tokens: OAuth2Tokens;
-	try {
-		tokens = await google.validateAuthorizationCode(code, codeVerifier);
-	} catch (e) {
-		if (e instanceof OAuth2RequestError) {
-			// Invalid authorization code, credentials, or redirect URI
-			const code = e.code;
-			console.error('Invalid authorization code, credentials, or redirect URI', 'code: ', code)
-		}
-		if (e instanceof ArcticFetchError) {
-			// Failed to call `fetch()`
-			const cause = e.cause;
-			console.error('Failed to call fetch()', cause)
-
-		}
-		console.error(e);
-		return new Response(null, {
-			status: 400
-		});
-	}
 	const claims = decodeIdToken(tokens.idToken()) as Auth.GoogleIdTokenPayload;
-	const googleUserId = claims.sub;
-	const email = claims.email;
+	const { sub: googleUserId, email } = claims;
 
 	const { db } = event.locals;
-	try {
-		const existingUser = await db
-			.select()
-			.from(table.user)
-			.where(eq(table.user.googleId, googleUserId));
-		
-		
-		if (existingUser && existingUser.length > 0) {
-			const {id : existingUserId } = existingUser[0]
-			const sessionToken = generateSessionToken();
-			const session = await createSession(db, sessionToken, existingUserId);
-			setSessionTokenCookie(event, sessionToken, session.expiresAt);
-			return new Response(null, {
-				status: 302,
-				headers: {
-					Location: '/'
-				}
-			});
-		}
-	} catch (e) {
-		console.error(e);
-		return error(500, { message: 'An error has occurred' });
-	}
+	const { userExist } = await setSessionIfUserExists(event, db, 'Google', googleUserId);
 
-	const newUserId = generateUserId();
-
-	try {
-		const [user] = await db
-			.insert(table.user)
-			.values({ id: newUserId, googleId: googleUserId, email })
-			.returning({ id: table.user.id });
-
-		const sessionToken = generateSessionToken();
-		const session = await createSession(db, sessionToken, user.id);
-		setSessionTokenCookie(event, sessionToken, session.expiresAt);
+	if (userExist) {
 		return new Response(null, {
 			status: 302,
 			headers: {
 				Location: '/'
 			}
 		});
-	} catch (e) {
-		console.error(e);
-		return error(500, { message: 'An error has occurred' });
 	}
+
+	const session = await createUserAndSession(event, db, 'Google', googleUserId, email);
+
+	if (session) {
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: '/'
+			}
+		});
+	}
+	error(500, 'An error has occurred');
 }
