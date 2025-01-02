@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import Exit from '$lib/icons/Exit.svelte';
 	import HamburgerMenu from '$lib/icons/HamburgerMenu.svelte';
 	import { imageCdnUrl } from '$lib/utils/constants';
+
+	type Props = {
+		loggedUser: boolean;
+	};
+	let { loggedUser }: Props = $props();
 
 	let checked = $state.raw(false);
 
@@ -40,9 +45,15 @@
 			/>
 		</a>
 		<div class="flex flex-1 justify-end">
-			<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
-				>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
-			>
+			{#if loggedUser}
+				<a href="/crear-post" class="text-sm/6 font-semibold text-gray-900"
+					>Crear Post <span aria-hidden="true">&rarr;</span></a
+				>
+			{:else}
+				<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
+					>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
+				>
+			{/if}
 		</div>
 	</nav>
 
@@ -69,9 +80,15 @@
 					/>
 				</a>
 				<div class="flex flex-1 justify-end">
-					<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
-						>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
-					>
+					{#if loggedUser}
+						<a href="/crear-post" class="text-sm/6 font-semibold text-gray-900"
+							>Crear Post <span aria-hidden="true">&rarr;</span></a
+						>
+					{:else}
+						<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
+							>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
+						>
+					{/if}
 				</div>
 			</div>
 			<div class="mt-6 space-y-2">
