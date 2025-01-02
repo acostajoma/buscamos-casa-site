@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { afterNavigate } from '$app/navigation';
 	import Exit from '$lib/icons/Exit.svelte';
 	import HamburgerMenu from '$lib/icons/HamburgerMenu.svelte';
 	import { imageCdnUrl } from '$lib/utils/constants';
+	import FlyoutMenu from './FlyoutMenu.svelte';
+	import Link from './Link.svelte';
 
 	type Props = {
 		loggedUser: boolean;
@@ -15,15 +18,38 @@
 	afterNavigate(() => {
 		checked = false;
 	});
+
+	const links = [
+		{ title: 'Product', href: '/product' },
+		{ title: 'Features', href: '/features' },
+		{ title: 'Company', href: '/company' }
+	];
 </script>
+
+{#snippet logoutButton(_class: string)}
+	<form method="POST" use:enhance action="/inicia-sesion?/logout">
+		<button type="submit" class={_class}>Cerrar Sesión</button>
+	</form>
+{/snippet}
+
+{#snippet companyLogo()}
+	<a href="/" class="-m-1.5 p-1.5">
+		<span class="sr-only">Buscamos Casa</span>
+		<img
+			class="h-8 w-auto"
+			src="{imageCdnUrl}/5c6fafb3-06f9-4c87-6368-110713d3ac00/icon"
+			alt="Buscamos Casa"
+		/>
+	</a>
+{/snippet}
 
 <header class="bg-white">
 	<nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
 		<div class="flex flex-1">
 			<div class="hidden lg:flex lg:gap-x-12">
-				<a href="#" class="text-sm/6 font-semibold text-gray-900">Product</a>
-				<a href="#" class="text-sm/6 font-semibold text-gray-900">Features</a>
-				<a href="#" class="text-sm/6 font-semibold text-gray-900">Company</a>
+				{#each links as { title, href } (title)}
+					<a {href} class="text-sm/6 font-semibold text-gray-900">{title}</a>
+				{/each}
 			</div>
 			<div class="flex lg:hidden">
 				<label
@@ -36,23 +62,18 @@
 				</label>
 			</div>
 		</div>
-		<a href="/" class="-m-1.5 p-1.5">
-			<span class="sr-only">Buscamos Casa</span>
-			<img
-				class="h-8 w-auto"
-				src="{imageCdnUrl}/5c6fafb3-06f9-4c87-6368-110713d3ac00/icon"
-				alt="Buscamos Casa"
-			/>
-		</a>
-		<div class="flex flex-1 justify-end">
+		{@render companyLogo()}
+		<div class="flex flex-1 justify-end gap-3 align-middle">
 			{#if loggedUser}
-				<a href="/crear-post" class="text-sm/6 font-semibold text-gray-900"
-					>Crear Post <span aria-hidden="true">&rarr;</span></a
-				>
+				<div class="hidden lg:block">
+					<FlyoutMenu>
+						<a href="/perfil" class="block p-2 hover:text-yellow-700">Información Personal</a>
+						{@render logoutButton('block p-2 hover:text-yellow-700')}
+					</FlyoutMenu>
+				</div>
+				<Link href="/crear-post">Crear Post</Link>
 			{:else}
-				<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
-					>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
-				>
+				<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
 			{/if}
 		</div>
 	</nav>
@@ -71,42 +92,34 @@
 						<Exit />
 					</label>
 				</div>
-				<a href="/" class="-m-1.5 p-1.5">
-					<span class="sr-only">Buscamos Casa</span>
-					<img
-						class="h-8 w-auto"
-						src="{imageCdnUrl}/5c6fafb3-06f9-4c87-6368-110713d3ac00/icon"
-						alt="Buscamos Casa"
-					/>
-				</a>
-				<div class="flex flex-1 justify-end">
+
+				{@render companyLogo()}
+
+				<div class="flex flex-1 justify-end align-middle">
 					{#if loggedUser}
-						<a href="/crear-post" class="text-sm/6 font-semibold text-gray-900"
-							>Crear Post <span aria-hidden="true">&rarr;</span></a
-						>
+						<Link href="/crear-post">Crear Post</Link>
 					{:else}
-						<a href="/inicia-sesion" class="text-sm/6 font-semibold text-gray-900"
-							>Inicia Sesión o Regístrate <span aria-hidden="true">&rarr;</span></a
-						>
+						<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
 					{/if}
 				</div>
 			</div>
 			<div class="mt-6 space-y-2">
+				{#each links as { title, href } (title)}
+					<a
+						{href}
+						class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+						>{title}</a
+					>
+				{/each}
 				<a
 					href="#"
 					class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-					>Product</a
+					>Información Personal</a
 				>
-				<a
-					href="#"
-					class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-					>Features</a
-				>
-				<a
-					href="#"
-					class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-					>Company</a
-				>
+
+				{@render logoutButton(
+					'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50'
+				)}
 			</div>
 		</div>
 	</div>
