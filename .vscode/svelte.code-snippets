@@ -12,9 +12,9 @@
 			"\t\t${1:newProp} : ${2:typeDef}",
 			"\t}",
 			"\tlet { \n\t\tchildren, \n\t\tdata, ${1:newProp}\n} : Props = \\$props()\n\t$0",
-			"</script>",
+			"</script>"
 		],
-		"description": "Create the structure of a TS svelte page",
+		"description": "Create the structure of a TS svelte page"
 	},
 	"Create the structure of a TS svelte component": {
 		"scope": "svelte",
@@ -27,15 +27,15 @@
 			"\t\t${1:newProp} : ${2:typeDef}",
 			"\t}",
 			"\tlet { \n\t\tchildren, ${1:newProp}\n} : Props = \\$props()\n\t$0",
-			"</script>",
+			"</script>"
 		],
-		"description": "Create the structure of a TS svelte page",
+		"description": "Create the structure of a TS svelte page"
 	},
 	"Svelte if block": {
 		"scope": "svelte",
 		"prefix": "svif",
 		"body": ["{#if ${1:condition}}", "\t${2:// your code here}", "{/if}\n$0"],
-		"description": "Snippet to create an if block in Svelte",
+		"description": "Snippet to create an if block in Svelte"
 	},
 	"Svelte if-else block": {
 		"scope": "svelte",
@@ -45,9 +45,9 @@
 			"\t${2:// your code here}",
 			"{:else}",
 			"\t${3:// your else code here}",
-			"{/if}\n$0",
+			"{/if}\n$0"
 		],
-		"description": "Snippet to create an if-else block in Svelte",
+		"description": "Snippet to create an if-else block in Svelte"
 	},
 	"Svelte if-elseif-else block": {
 		"scope": "svelte",
@@ -59,33 +59,33 @@
 			"\t${4:// code if condition2 is true}",
 			"{:else}",
 			"\t${5:// code if neither condition1 nor condition2 is true}",
-			"{/if}\n$0",
+			"{/if}\n$0"
 		],
-		"description": "Snippet to create an if-else if-else block in Svelte",
+		"description": "Snippet to create an if-else if-else block in Svelte"
 	},
 	"Svelte @html block": {
 		"scope": "svelte",
 		"prefix": "svhtml",
 		"body": ["{@html ${1:htmlContent}}$0"],
-		"description": "Snippet to use the @html directive in Svelte",
+		"description": "Snippet to use the @html directive in Svelte"
 	},
 	"Svelte @debug block": {
 		"scope": "svelte",
 		"prefix": "svdebug",
 		"body": ["{@debug ${1:variables}}$0"],
-		"description": "Snippet to use the @debug directive in Svelte",
+		"description": "Snippet to use the @debug directive in Svelte"
 	},
 	"Svelte @const block": {
 		"scope": "svelte",
 		"prefix": "svconst",
 		"body": ["{@const ${1:variableName} = ${2:value}}$0"],
-		"description": "Snippet to use the @const directive in Svelte",
+		"description": "Snippet to use the @const directive in Svelte"
 	},
 	"Svelte #key block": {
 		"scope": "svelte",
 		"prefix": "svkey",
 		"body": ["{#key ${1:key}}", "\t${2:// your code here}", "{/key}$0"],
-		"description": "Snippet to create a #key block in Svelte",
+		"description": "Snippet to create a #key block in Svelte"
 	},
 	"Svelte #await block": {
 		"scope": "svelte",
@@ -97,15 +97,15 @@
 			"\t${4:// resolved state}",
 			"{:catch ${5:error}}",
 			"\t${6:// error state}",
-			"{/await}$0",
+			"{/await}$0"
 		],
-		"description": "Snippet to create an #await block in Svelte",
+		"description": "Snippet to create an #await block in Svelte"
 	},
 	"Svelte #each block": {
 		"scope": "svelte",
 		"prefix": "sveach",
 		"body": ["{#each ${1:items} as ${2:item} (${3:key})}", "\t${4:// your code here}", "{/each}$0"],
-		"description": "Snippet to create an #each block in Svelte",
+		"description": "Snippet to create an #each block in Svelte"
 	},
 	"Create markdown description of component": {
 		"scope": "svelte",
@@ -117,8 +117,8 @@
 			"```svelte",
 			"${2:code_example}",
 			"```",
-			"-->",
+			"-->"
 		],
-		"description": "Snippet to create a general store function with state management.",
-	},
+		"description": "Snippet to create a general store function with state management."
+	}
 }

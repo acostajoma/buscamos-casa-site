@@ -4,7 +4,7 @@ import { dev } from '$app/environment';
 import { getDB } from '$lib/server/db';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
-	if (dev){
+	if (dev) {
 		const { getPlatformProxy } = await import('wrangler');
 		event.platform = await getPlatformProxy();
 	}
@@ -16,7 +16,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 	// Setting DB
 	const db = getDB(platform.env);
-	event.locals.db = db
+	event.locals.db = db;
 
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
