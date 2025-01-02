@@ -19,7 +19,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const { sub: googleUserId, email } = claims;
 
 	const { db } = event.locals;
-	const { userExist } = await setSessionIfUserExists(event, db, 'Google', googleUserId);
+	const { userExist } = await setSessionIfUserExists(event, db, 'Google', googleUserId, email);
 
 	if (userExist) {
 		return new Response(null, {

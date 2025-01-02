@@ -1,13 +1,27 @@
 {
-	"version": "7",
-	"dialect": "sqlite",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "6",
-			"when": 1735835478219,
-			"tag": "0000_nasty_scarecrow",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1735835478219,
+      "tag": "0000_nasty_scarecrow",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1735852134585,
+      "tag": "0001_wild_squirrel_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1735852568470,
+      "tag": "0002_strange_raider",
+      "breakpoints": true
+    }
+  ]
 }

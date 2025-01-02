@@ -30,7 +30,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const { id: facebookUserId, email } = user;
 	const { db } = event.locals;
-	const { userExist } = await setSessionIfUserExists(event, db, 'Facebook', facebookUserId);
+	const { userExist } = await setSessionIfUserExists(event, db, 'Facebook', facebookUserId, email);
 
 	if (userExist) {
 		return new Response(null, {

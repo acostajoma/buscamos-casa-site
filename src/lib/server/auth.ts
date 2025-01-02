@@ -160,20 +160,34 @@ export async function setSessionIfUserExists(
 	event: RequestEvent,
 	db: DrizzleD1Database,
 	client: Auth.ClientNames,
-	clientUserId: string
+	clientUserId: string,
+	email: string
 ): Promise<{ userExist: boolean }> {
 	try {
-		let userIdCondition;
-		if (client === 'Facebook') {
-			userIdCondition = eq(table.user.facebookId, clientUserId);
-		} else if (client === 'Google') {
-			userIdCondition = eq(table.user.googleId, clientUserId);
-		}
-
-		const existingUser = await db.select().from(table.user).where(userIdCondition);
+		const existingUser = await db.select().from(table.user).where(eq(table.user.email, email));
 
 		if (existingUser && existingUser.length > 0) {
-			const { id: existingUserId } = existingUser[0];
+			const { id: existingUserId, facebookId, googleId } = existingUser[0];
+
+			if (client === 'Google' && !googleId) {
+				await db
+					.update(table.user)
+					.set({ googleId: clientUserId })
+					.where(eq(table.user.email, email));
+			}
+			if (client === 'Facebook' && !facebookId) {
+				await db
+					.update(table.user)
+					.set({ facebookId: clientUserId })
+					.where(eq(table.user.email, email));
+			}
+			if (
+				(client === 'Facebook' && facebookId && clientUserId !== facebookId) ||
+				(client === 'Google' && googleId && clientUserId !== googleId)
+			) {
+				throw new Error('El id del proveedor no coincide con el registrado.');
+			}
+
 			const sessionToken = generateSessionToken();
 			const session = await createSession(db, sessionToken, existingUserId);
 			setSessionTokenCookie(event, sessionToken, session.expiresAt);
