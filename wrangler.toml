@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 
 
 d1_databases = [
-    { binding = "DB", database_name = "bc-db-development", database_id = "67fb6cb4-15ef-4924-b495-f65e3a9a61e2", preview_database_id = "DB", migrations_dir = "drizzle" },
+    { binding = "DB", database_name = "bc-db-develop", database_id = "2cb18baa-acff-4da2-9a3a-a7b644fe4cb2", preview_database_id = "DB", migrations_dir = "drizzle" },
 ]
 
 

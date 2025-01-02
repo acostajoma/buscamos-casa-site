@@ -3,6 +3,7 @@
 		"autenticacion",
 		"AUTOINCREMENT",
 		"ganalytics",
+		"saletype",
 		"sesion",
 		"superform",
 		"USERDATA"
