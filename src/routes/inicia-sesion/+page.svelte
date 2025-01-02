@@ -26,7 +26,7 @@
 
 			<div class="flex flex-col gap-4">
 				<a
-					href="/login/google"
+					href="/inicia-sesion/google"
 					class="shadow-xs flex w-full items-center justify-center gap-3 rounded-md bg-white px-4 py-3 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent"
 				>
 					<Google />
@@ -34,7 +34,7 @@
 				</a>
 
 				<a
-					href="/login/facebook"
+					href="/inicia-sesion/facebook"
 					class="shadow-xs flex w-full items-center justify-center gap-3 rounded-md bg-white px-4 py-3 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent"
 				>
 					<Facebook />

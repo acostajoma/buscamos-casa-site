@@ -17,8 +17,8 @@ import { eq } from 'drizzle-orm';
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
-const DEV_GOOGLE_CALLBACK = 'http://localhost:5173/login/google/callback';
-const DEV_FACEBOOK_CALLBACK = 'http://localhost:5173/login/facebook/callback';
+const DEV_GOOGLE_CALLBACK = 'http://localhost:5173/inicia-sesion/google/callback';
+const DEV_FACEBOOK_CALLBACK = 'http://localhost:5173/inicia-sesion/facebook/callback';
 
 export const sessionCookieName = 'auth-session';
 
