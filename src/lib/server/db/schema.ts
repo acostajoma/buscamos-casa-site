@@ -40,7 +40,7 @@ export type UserData = typeof userData.$inferSelect;
 
 // Property Tables
 
-const propertyTypes: [string, ...string[]] = [
+export const propertyTypes: readonly [string, ...string[]] = [
 	'Casa',
 	'Apartamento',
 	'Lote',
@@ -49,7 +49,7 @@ const propertyTypes: [string, ...string[]] = [
 	'Finca'
 ];
 
-const listingStates: [string, ...string[]] = [
+export const listingStates: readonly [string, ...string[]] = [
 	'Publicado',
 	'En Revision',
 	'Denegado',
@@ -62,7 +62,13 @@ const listingStates: [string, ...string[]] = [
 	'Requiere Correcciones'
 ];
 
-const saleTypes: [string, ...string[]] = ['Venta', 'Alquiler', 'Alquiler con opción a compra'];
+export const saleTypes: [string, ...string[]] = [
+	'Venta',
+	'Alquiler',
+	'Alquiler con opción a compra'
+];
+
+export const currencies: [string, ...string[]] = ['Colon', 'Dólar'];
 
 export const property = sqliteTable('property', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
@@ -71,8 +77,8 @@ export const property = sqliteTable('property', {
 	description: text('description').notNull(),
 	propertyType: text('property_type', { enum: propertyTypes }),
 	price: real('price').notNull(),
-	currency: text('currency').notNull(),
-	lotSize: real('lot_size').notNull(),
+	currency: text('currency', { enum: currencies }).notNull(),
+	size: real('size').notNull(),
 	waterAvailability: integer('water_availability', { mode: 'boolean' }).default(true),
 	electricityAvailability: integer('electricity_availability', { mode: 'boolean' }).default(true),
 	postOwnerId: text('post_owner_id')
