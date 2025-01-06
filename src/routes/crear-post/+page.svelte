@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Form from '$lib/components/Forms/Form.svelte';
+	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
 	import { postSchema } from '$lib/validation/post';
 	import { superForm } from 'sveltekit-superforms';
@@ -13,7 +13,20 @@
 	});
 </script>
 
-<Form {form} class="w-full max-w-sm flex flex-col gap-2 mx-auto">
-	<Input {form} label="Título" name="title" id="title" type="text" required />
-	<Input {form} label="Descripción" name="description" id="description" type="text" required />
-</Form>
+{#snippet general()}
+	<div class="sm:col-span-3">
+		<Input {form} label="Título" name="title" id="title" type="text" required />
+	</div>
+	<div class="sm:col-span-3">
+		<Input {form} label="Descripción" name="description" id="description" type="text" required />
+	</div>
+{/snippet}
+
+<div class="container mx-auto">
+	<DoubleColForm
+		{form}
+		items={[
+			{ title: 'General', description: 'Aspectos generales de la propiedad', fields: general }
+		]}
+	/>
+</div>
