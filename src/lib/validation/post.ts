@@ -1,4 +1,4 @@
-import { currencies, propertyTypes, saleTypes } from '$lib/server/db/schema';
+import { currencies, propertyTypes, saleTypes } from '$lib/utils/postConstants';
 import { required_error } from '$lib/utils/zodErrorMessages';
 import { z } from 'zod';
 import { booleanField, customEnum, numeric, text } from './generalZodTypes';
