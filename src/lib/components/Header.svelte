@@ -71,7 +71,7 @@
 						{@render logoutButton('block p-2 hover:text-yellow-700')}
 					</FlyoutMenu>
 				</div>
-				<Link href="/crear-post">Crear Post</Link>
+				<Link href="/crear-publicacion">Crear Post</Link>
 			{:else}
 				<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
 			{/if}
@@ -97,7 +97,7 @@
 
 				<div class="flex flex-1 justify-end align-middle">
 					{#if loggedUser}
-						<Link href="/crear-post">Crear Post</Link>
+						<Link href="/crear-publicacion">Crear Post</Link>
 					{:else}
 						<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
 					{/if}

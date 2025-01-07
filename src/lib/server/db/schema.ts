@@ -80,6 +80,10 @@ export const propertyRelations = relations(property, ({ one, many }) => ({
 	sellerInformation: one(sellerInformation, {
 		fields: [property.id],
 		references: [sellerInformation.propertyId]
+	}),
+	propertiesWithConstruction: one(propertiesWithConstruction, {
+		fields: [property.id],
+		references: [propertiesWithConstruction.propertyId]
 	})
 }));
 

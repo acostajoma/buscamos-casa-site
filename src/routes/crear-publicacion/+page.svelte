@@ -1,10 +1,11 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
 	import Fieldset from '$lib/components/Forms/Fieldset.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
 	import TextArea from '$lib/components/Forms/TextArea.svelte';
 	import { propertyTypes, saleTypes } from '$lib/utils/postConstants';
-	import { postSchema } from '$lib/validation/post';
+	import { propertySchema } from '$lib/validation/post';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types';
@@ -12,7 +13,8 @@
 	let { data }: { data: PageData } = $props();
 	const form = superForm(data.form, {
 		validationMethod: 'oninput',
-		validators: zod(postSchema)
+		validators: zod(propertySchema),
+		customValidity: false
 	});
 </script>
 
@@ -51,5 +53,9 @@
 		items={[
 			{ title: 'General', description: 'Aspectos generales de la propiedad', fields: general }
 		]}
-	/>
+	>
+		{#snippet button()}
+			<Button type="submit" {form}>Siguiente</Button>
+		{/snippet}
+	</DoubleColForm>
 </div>
