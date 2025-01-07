@@ -1,7 +1,9 @@
-import { error, type Handle } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth.js';
 import { dev } from '$app/environment';
+import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
+import { onlyLoggedIn, onlyLoggedOut } from '$lib/utils/constants';
+import { error, redirect, type Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	if (dev) {
@@ -38,4 +40,19 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = handleAuth;
+const urlGuard: Handle = async ({ event, resolve }) => {
+	const {
+		url: { pathname }
+	} = event;
+	const { user } = event.locals;
+	if (onlyLoggedIn.has(pathname) && !user) {
+		redirect(302, '/inicia-sesion');
+	}
+	if (onlyLoggedOut.has(pathname) && user) {
+		redirect(302, '/');
+	}
+
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleAuth, urlGuard);
