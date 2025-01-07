@@ -1,6 +1,6 @@
-import { currencies, listingStates, propertyTypes, saleTypes } from '$lib/utils/postConstants';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { index, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { currencies, listingStates, propertyTypes, saleTypes } from '../../utils/postConstants';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -11,6 +11,14 @@ export const user = sqliteTable('user', {
 		.unique()
 		.references(() => userData.id, { onDelete: 'set null' })
 });
+
+export const userRelations = relations(user, ({ one, many }) => ({
+	userData: one(userData, {
+		fields: [user.userDataId],
+		references: [userData.id]
+	}),
+	property: many(property)
+}));
 
 export const session = sqliteTable(
 	'session',
@@ -43,22 +51,51 @@ export type UserData = typeof userData.$inferSelect;
 
 export const property = sqliteTable('property', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	listingStatus: text('listing_status', { enum: listingStates }).notNull(),
 	title: text('title').notNull(),
 	description: text('description').notNull(),
+	listingStatus: text('listing_status', { enum: listingStates })
+		.notNull()
+		.default(listingStates[0]),
 	propertyType: text('property_type', { enum: propertyTypes }),
-	price: real('price').notNull(),
+	postOwnerId: text('post_owner_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'set null' })
+});
+
+export const propertyRelations = relations(property, ({ one, many }) => ({
+	propertyDetails: one(propertyDetails, {
+		fields: [property.id],
+		references: [propertyDetails.propertyId]
+	}),
+	saleTypes: many(saleType),
+	propertyMetaData: one(propertyMetaData, {
+		fields: [property.id],
+		references: [propertyMetaData.propertyId]
+	}),
+	photos: many(photo),
+	location: one(location, {
+		fields: [property.id],
+		references: [location.propertyId]
+	}),
+	sellerInformation: one(sellerInformation, {
+		fields: [property.id],
+		references: [sellerInformation.propertyId]
+	})
+}));
+
+export const propertyDetails = sqliteTable('property_details', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	propertyId: integer('property_id')
+		.notNull()
+		.references(() => property.id, { onDelete: 'cascade' }),
+	salePrice: real('sale_price'),
+	rentPrice: real('rent_price'),
 	currency: text('currency', { enum: currencies }).notNull(),
 	size: real('size').notNull(),
 	waterAvailability: integer('water_availability', { mode: 'boolean' }).default(true),
 	electricityAvailability: integer('electricity_availability', { mode: 'boolean' }).default(true),
-	postOwnerId: text('post_owner_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'set null' }),
+
 	locationId: integer('location_id').references(() => location.id, { onDelete: 'set null' }),
-	metaData: integer('meta_data')
-		.notNull()
-		.references(() => propertyMetaData.id, { onDelete: 'restrict' }),
 
 	// Time stamps
 	createdAt: text('created_at')
@@ -70,10 +107,30 @@ export const property = sqliteTable('property', {
 
 export type Property = typeof property.$inferSelect;
 
+export const saleType = sqliteTable(
+	'sale_type',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		propertyId: integer('property_id')
+			.notNull()
+			.references(() => property.id, { onDelete: 'cascade' }),
+		type: text('type', { enum: saleTypes })
+	},
+	(table) => ({
+		propertyIdx: index('idx_saletype_property_id').on(table.propertyId),
+		typeIdx: index('idx_saletype_type').on(table.type)
+	})
+);
+
+export type SaleType = typeof saleType.$inferSelect;
+
 export const propertyMetaData = sqliteTable('property_meta_data', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	views: integer('views').default(0),
-	shared: integer('shared').default(0)
+	shared: integer('shared').default(0),
+	propertyId: integer('property_id')
+		.notNull()
+		.references(() => property.id, { onDelete: 'cascade' })
 });
 
 export type PropertyMetaData = typeof propertyMetaData.$inferSelect;
@@ -93,23 +150,6 @@ export const propertiesWithConstruction = sqliteTable('properties_with_construct
 
 export type PropertiesWithConstruction = typeof propertiesWithConstruction.$inferSelect;
 
-export const saleType = sqliteTable(
-	'sale_type',
-	{
-		id: integer('id').primaryKey({ autoIncrement: true }),
-		propertyId: integer('property_id')
-			.notNull()
-			.references(() => property.id, { onDelete: 'cascade' }),
-		type: text('type', { enum: saleTypes })
-	},
-	(table) => ({
-		propertyIdx: index('idx_saletype_property_id').on(table.propertyId),
-		typeIdx: index('idx_saletype_type').on(table.type)
-	})
-);
-
-export type SaleType = typeof saleType.$inferSelect;
-
 export const location = sqliteTable(
 	'location',
 	{
@@ -121,7 +161,11 @@ export const location = sqliteTable(
 		country: text('country').notNull(),
 		mapUrl: text('map_url'),
 		longitude: real('longitude'),
-		latitude: real('latitude')
+		latitude: real('latitude'),
+		propertyId: integer('property_id')
+			.notNull()
+			.unique()
+			.references(() => property.id, { onDelete: 'cascade' })
 	},
 	(table) => {
 		return {

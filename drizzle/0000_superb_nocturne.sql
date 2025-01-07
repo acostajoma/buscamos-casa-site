@@ -12,7 +12,9 @@ CREATE TABLE `location` (
 	`country` text NOT NULL,
 	`map_url` text,
 	`longitude` real,
-	`latitude` real
+	`latitude` real,
+	`property_id` integer NOT NULL,
+	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `photo` (
@@ -35,24 +37,29 @@ CREATE TABLE `properties_with_construction` (
 --> statement-breakpoint
 CREATE TABLE `property` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`listing_status` text NOT NULL,
 	`title` text NOT NULL,
 	`description` text NOT NULL,
+	`listing_status` text DEFAULT 'En Revision' NOT NULL,
 	`property_type` text,
-	`price` real NOT NULL,
+	`post_owner_id` text NOT NULL,
+	FOREIGN KEY (`post_owner_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
+);
+--> statement-breakpoint
+CREATE TABLE `property_details` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`property_id` integer NOT NULL,
+	`sale_price` real,
+	`rent_price` real,
 	`currency` text NOT NULL,
-	`lot_size` real NOT NULL,
+	`size` real NOT NULL,
 	`water_availability` integer DEFAULT true,
 	`electricity_availability` integer DEFAULT true,
-	`post_owner_id` text NOT NULL,
 	`location_id` integer,
-	`meta_data` integer NOT NULL,
 	`created_at` text DEFAULT (current_timestamp) NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
-	FOREIGN KEY (`post_owner_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null,
-	FOREIGN KEY (`location_id`) REFERENCES `location`(`id`) ON UPDATE no action ON DELETE set null,
-	FOREIGN KEY (`meta_data`) REFERENCES `property_meta_data`(`id`) ON UPDATE no action ON DELETE restrict
+	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`location_id`) REFERENCES `location`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE TABLE `property_features` (
@@ -66,7 +73,9 @@ CREATE TABLE `property_features` (
 CREATE TABLE `property_meta_data` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`views` integer DEFAULT 0,
-	`shared` integer DEFAULT 0
+	`shared` integer DEFAULT 0,
+	`property_id` integer NOT NULL,
+	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `sale_type` (
@@ -110,6 +119,7 @@ CREATE TABLE `user_data` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `features_name_unique` ON `features` (`name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `location_property_id_unique` ON `location` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_location_district` ON `location` (`district`);--> statement-breakpoint
 CREATE INDEX `idx_location_city` ON `location` (`city`);--> statement-breakpoint
 CREATE INDEX `idx_location_state` ON `location` (`state`);--> statement-breakpoint

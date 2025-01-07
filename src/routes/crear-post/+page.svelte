@@ -2,6 +2,7 @@
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
 	import Fieldset from '$lib/components/Forms/Fieldset.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
+	import TextArea from '$lib/components/Forms/TextArea.svelte';
 	import { propertyTypes, saleTypes } from '$lib/utils/postConstants';
 	import { postSchema } from '$lib/validation/post';
 	import { superForm } from 'sveltekit-superforms';
@@ -16,11 +17,11 @@
 </script>
 
 {#snippet general()}
-	<div class="sm:col-span-3">
+	<div class="sm:col-span-full">
 		<Input {form} label="Título" name="title" id="title" type="text" required />
 	</div>
-	<div class="sm:col-span-3">
-		<Input {form} label="Descripción" name="description" id="description" type="text" required />
+	<div class="sm:col-span-full">
+		<TextArea {form} label="Descripción" name="description" id="description" required />
 	</div>
 	<div class="sm:col-span-3">
 		<Fieldset

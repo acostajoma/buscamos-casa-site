@@ -8,8 +8,8 @@ export const propertyTypes: readonly [string, ...string[]] = [
 ];
 
 export const listingStates: readonly [string, ...string[]] = [
-	'Publicado',
 	'En Revision',
+	'Publicado',
 	'Denegado',
 	'Vendido',
 	'Alquilado',
