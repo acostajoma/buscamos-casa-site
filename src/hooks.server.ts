@@ -19,6 +19,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	// Setting DB
 	const db = getDB(platform.env);
 	event.locals.db = db;
+	event.locals.cache = platform.env.CACHE_KV;
 
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {

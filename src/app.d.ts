@@ -9,11 +9,13 @@ declare global {
 			user: import('$lib/server/auth').SessionValidationResult['user'];
 			session: import('$lib/server/auth').SessionValidationResult['session'];
 			db: DrizzleD1Database;
+			cache: KVNamespace;
 		}
 
 		interface Platform {
 			env: {
 				DB: D1Database;
+				CACHE_KV: KVNamespace;
 			};
 		}
 	}
