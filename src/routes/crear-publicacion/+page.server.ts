@@ -26,19 +26,32 @@ export const actions = {
 		const [newProperty] = await db
 			.insert(property)
 			.values({
-				title: form.data.title,
-				description: form.data.description,
-				propertyType: form.data.propertyType,
+				title: data.title,
+				description: data.description,
+				propertyType: data.propertyType,
 				postOwnerId: user.id,
 				listingStatus: 'Borrador'
 			})
-			.returning({ id: property.id });
+			.returning();
+		console.log(newProperty);
 
 		await db.insert(saleType).values(
 			data.saleType.map((type) => ({
 				propertyId: newProperty.id,
 				type: type
 			}))
+		);
+		await locals.cache.put(
+			`crear-publicacion:${newProperty.id}`,
+			JSON.stringify({ ...newProperty, saleType: data.saleType }),
+			{
+				expirationTtl: 300, // 5 minutes
+				metadata: {
+					userId: user.id,
+					title: data.title,
+					listingStatus: 'Borrador'
+				}
+			}
 		);
 
 		redirect(302, `/crear-publicacion/${newProperty.id}`);
