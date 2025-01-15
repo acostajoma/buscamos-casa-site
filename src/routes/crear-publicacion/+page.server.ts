@@ -30,29 +30,24 @@ export const actions = {
 				description: data.description,
 				propertyType: data.propertyType,
 				postOwnerId: user.id,
-				listingStatus: 'Borrador'
+				listingStatus: 'Borrador',
+				size: data.size
 			})
 			.returning();
-		console.log(newProperty);
 
-		await db.insert(saleType).values(
-			data.saleType.map((type) => ({
-				propertyId: newProperty.id,
-				type: type
-			}))
-		);
-		await locals.cache.put(
-			`crear-publicacion:${newProperty.id}`,
-			JSON.stringify({ ...newProperty, saleType: data.saleType }),
-			{
-				expirationTtl: 300, // 5 minutes
-				metadata: {
-					userId: user.id,
-					title: data.title,
-					listingStatus: 'Borrador'
-				}
-			}
-		);
+		if (!newProperty) {
+			return fail(500, { form });
+		}
+
+		await db
+			.insert(saleType)
+			.values(
+				data.saleType.map((type) => ({
+					propertyId: newProperty.id,
+					type: type
+				}))
+			)
+			.returning({ type: saleType.type });
 
 		redirect(302, `/crear-publicacion/${newProperty.id}`);
 	}

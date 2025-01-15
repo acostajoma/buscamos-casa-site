@@ -49,25 +49,39 @@ export type UserData = typeof userData.$inferSelect;
 
 // Property Tables
 
-export const property = sqliteTable('property', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	title: text('title').notNull(),
-	description: text('description').notNull(),
-	listingStatus: text('listing_status', { enum: listingStates })
-		.notNull()
-		.default(listingStates[0]),
-	propertyType: text('property_type', { enum: propertyTypes }),
-	postOwnerId: text('post_owner_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'set null' })
-});
+export const property = sqliteTable(
+	'property',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		listingStatus: text('listing_status', { enum: listingStates })
+			.notNull()
+			.default(listingStates[0]),
+		propertyType: text('property_type', { enum: propertyTypes }),
+		size: real('size').notNull(),
+		postOwnerId: text('post_owner_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'set null' }),
+		createdAt: text('created_at')
+			.notNull()
+			.default(sql`(current_timestamp)`),
+		updatedAt: text('updated_at'),
+		deletedAt: text('deleted_at')
+	},
+	(table) => ({
+		listingStatusIdx: index('idx_property_listing_status').on(table.listingStatus),
+		createdAtIdx: index('idx_property_created_at').on(table.createdAt)
+	})
+);
+export type Property = typeof property.$inferSelect;
 
 export const propertyRelations = relations(property, ({ one, many }) => ({
-	propertyDetails: one(propertyDetails, {
+	propertyFinancialDetails: one(propertyFinancialDetails, {
 		fields: [property.id],
-		references: [propertyDetails.propertyId]
+		references: [propertyFinancialDetails.propertyId]
 	}),
-	saleTypes: many(saleType),
+	saleType: many(saleType),
 	propertyMetaData: one(propertyMetaData, {
 		fields: [property.id],
 		references: [propertyMetaData.propertyId]
@@ -87,29 +101,18 @@ export const propertyRelations = relations(property, ({ one, many }) => ({
 	})
 }));
 
-export const propertyDetails = sqliteTable('property_details', {
+export const propertyFinancialDetails = sqliteTable('property_financial_details', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	propertyId: integer('property_id')
 		.notNull()
+		.unique()
 		.references(() => property.id, { onDelete: 'cascade' }),
 	salePrice: real('sale_price'),
 	rentPrice: real('rent_price'),
-	currency: text('currency', { enum: currencies }).notNull(),
-	size: real('size').notNull(),
-	waterAvailability: integer('water_availability', { mode: 'boolean' }).default(true),
-	electricityAvailability: integer('electricity_availability', { mode: 'boolean' }).default(true),
-
-	locationId: integer('location_id').references(() => location.id, { onDelete: 'set null' }),
-
-	// Time stamps
-	createdAt: text('created_at')
-		.notNull()
-		.default(sql`(current_timestamp)`),
-	updatedAt: text('updated_at'),
-	deletedAt: text('deleted_at')
+	currency: text('currency', { enum: currencies }).notNull()
 });
 
-export type Property = typeof property.$inferSelect;
+export type PropertyFinancialDetails = typeof propertyFinancialDetails.$inferSelect;
 
 export const saleType = sqliteTable(
 	'sale_type',
@@ -125,6 +128,13 @@ export const saleType = sqliteTable(
 		typeIdx: index('idx_saletype_type').on(table.type)
 	})
 );
+
+export const saleTypeRelations = relations(saleType, ({ one }) => ({
+	property: one(property, {
+		fields: [saleType.propertyId],
+		references: [property.id]
+	})
+}));
 
 export type SaleType = typeof saleType.$inferSelect;
 
@@ -145,11 +155,11 @@ export const propertiesWithConstruction = sqliteTable('properties_with_construct
 		.notNull()
 		.unique()
 		.references(() => property.id, { onDelete: 'restrict' }),
-	numBedrooms: integer('num_bedrooms'),
-	numBathrooms: integer('num_bathrooms'),
-	constructionSize: real('construction_size'),
-	yearBuilt: integer('year_built'),
-	garageSpace: integer('garage_space')
+	numBedrooms: integer('num_bedrooms').default(1).notNull(),
+	numBathrooms: real('num_bathrooms').default(1).notNull(),
+	constructionSize: real('construction_size').notNull(),
+	yearBuilt: integer('year_built').notNull(),
+	garageSpace: integer('garage_space').default(0).notNull()
 });
 
 export type PropertiesWithConstruction = typeof propertiesWithConstruction.$inferSelect;

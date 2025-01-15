@@ -41,19 +41,20 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-const urlGuard: Handle = async ({ event, resolve }) => {
+const routeGuard: Handle = async ({ event, resolve }) => {
 	const {
-		url: { pathname }
+		url: { pathname },
+		route
 	} = event;
 	const { user } = event.locals;
-	if (onlyLoggedIn.has(pathname) && !user) {
+	if (route?.id && (onlyLoggedIn.has(route.id) || onlyLoggedIn.has(pathname)) && !user) {
 		redirect(302, '/inicia-sesion');
 	}
-	if (onlyLoggedOut.has(pathname) && user) {
+	if (route?.id && (onlyLoggedOut.has(route.id) || onlyLoggedOut.has(pathname)) && user) {
 		redirect(302, '/');
 	}
 
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleAuth, urlGuard);
+export const handle: Handle = sequence(handleAuth, routeGuard);

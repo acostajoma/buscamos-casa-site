@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "94116ffa-58bb-4372-a676-c9dabc9a1828",
+  "id": "42ea15e8-f29f-4f59-b96e-dab6fff468ee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "features": {
@@ -230,36 +230,39 @@
           "name": "num_bedrooms",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
         },
         "num_bathrooms": {
           "name": "num_bathrooms",
-          "type": "integer",
+          "type": "real",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
         },
         "construction_size": {
           "name": "construction_size",
           "type": "real",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "year_built": {
           "name": "year_built",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "garage_space": {
           "name": "garage_space",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         }
       },
       "indexes": {
@@ -328,71 +331,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "post_owner_id": {
-          "name": "post_owner_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "property_post_owner_id_user_id_fk": {
-          "name": "property_post_owner_id_user_id_fk",
-          "tableFrom": "property",
-          "tableTo": "user",
-          "columnsFrom": [
-            "post_owner_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "property_details": {
-      "name": "property_details",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "property_id": {
-          "name": "property_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "sale_price": {
-          "name": "sale_price",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "rent_price": {
-          "name": "rent_price",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "currency": {
-          "name": "currency",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "size": {
           "name": "size",
           "type": "real",
@@ -400,27 +338,11 @@
           "notNull": true,
           "autoincrement": false
         },
-        "water_availability": {
-          "name": "water_availability",
-          "type": "integer",
+        "post_owner_id": {
+          "name": "post_owner_id",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": true
-        },
-        "electricity_availability": {
-          "name": "electricity_availability",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": true
-        },
-        "location_id": {
-          "name": "location_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -446,27 +368,29 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "property_details_property_id_property_id_fk": {
-          "name": "property_details_property_id_property_id_fk",
-          "tableFrom": "property_details",
-          "tableTo": "property",
-          "columnsFrom": [
-            "property_id"
+      "indexes": {
+        "idx_property_listing_status": {
+          "name": "idx_property_listing_status",
+          "columns": [
+            "listing_status"
           ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "isUnique": false
         },
-        "property_details_location_id_location_id_fk": {
-          "name": "property_details_location_id_location_id_fk",
-          "tableFrom": "property_details",
-          "tableTo": "location",
+        "idx_property_created_at": {
+          "name": "idx_property_created_at",
+          "columns": [
+            "created_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "property_post_owner_id_user_id_fk": {
+          "name": "property_post_owner_id_user_id_fk",
+          "tableFrom": "property",
+          "tableTo": "user",
           "columnsFrom": [
-            "location_id"
+            "post_owner_id"
           ],
           "columnsTo": [
             "id"
@@ -542,6 +466,72 @@
           "name": "property_features_property_id_feature_id_pk"
         }
       },
+      "uniqueConstraints": {}
+    },
+    "property_financial_details": {
+      "name": "property_financial_details",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sale_price": {
+          "name": "sale_price",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "rent_price": {
+          "name": "rent_price",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "property_financial_details_property_id_unique": {
+          "name": "property_financial_details_property_id_unique",
+          "columns": [
+            "property_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "property_financial_details_property_id_property_id_fk": {
+          "name": "property_financial_details_property_id_property_id_fk",
+          "tableFrom": "property_financial_details",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "property_meta_data": {

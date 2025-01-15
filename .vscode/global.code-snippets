@@ -56,10 +56,7 @@
 	"Svelte Inspect Rune": {
 		"scope": "typescript,javascript",
 		"prefix": "svinspect",
-		"body": [
-			"/**\n* Will console.log when `${1:variable1},` or `${2:variable2}` change.\n* Note this only works during development\n* More notes on https://svelte-5-preview.vercel.app/docs/runes#\\$inspect\n*/",
-			"\\$inspect(${1:variable1}, ${2:variable2});\n$0"
-		],
+		"body": ["\\$inspect(${1:variable1}, ${2:variable2});\n$0"],
 		"description": "Snippet to create a inspect rune"
 	},
 	"Svelte Host Rune": {

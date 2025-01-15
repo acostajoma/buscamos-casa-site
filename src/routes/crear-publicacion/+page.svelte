@@ -18,12 +18,26 @@
 	});
 </script>
 
-{#snippet general()}
+{#snippet content()}
 	<div class="sm:col-span-full">
 		<Input {form} label="Título" name="title" id="title" type="text" required />
 	</div>
 	<div class="sm:col-span-full">
 		<TextArea {form} label="Descripción" name="description" id="description" required />
+	</div>
+	<div class="sm:col-span-full">
+		<Input {form} label="Tamaño de la propiedad" name="size" id="size" type="number" required />
+	</div>
+
+	<div class="sm:col-span-3">
+		<Fieldset
+			{form}
+			legend="Tipo de negocio"
+			description="Selecciona todas las modalidades que apliquen para la propiedad"
+			name="saleType"
+			options={saleTypes}
+			type="checkbox"
+		></Fieldset>
 	</div>
 	<div class="sm:col-span-3">
 		<Fieldset
@@ -35,23 +49,13 @@
 			type="radio"
 		></Fieldset>
 	</div>
-	<div class="sm:col-span-3">
-		<Fieldset
-			{form}
-			legend="Tipo de negocio"
-			description="Selecciona todas las modalidades que apliquen para la propiedad"
-			name="saleType"
-			options={saleTypes}
-			type="checkbox"
-		></Fieldset>
-	</div>
 {/snippet}
 
 <div class="container mx-auto">
 	<DoubleColForm
 		{form}
 		items={[
-			{ title: 'General', description: 'Aspectos generales de la propiedad', fields: general }
+			{ title: 'General', description: 'Aspectos generales de la propiedad', fields: content }
 		]}
 	>
 		{#snippet button()}

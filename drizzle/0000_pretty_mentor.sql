@@ -27,11 +27,11 @@ CREATE TABLE `photo` (
 CREATE TABLE `properties_with_construction` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`property_id` integer NOT NULL,
-	`num_bedrooms` integer,
-	`num_bathrooms` integer,
-	`construction_size` real,
-	`year_built` integer,
-	`garage_space` integer,
+	`num_bedrooms` integer DEFAULT 1 NOT NULL,
+	`num_bathrooms` real DEFAULT 1 NOT NULL,
+	`construction_size` real NOT NULL,
+	`year_built` integer NOT NULL,
+	`garage_space` integer DEFAULT 0 NOT NULL,
 	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE restrict
 );
 --> statement-breakpoint
@@ -41,25 +41,12 @@ CREATE TABLE `property` (
 	`description` text NOT NULL,
 	`listing_status` text DEFAULT 'En Revision' NOT NULL,
 	`property_type` text,
-	`post_owner_id` text NOT NULL,
-	FOREIGN KEY (`post_owner_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
-);
---> statement-breakpoint
-CREATE TABLE `property_details` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`property_id` integer NOT NULL,
-	`sale_price` real,
-	`rent_price` real,
-	`currency` text NOT NULL,
 	`size` real NOT NULL,
-	`water_availability` integer DEFAULT true,
-	`electricity_availability` integer DEFAULT true,
-	`location_id` integer,
+	`post_owner_id` text NOT NULL,
 	`created_at` text DEFAULT (current_timestamp) NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
-	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`location_id`) REFERENCES `location`(`id`) ON UPDATE no action ON DELETE set null
+	FOREIGN KEY (`post_owner_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE TABLE `property_features` (
@@ -68,6 +55,15 @@ CREATE TABLE `property_features` (
 	PRIMARY KEY(`feature_id`, `property_id`),
 	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`feature_id`) REFERENCES `features`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `property_financial_details` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`property_id` integer NOT NULL,
+	`sale_price` real,
+	`rent_price` real,
+	`currency` text NOT NULL,
+	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `property_meta_data` (
@@ -125,7 +121,10 @@ CREATE INDEX `idx_location_city` ON `location` (`city`);--> statement-breakpoint
 CREATE INDEX `idx_location_state` ON `location` (`state`);--> statement-breakpoint
 CREATE INDEX `idx_photos_property_id` ON `photo` (`property_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `properties_with_construction_property_id_unique` ON `properties_with_construction` (`property_id`);--> statement-breakpoint
+CREATE INDEX `idx_property_listing_status` ON `property` (`listing_status`);--> statement-breakpoint
+CREATE INDEX `idx_property_created_at` ON `property` (`created_at`);--> statement-breakpoint
 CREATE INDEX `idx_property_feature_property_id` ON `property_features` (`property_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `property_financial_details_property_id_unique` ON `property_financial_details` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_saletype_property_id` ON `sale_type` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_saletype_type` ON `sale_type` (`type`);--> statement-breakpoint
 CREATE INDEX `idx_sellerinformation_property_id` ON `seller_information` (`property_id`);--> statement-breakpoint

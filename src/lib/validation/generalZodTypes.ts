@@ -25,7 +25,7 @@ export const numeric = (min: number, max: number, step: number, formatNumber = t
 			invalid_type_error
 		})
 		.multipleOf(step, { message: multiple_of_error(step) })
-		.min(min + step, { message: greater_than(min, formatNumber) })
+		.min(min, { message: greater_than(min, formatNumber) })
 		.max(max, less_or_equal_than(max, formatNumber));
 
 export const coordinates = (min: number, max: number) =>

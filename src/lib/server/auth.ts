@@ -14,7 +14,6 @@ import {
 import { error, type RequestEvent } from '@sveltejs/kit';
 import { ArcticFetchError, Facebook, Google, OAuth2RequestError, OAuth2Tokens } from 'arctic';
 import { eq } from 'drizzle-orm';
-import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 const DEV_GOOGLE_CALLBACK = 'http://localhost:5173/inicia-sesion/google/callback';
@@ -36,7 +35,7 @@ export function generateSessionToken() {
 	return token;
 }
 
-export async function createSession(db: DrizzleD1Database, token: string, userId: string) {
+export async function createSession(db: App.Locals['db'], token: string, userId: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: table.Session = {
 		id: sessionId,
@@ -47,7 +46,7 @@ export async function createSession(db: DrizzleD1Database, token: string, userId
 	return session;
 }
 
-export async function validateSessionToken(db: DrizzleD1Database, token: string) {
+export async function validateSessionToken(db: App.Locals['db'], token: string) {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const [result] = await db
 		.select({
@@ -84,7 +83,7 @@ export async function validateSessionToken(db: DrizzleD1Database, token: string)
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;
 
-export async function invalidateSession(db: DrizzleD1Database, sessionId: string) {
+export async function invalidateSession(db: App.Locals['db'], sessionId: string) {
 	await db.delete(table.session).where(eq(table.session.id, sessionId));
 }
 
@@ -158,7 +157,7 @@ export async function getOAuthToken(
 
 export async function setSessionIfUserExists(
 	event: RequestEvent,
-	db: DrizzleD1Database,
+	db: App.Locals['db'],
 	client: Auth.ClientNames,
 	clientUserId: string,
 	email: string
@@ -202,7 +201,7 @@ export async function setSessionIfUserExists(
 
 export async function createUserAndSession(
 	event: RequestEvent,
-	db: DrizzleD1Database,
+	db: App.Locals['db'],
 	client: Auth.ClientNames,
 	userClientId: string,
 	email: string

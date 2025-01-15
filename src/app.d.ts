@@ -8,7 +8,7 @@ declare global {
 		interface Locals {
 			user: import('$lib/server/auth').SessionValidationResult['user'];
 			session: import('$lib/server/auth').SessionValidationResult['session'];
-			db: DrizzleD1Database;
+			db: DrizzleD1Database<typeof import('$lib/server/db/schema')>;
 			cache: KVNamespace;
 		}
 
