@@ -1,3 +1,4 @@
+import { locationMap } from '$lib/utils/location/costaRicaData';
 import { currencies, propertyTypes, saleTypes } from '$lib/utils/postConstants';
 import { required_error } from '$lib/utils/zodErrorMessages';
 import { z } from 'zod';
@@ -92,3 +93,38 @@ export const createPropertyWithConstructionSchema = (
 				});
 			}
 		});
+
+export const locationSchema = z
+	.object({
+		address: text(1, 200),
+		city: text(1, 200).default('Acosta'),
+		state: text(1, 200).default('San José'),
+		district: text(1, 200).default('Cangrejal'),
+		country: text(1, 200).default('Costa Rica'),
+		mapUrl: text(1, 200).nullable().optional(),
+		longitude: numeric(1, 200, 0.01, true).nullable().optional(),
+		latitude: numeric(1, 200, 0.01, true).nullable().optional()
+	})
+	.superRefine((data, ctx) => {
+		if (!locationMap.has(data.state)) {
+			ctx.addIssue({
+				path: ['state'],
+				code: z.ZodIssueCode.custom,
+				message: 'La provincia no es válida'
+			});
+		}
+		if (!locationMap.get(data.state)?.has(data.city)) {
+			ctx.addIssue({
+				path: ['canton'],
+				code: z.ZodIssueCode.custom,
+				message: 'El cantón no es válido'
+			});
+		}
+		if (!locationMap.get(data.state)?.get(data.city)?.has(data.district)) {
+			ctx.addIssue({
+				path: ['district'],
+				code: z.ZodIssueCode.custom,
+				message: 'El distrito no es válido'
+			});
+		}
+	});

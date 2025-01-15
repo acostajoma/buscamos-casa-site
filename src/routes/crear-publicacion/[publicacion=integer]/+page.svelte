@@ -17,8 +17,6 @@
 		customValidity: false
 	});
 
-	let { form: formData } = $derived(form);
-
 	let formItems = $derived.by(() => {
 		const items = [
 			{
