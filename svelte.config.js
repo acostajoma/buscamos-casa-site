@@ -26,14 +26,14 @@ const config = {
 		},
 		csp: {
 			directives: {
-				'script-src': ['self'],
-				/** @todo Remove unsplash and tailwind when hitting prod */
+				'script-src': ['self', 'https://maps.googleapis.com', 'wasm-unsafe-eval'],
 				'img-src': [
 					'self',
-					'https://images.unsplash.com',
 					'data:',
 					'https://tailwindui.com',
-					'https://imagedelivery.net'
+					'https://imagedelivery.net',
+					'https://maps.gstatic.com',
+					'https://maps.googleapis.com'
 				],
 				'worker-src': ['self', 'blob:']
 			}

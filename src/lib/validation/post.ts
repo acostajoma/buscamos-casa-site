@@ -96,14 +96,14 @@ export const createPropertyWithConstructionSchema = (
 
 export const locationSchema = z
 	.object({
-		address: text(1, 200),
+		address: text(10, 200),
 		city: text(1, 200).default('Acosta'),
 		state: text(1, 200).default('San José'),
 		district: text(1, 200).default('Cangrejal'),
 		country: text(1, 200).default('Costa Rica'),
 		mapUrl: text(1, 200).nullable().optional(),
-		longitude: numeric(1, 200, 0.01, true).nullable().optional(),
-		latitude: numeric(1, 200, 0.01, true).nullable().optional()
+		longitude: numeric(-180, 180, 0.000001, true).nullable().optional(),
+		latitude: numeric(-90, 90, 0.000001, true).nullable().optional()
 	})
 	.superRefine((data, ctx) => {
 		if (!locationMap.has(data.state)) {
@@ -128,3 +128,5 @@ export const locationSchema = z
 			});
 		}
 	});
+
+export type Location = z.infer<typeof locationSchema>;
