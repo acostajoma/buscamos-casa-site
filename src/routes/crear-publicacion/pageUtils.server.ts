@@ -96,14 +96,15 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 		error(500, errorMessage);
 	}
 
-	const result = await db.insert(saleType).values(
-		data.saleType.map((type) => ({
-			propertyId: newProperty.id,
-			type: type
-		}))
-	);
+	const saleTypes = data.saleType.map((type) => ({
+		propertyId: newProperty.id,
+		type: type
+	}));
+	const deleteSaleTypes = await db.delete(saleType).where(eq(saleType.propertyId, newProperty.id));
 
-	if (!result.success || result?.error) {
+	const result = await db.insert(saleType).values(saleTypes);
+
+	if (!result.success || result?.error || !deleteSaleTypes.success || deleteSaleTypes?.error) {
 		error(500, errorMessage);
 	}
 
