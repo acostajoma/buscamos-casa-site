@@ -5,6 +5,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { getProperty } from '../../pageUtils.server';
 import { eq, asc } from 'drizzle-orm';
 import { photo } from '$lib/server/db/schema';
+import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_CLOUD_NAME } from '$env/static/public';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const {user, db} = locals
@@ -35,8 +36,49 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions = {
-	default: async ({ request }) => {
+	nose: async ({ request }) => {
 		const formData = await request.formData();
 		console.log(formData);
+	},
+	delete: async ({ request, locals: {user,db} }) : Promise<{publicId : string}> => {
+		const requestData = await request.formData()
+		const publicId = requestData.get('publicId')?.toString();
+
+		if (!publicId) {
+			error(400, 'Ha ocurrido un error al borrar tu imagen');
+		}
+
+		const photoData = await db.query.photo.findFirst({
+			where: eq(photo.id, publicId),
+			with: {
+				property: { columns: { postOwnerId: true } }
+			}
+		})
+
+		if (photoData?.property?.postOwnerId !== user?.id) {
+			error(403, 'No tienes permisos para borrar esta imagen');
+		}
+
+		const timestamp = Math.floor(Date.now() / 1000).toString();
+		const signature = getCloudinarySignature({timestamp, public_id: publicId});
+		const formData = new FormData();
+		formData.set('api_key', PUBLIC_CLOUDINARY_API_KEY);
+		formData.set('timestamp', timestamp);
+		formData.set('signature', signature);
+		formData.set('public_id', publicId);
+		const cloudinaryDeletePromise= fetch(`https://api.cloudinary.com/v1_1/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/destroy`, {
+			method: 'POST',
+			body: formData
+		})
+		const dbDeletePromise = db.delete(photo).where(eq(photo.id, publicId));
+		const [cloudinaryResponse, dbDeleteResponse ] = await Promise.all([cloudinaryDeletePromise, dbDeletePromise]);
+
+		
+		if (!cloudinaryResponse.ok || !dbDeleteResponse?.success) {
+			error(500, 'Error al borrar la imagen');
+		}
+
+		return {publicId}
 	}
+
 } satisfies Actions;

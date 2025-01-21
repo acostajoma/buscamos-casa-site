@@ -1,28 +1,61 @@
 <script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import Exit from '$lib/icons/Exit.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
+
 	type Props = {
 		images: Cloudinary.Image[];
 	};
 
 	let { images }: Props = $props();
+
+	const deleteHandler: SubmitFunction = ({}) => {
+		return ({ result }) => {
+			console.log(result);
+			if (result.type === 'success' && result.data?.publicId) {
+				images = images.filter(({ key }) => key === result.data?.publicId);
+			}
+			if (result.type === 'error') {
+				applyAction(result);
+			}
+			if (result.type === 'redirect') {
+				goto(result.location);
+			}
+		};
+	};
 </script>
 
-<ul role="list" class="flex flex-wrap gap-4">
+{#snippet image(imgSrc: string, i: number, publicId: string)}
+	<div class="relative inline-block">
+		<img
+			src={imgSrc}
+			alt="image {i}"
+			class="py-2 px-2 pointer-events-none aspect-4/3 object-cover group-hover:opacity-75 rounded-lg"
+		/>
+		<form action="?/delete" method="POST" use:enhance={deleteHandler}>
+			<input type="text" name="publicId" value={publicId} hidden />
+			<button
+				type="submit"
+				class="absolute top-0 right-0 flex size-5.5 rounded-full bg-red-400 ring-2 ring-white items-center justify-center text-white"
+				><Exit class="size-4" /></button
+			>
+		</form>
+	</div>
+{/snippet}
+
+<ul role="list" class="flex flex-wrap gap-1">
 	{#each images as { key, data, state }, i (key)}
 		<li class="relative">
 			<div
-				class="group overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
+				class="mt-1 group overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
 			>
 				{#if state === 'successful'}
-					<img
-						src={(data as Cloudinary.Asset).eager[0].secure_url}
-						alt="image {i}"
-						class="pointer-events-none aspect-10/7 object-cover group-hover:opacity-75"
-					/>
+					{@const imgSrc = (data as Cloudinary.Asset).eager[0].secure_url}
+					{@render image(imgSrc, i, (data as Cloudinary.Asset).public_id)}
 				{:else if state === 'posted' && data && typeof data === 'object' && 'id' in data}
-					<img
-						src={`https://res.cloudinary.com/dldnvubae/image/upload/c_scale,h_90,w_120/f_auto/q_auto/${data.id}`}
-						alt="image {i}"
-					/>
+					{@const imgSrc = `https://res.cloudinary.com/dldnvubae/image/upload/c_scale,h_90,w_auto/f_auto/q_auto/${data.id}`}
+					{@render image(imgSrc, i, data.id)}
 				{:else if state === 'uploading'}
 					<div class="flex justify-center items-center">
 						<svg
