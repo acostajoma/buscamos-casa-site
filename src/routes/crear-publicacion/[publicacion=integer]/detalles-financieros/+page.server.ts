@@ -1,16 +1,15 @@
 import {
 	propertiesWithConstruction,
-	property,
 	propertyFinancialDetails
 } from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
 import { createPropertyWithConstructionSchema } from '$lib/validation/post';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 import type { BatchItem, BatchResponse } from 'drizzle-orm/batch';
 import { superValidate, type SuperValidated } from 'sveltekit-superforms';
 import type { z } from 'zod';
 import type { Actions, PageServerLoad } from '../$types';
+import { getProperty } from '../../pageUtils.server';
 
 type FormData = z.infer<ReturnType<typeof createPropertyWithConstructionSchema>>;
 
@@ -19,16 +18,8 @@ async function validatePropertyForm(
 	params: { publicacion: string },
 	request?: Request
 ) {
-	const { db } = locals;
 
-	const newProperty = await db.query.property.findFirst({
-		where: eq(property.id, Number(params.publicacion)),
-		with: {
-			saleType: { columns: { type: true } },
-			propertiesWithConstruction: true,
-			propertyFinancialDetails: true
-		}
-	});
+	const newProperty = await getProperty(locals, params);
 	if (!newProperty) {
 		error(404, 'Publicación no encontrada');
 	}

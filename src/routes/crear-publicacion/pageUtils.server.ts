@@ -5,6 +5,41 @@ import { eq } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
+const getPropertyData = async (locals: App.Locals, params: { publicacion: string }) => {
+	const { db } = locals;
+	return await db.query.property.findFirst({
+		where: eq(property.id, Number(params.publicacion)),
+		with: {
+			saleType: { columns: { type: true } },
+			propertiesWithConstruction: true,
+			propertyFinancialDetails: true
+		}
+	})
+}
+
+type PropertyData = Awaited<ReturnType<typeof getPropertyData>>;
+
+export const getProperty = async (locals: App.Locals, params: { publicacion: string }) => {
+	const { cache } = locals;
+	const cachePath = 'crear-publicacion:propertyData:' + params.publicacion;
+	let newProperty : PropertyData;
+	const cacheData = await cache.get(cachePath);
+	if (cacheData) {
+		newProperty = JSON.parse(cacheData);
+	} else {
+		newProperty = await getPropertyData(locals, params);
+		cache.put(cachePath, JSON.stringify(newProperty), { expirationTtl: 600 });
+	};
+	if (!newProperty) {
+		error(404, 'Publicación no encontrada');
+	}
+	if (newProperty.postOwnerId !== locals.user?.id) {
+		error(403, 'No tienes permisos para editar esta publicación');
+	}
+	return newProperty;
+}
+
+
 export const validatePropertyForm = async (
 	locals: App.Locals,
 	request?: Request,

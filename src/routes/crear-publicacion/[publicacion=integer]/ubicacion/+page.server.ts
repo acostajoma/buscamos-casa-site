@@ -1,10 +1,11 @@
-import { location, property } from '$lib/server/db/schema';
+import { location } from '$lib/server/db/schema';
 import { locationSchema } from '$lib/validation/post';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';
+import { getProperty } from '../../pageUtils.server';
 
 async function validateLocation(
 	locals: App.Locals,
@@ -12,23 +13,17 @@ async function validateLocation(
 	request?: Request
 ) {
 	const { db, user } = locals;
-	const [propertyLocation, propertyId] = await db.batch([
-		db.query.location.findFirst({
-			where: eq(location.propertyId, Number(params.publicacion))
-		}),
-		db.query.property.findFirst({
-			where: eq(property.id, Number(params.publicacion)),
-			columns: {
-				id: true,
-				postOwnerId: true
-			}
-		})
-	]);
-	if (!propertyId) {
+
+	const locationPromise = db.query.location.findFirst({
+		where: eq(location.propertyId, Number(params.publicacion))
+	})
+	const [property, propertyLocation] = await Promise.all([getProperty(locals, params), locationPromise]); 
+
+	if (!property) {
 		error(404, 'Publicación no encontrada');
 	}
 
-	if (propertyId.postOwnerId !== user?.id) {
+	if (property.postOwnerId !== user?.id) {
 		error(403, 'No tienes permisos para editar esta publicación');
 	}
 
@@ -39,10 +34,10 @@ async function validateLocation(
 		}
 		return { form };
 	}
-
 	if (propertyLocation) {
 		return { form: await superValidate(propertyLocation, zod(locationSchema)) };
 	}
+
 	return { form: await superValidate(zod(locationSchema)) };
 }
 

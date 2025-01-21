@@ -5,26 +5,27 @@
 	import Button from './Button.svelte';
 	import DoubleColForm from './Forms/DoubleColForm.svelte';
 	import ImageGrid from './ImageGrid.svelte';
+	import { page } from '$app/state';
 
 	type Props = {
 		signature: string;
 		timestamp: string;
 		context: string;
+		photos: Cloudinary.Image[];
 	};
+	let { signature, timestamp, context, photos }: Props = $props();
 
 	let files = $state<FileList | null | undefined>(null);
 	let fileDragOver = $state(false);
-	let images = $state<Cloudinary.Image[]>([]);
+	let images = $state<Cloudinary.Image[]>(photos);
 
-	let { signature, timestamp, context }: Props = $props();
 	let url = $derived(
 		'https://api.cloudinary.com/v1_1/' + PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload'
 	);
-	let lengthError = $state<string[]>([]);
+	let uploaderError = $state<string[]>([]);
 	let uploadingInProgress = $state(false);
 
 	const acceptedTypes = allowedImageTypes.map((type) => `image/${type}`).join(',');
-	$inspect(files);
 
 	async function uploadFile(file: File) {
 		const imageKey = crypto.randomUUID();
@@ -47,6 +48,7 @@
 
 			const response = await fetch(url, { method: 'POST', body: formData });
 			if (!response.ok) {
+				uploaderError.push(`Ha ocurrido un error al subir la imagen ${file.name}`);
 				throw new Error(`Error uploading file: ${response.status} - ${response.statusText}`);
 			}
 			const data = await response.json();
@@ -56,11 +58,19 @@
 				return;
 			}
 
-			// Optionally, notify your endpoint
-			await fetch('/crear-publicacion/api/add-photos-to-post', {
+			// Add the uploaded image to the post
+
+			const endpointReq = await fetch('/crear-publicacion/api/add-photos-to-post', {
 				method: 'POST',
-				body: JSON.stringify(data)
+				body: JSON.stringify({ imageData: data, params: page.params, order: i + 1 })
 			});
+			const endpointRes = await endpointReq.json();
+			if (!endpointReq.ok) {
+				uploaderError.push(
+					`Ha ocurrido un error al subir la imagen ${file.name}. ${(endpointRes as { message: string }).message}`
+				);
+				return;
+			}
 			images[i] = { ...image, state: 'successful', data: data as Cloudinary.Asset };
 		} catch (err: any) {
 			// If there’s a failure, revert the last 'uploading' entry
@@ -78,7 +88,7 @@
 					const newFiles = Array.from(files!);
 					const imageArrayLength = images.length;
 					if (imageArrayLength + newFiles.length > 20) {
-						lengthError.push(`You can only upload up to 20 images in total.`);
+						uploaderError.push(`Solo se permiten un máximo de 20 imágenes.`);
 						files = null;
 						return;
 					}

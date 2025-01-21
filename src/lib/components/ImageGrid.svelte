@@ -7,7 +7,7 @@
 </script>
 
 <ul role="list" class="flex flex-wrap gap-4">
-	{#each images as { key, data, state } (key)}
+	{#each images as { key, data, state }, i (key)}
 		<li class="relative">
 			<div
 				class="group overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
@@ -15,8 +15,13 @@
 				{#if state === 'successful'}
 					<img
 						src={(data as Cloudinary.Asset).eager[0].secure_url}
-						alt=""
+						alt="image {i}"
 						class="pointer-events-none aspect-10/7 object-cover group-hover:opacity-75"
+					/>
+				{:else if state === 'posted' && data && typeof data === 'object' && 'id' in data}
+					<img
+						src={`https://res.cloudinary.com/dldnvubae/image/upload/c_scale,h_90,w_120/f_auto/q_auto/${data.id}`}
+						alt="image {i}"
 					/>
 				{:else if state === 'uploading'}
 					<div class="flex justify-center items-center">

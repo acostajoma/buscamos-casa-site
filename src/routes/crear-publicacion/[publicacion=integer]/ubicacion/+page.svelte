@@ -20,7 +20,7 @@
 		customValidity: false,
 		dataType: 'json'
 	});
-	let disabledButton = $derived(!data.form.valid);
+	let { valid } = data.form; // used in updating scenarios
 
 	const { value: stateValue } = formFieldProxy(form, 'state');
 	const { value: cantonValue } = formFieldProxy(form, 'city');
@@ -90,7 +90,7 @@
 				Anterior
 			</Link>
 			<p class="text-sm text-gray-500">Paso 3 de 4</p>
-			<Button type="submit" {form} disabled={disabledButton}>Siguiente</Button>
+			<Button type="submit" {form} disabled={valid === true ? false : undefined}>Siguiente</Button>
 		{/snippet}
 	</DoubleColForm>
 </div>

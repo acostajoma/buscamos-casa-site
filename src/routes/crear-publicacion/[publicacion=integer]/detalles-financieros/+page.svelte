@@ -19,7 +19,7 @@
 		customValidity: false
 	});
 
-	let disabledButton = $derived(!data.form.valid);
+	let { valid } = data.form;
 
 	let formItems = $derived.by(() => {
 		const items = [
@@ -130,7 +130,7 @@
 			<Link href={`/crear-publicacion/${page.params.publicacion}`}>Anterior</Link>
 			<p class="text-sm text-gray-500">Paso 2 de 4</p>
 
-			<Button type="submit" {form} disabled={disabledButton}>Siguiente</Button>
+			<Button type="submit" {form} disabled={valid === true ? false : undefined}>Siguiente</Button>
 		{/snippet}
 	</DoubleColForm>
 </div>

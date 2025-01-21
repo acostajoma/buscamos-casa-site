@@ -192,6 +192,13 @@ export const location = sqliteTable(
 
 export type Location = typeof location.$inferSelect;
 
+export const locationRelations = relations(location, ({ one }) => ({
+	property: one(property, {
+		fields: [location.propertyId],
+		references: [property.id]
+	})
+}));
+
 export const sellerInformation = sqliteTable(
 	'seller_information',
 	{
@@ -226,6 +233,14 @@ export const photo = sqliteTable(
 );
 
 export type Photo = typeof photo.$inferSelect;
+
+export const photoRelations = relations(photo, ({ one }) => ({
+	property: one(property, {
+		fields: [photo.propertyId],
+		references: [property.id]
+	})
+}));
+
 
 export const feature = sqliteTable('features', {
 	id: integer('id').primaryKey({ autoIncrement: true }),

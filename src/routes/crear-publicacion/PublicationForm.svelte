@@ -21,7 +21,7 @@
 		customValidity: false
 	});
 
-	let disabledButton = $derived(!data.form.valid);
+	let { valid } = data.form;
 </script>
 
 {#snippet content()}
@@ -67,7 +67,7 @@
 		{#snippet button()}
 			<p class="text-sm text-gray-500">Paso 1 de 4</p>
 
-			<Button type="submit" {form} disabled={disabledButton}>Siguiente</Button>
+			<Button type="submit" {form} disabled={valid === true ? false : undefined}>Siguiente</Button>
 		{/snippet}
 	</DoubleColForm>
 </div>

@@ -84,7 +84,7 @@ declare global {
 			asset_id: string;
 			bytes: number;
 			context: {
-				custom: Record<string, unknown>; // O define un tipo más específico
+				custom: Record<string, unknown>;
 			};
 			created_at: string;
 			delete_token: string;
@@ -126,7 +126,12 @@ declare global {
 			data: AssetError;
 		}
 
-		type Image<> = { key: string; file: File } & (ImageUploading | ImageSuccessful | ImageError);
+		interface ImagePost {
+			state: 'posted';
+			data: import('$lib/server/db/schema').Photo;
+		}
+
+		type Image = { key: string; file?: File } & (ImageUploading | ImageSuccessful | ImageError | ImagePost);
 	}
 }
 
