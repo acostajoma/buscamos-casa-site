@@ -54,6 +54,80 @@ declare global {
 
 		type ClientNames = 'Facebook' | 'Google';
 	}
+
+	namespace CloudflareTypes {
+		interface DirectImageUploadResponse {
+			result: {
+				uploadURL: string;
+				id: string;
+			};
+			success: boolean;
+			errors: unknown[];
+			messages: string[];
+		}
+	}
+
+	namespace Cloudinary {
+		interface ParamsToSign {
+			timestamp: string;
+			source?: string;
+			context?: string;
+			public_id?: string;
+			eager?: string;
+			upload_preset?: string;
+			secure?: boolean;
+			allowed_formats?: string;
+		}
+		interface Asset {
+			access_mode: string;
+			api_key: string;
+			asset_id: string;
+			bytes: number;
+			context: {
+				custom: Record<string, unknown>; // O define un tipo más específico
+			};
+			created_at: string;
+			delete_token: string;
+			etag: string;
+			folder: string;
+			format: string;
+			height: number;
+			placeholder: boolean;
+			public_id: string;
+			resource_type: string;
+			secure_url: string;
+			signature: string;
+			tags: string[];
+			type: string;
+			url: string;
+			version: number;
+			version_id: string;
+			width: number;
+			eager: {
+				secure_url: string;
+			}[];
+		}
+		interface AssetError {
+			error: { message: string };
+		}
+
+		interface ImageUploading {
+			state: 'uploading';
+			data?: undefined;
+		}
+
+		interface ImageSuccessful {
+			state: 'successful';
+			data: Asset;
+		}
+
+		interface ImageError {
+			state: 'error';
+			data: AssetError;
+		}
+
+		type Image<> = { key: string; file: File } & (ImageUploading | ImageSuccessful | ImageError);
+	}
 }
 
 export {};

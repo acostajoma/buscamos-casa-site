@@ -33,10 +33,14 @@ const config = {
 					'https://tailwindui.com',
 					'https://imagedelivery.net',
 					'https://maps.gstatic.com',
-					'https://maps.googleapis.com'
+					'https://maps.googleapis.com',
+					'https://upload.imagedelivery.net',
+					'https://res.cloudinary.com'
 				],
-				'worker-src': ['self', 'blob:']
-			}
+				'worker-src': ['self', 'blob:'],
+				'style-src': ['self', 'https://fonts.googleapis.com']
+			},
+			mode: 'auto'
 		},
 		version: {
 			name: 'buscamos-casa 0.01'

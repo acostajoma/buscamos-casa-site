@@ -1,19 +1,37 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { enhance as svelteEnhance } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { type Snippet } from 'svelte';
 	import SuperDebug, { type SuperForm } from 'sveltekit-superforms';
 
 	type Props = {
 		children: Snippet;
-		form: SuperForm<any>;
+		form?: SuperForm<any>;
 		action?: string;
 		class?: string;
+		enctype?:
+			| 'application/x-www-form-urlencoded'
+			| 'multipart/form-data'
+			| 'text/plain'
+			| null
+			| undefined;
+		submitFunction?: SubmitFunction;
 	};
-	let { children, action, class: _class, form: superform }: Props = $props();
-	const { form, message, enhance, formId } = superform;
+	let {
+		children,
+		action,
+		class: _class,
+		form: superform,
+		enctype,
+		submitFunction
+	}: Props = $props();
+	const { form, message, formId } = superform || {};
+
+	const enhance = superform ? superform.enhance : svelteEnhance;
 </script>
 
-<form method="post" {action} use:enhance class={_class} id={$formId}>
+<form method="post" {action} use:enhance={submitFunction} class={_class} id={$formId} {enctype}>
 	{@render children()}
 
 	{#if $message}
@@ -24,7 +42,7 @@
 	{/if}
 </form>
 
-{#if dev}
+{#if dev && form}
 	<div class="min-w-80 pt-10">
 		<p>This SuperDebug Section will only appear on dev mode</p>
 		<SuperDebug data={$form} />
