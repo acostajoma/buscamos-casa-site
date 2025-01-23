@@ -4,7 +4,6 @@ compatibility_date = "2024-12-28"
 pages_build_output_dir = ".svelte-kit/cloudflare"
 compatibility_flags = ["nodejs_compat"]
 
-
 d1_databases = [
     { binding = "DB", database_name = "bc-db-dev", database_id = "dc4ed84f-f098-4ff3-a2b8-c58ff28a35f2", preview_database_id = "DB", migrations_dir = "drizzle" },
 ]

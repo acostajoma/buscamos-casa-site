@@ -23,7 +23,9 @@
 		"apply": "wrangler d1 migrations apply DB --local",
 		"apply:preview": "wrangler DB migrations apply DB --env preview",
 		"apply:production": "wrangler DB migrations apply DB --env production",
-		"db:apply": "pnpm run db:generate && pnpm run apply"
+		"db:apply": "pnpm run db:generate && pnpm run apply",
+		"pages:secrets:preview": "wrangler pages secret bulk secrets.json --env preview",
+		"pages:secrets:prod": "wrangler pages secret bulk secrets-prod.json --env production"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.3",
