@@ -26,7 +26,8 @@
 		"db:apply": "pnpm run db:generate && pnpm run apply",
 		"pages:secrets:preview": "wrangler pages secret bulk secrets-preview.json --env preview",
 		"pages:secrets:prod": "wrangler pages secret bulk secrets-prod.json --env production",
-		"deploy:preview": "wrangler pages deploy --branch preview"
+		"deploy:preview": "pnpm build && wrangler pages deploy --branch preview",
+		"deploy:prod": "pnpm build && wrangler pages deploy"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.3",
