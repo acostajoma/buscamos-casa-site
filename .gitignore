@@ -29,5 +29,5 @@ vite.config.ts.timestamp-*
 # Other
 .history
 .wrangler
-secrets.json
+secrets-preview.json
 secrets-prod.json
