@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { PUBLIC_CLOUDINARY_API_KEY, PUBLIC_CLOUDINARY_CLOUD_NAME } from '$env/static/public';
+	import { page } from '$app/state';
+	import { env } from '$env/dynamic/public';
 	import { allowedImageTypes, uploadPreset } from '$lib/utils/constants';
 	import { untrack } from 'svelte';
 	import Button from './Button.svelte';
 	import DoubleColForm from './Forms/DoubleColForm.svelte';
 	import ImageGrid from './ImageGrid.svelte';
-	import { page } from '$app/state';
 
 	type Props = {
 		signature: string;
@@ -20,7 +20,7 @@
 	let images = $state<Cloudinary.Image[]>(photos);
 
 	let url = $derived(
-		'https://api.cloudinary.com/v1_1/' + PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload'
+		'https://api.cloudinary.com/v1_1/' + env.PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload'
 	);
 	let uploaderError = $state<string[]>([]);
 	let uploadingInProgress = $state(false);
@@ -39,7 +39,7 @@
 		try {
 			const formData = new FormData();
 			formData.set('file', file);
-			formData.set('api_key', PUBLIC_CLOUDINARY_API_KEY);
+			formData.set('api_key', env.PUBLIC_CLOUDINARY_API_KEY);
 			formData.set('timestamp', timestamp);
 			formData.set('context', context);
 			formData.set('upload_preset', uploadPreset);

@@ -1,4 +1,4 @@
-import { CLOUDINARY_API_SECRET } from '$env/static/private';
+import { CLOUDINARY_API_SECRET } from '$env/dynamic/private';
 import { sha1 } from '@oslojs/crypto/sha1';
 
 export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) => {
