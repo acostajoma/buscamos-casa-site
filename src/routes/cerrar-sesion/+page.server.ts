@@ -1,15 +1,16 @@
 // routes/+page.server.ts
 import { deleteSessionTokenCookie, invalidateSession } from '$lib/server/auth';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
-// export const load: PageServerLoad = async ({ }) => {
-// 	// ...
-// };
+// This route is only for the logout action
+export const load: PageServerLoad = async () => {
+	return error(404, 'La página no existe');
+};
 
 export const actions: Actions = {
-	logout: async (event) => {
+	default: async (event) => {
 		const {
 			locals: { session, db }
 		} = event;

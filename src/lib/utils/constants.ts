@@ -6,7 +6,8 @@ export const onlyLoggedIn = new Set([
 	'/crear-publicacion/[publicacion=integer]',
 	'/crear-publicacion/[publicacion=integer]/detalles-financieros',
 	'/crear-publicacion/[publicacion=integer]/ubicacion',
-	'/crear-publicacion/[publicacion=integer]/fotos'
+	'/crear-publicacion/[publicacion=integer]/fotos',
+	'/cerrar-sesion'
 ]);
 
 // Routes that are only accessible to logged out users

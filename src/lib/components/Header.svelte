@@ -27,7 +27,7 @@
 </script>
 
 {#snippet logoutButton(_class: string)}
-	<form method="POST" use:enhance action="/inicia-sesion?/logout">
+	<form method="POST" use:enhance action="/cerrar-sesion">
 		<button type="submit" class={_class}>Cerrar Sesión</button>
 	</form>
 {/snippet}
@@ -68,12 +68,12 @@
 				<div class="hidden lg:block">
 					<FlyoutMenu>
 						<a href="/perfil" class="block p-2 hover:text-yellow-700">Información Personal</a>
-						{@render logoutButton('block p-2 hover:text-yellow-700')}
+						{@render logoutButton('block p-2 hover:text-yellow-700 cursor-pointer')}
 					</FlyoutMenu>
 				</div>
 				<Link href="/crear-publicacion">Crear Post</Link>
 			{:else}
-				<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
+				<Link href="/inicia-sesion">Inicia Sesión</Link>
 			{/if}
 		</div>
 	</nav>
@@ -99,7 +99,7 @@
 					{#if loggedUser}
 						<Link href="/crear-publicacion">Crear Post</Link>
 					{:else}
-						<Link href="/inicia-sesion">Inicia Sesión o Regístrate</Link>
+						<Link href="/inicia-sesion">Inicia Sesión</Link>
 					{/if}
 				</div>
 			</div>
@@ -118,7 +118,7 @@
 				>
 
 				{@render logoutButton(
-					'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50'
+					'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer w-full text-left'
 				)}
 			</div>
 		</div>
