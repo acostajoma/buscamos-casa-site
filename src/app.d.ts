@@ -116,22 +116,17 @@ declare global {
 			data?: undefined;
 		}
 
-		interface ImageSuccessful {
-			state: 'successful';
-			data: Asset;
-		}
-
 		interface ImageError {
 			state: 'error';
-			data: AssetError;
+			data: string;
 		}
 
-		interface ImagePost {
-			state: 'posted';
+		interface ImageSuccessful {
+			state: 'successful';
 			data: import('$lib/server/db/schema').Photo;
 		}
 
-		type Image = { key: string; file?: File } & (ImageUploading | ImageSuccessful | ImageError | ImagePost);
+		type Image = { key: string; file?: File } & (ImageUploading | ImageSuccessful | ImageError);
 	}
 }
 

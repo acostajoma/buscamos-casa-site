@@ -1,31 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
-	import { allowedImageTypes, uploadPreset } from '$lib/utils/constants';
+	import { acceptedImageTypes, allowedImageTypes } from '$lib/utils/constants';
 	import { untrack } from 'svelte';
 	import Button from './Button.svelte';
 	import DoubleColForm from './Forms/DoubleColForm.svelte';
 	import ImageGrid from './ImageGrid.svelte';
+	import Link from './Link.svelte';
 
 	type Props = {
-		signature: string;
-		timestamp: string;
-		context: string;
 		photos: Cloudinary.Image[];
 	};
-	let { signature, timestamp, context, photos }: Props = $props();
+	let { photos }: Props = $props();
 
 	let files = $state<FileList | null | undefined>(null);
 	let fileDragOver = $state(false);
-	let images = $state<Cloudinary.Image[]>(photos);
+	let disabled = $derived(photos.length === 0);
 
-	let url = $derived(
-		'https://api.cloudinary.com/v1_1/' + env.PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload'
-	);
 	let uploaderError = $state<string[]>([]);
 	let uploadingInProgress = $state(false);
-
-	const acceptedTypes = allowedImageTypes.map((type) => `image/${type}`).join(',');
 
 	async function uploadFile(file: File) {
 		const imageKey = crypto.randomUUID();
@@ -34,50 +26,19 @@
 			state: 'uploading',
 			file
 		};
-		images.push(image);
-		const i = images.findIndex((images) => images.key === imageKey);
-		try {
-			const formData = new FormData();
-			formData.set('file', file);
-			formData.set('api_key', env.PUBLIC_CLOUDINARY_API_KEY);
-			formData.set('timestamp', timestamp);
-			formData.set('context', context);
-			formData.set('upload_preset', uploadPreset);
-			formData.set('allowed_formats', allowedImageTypes.join(','));
-			formData.set('signature', signature);
+		photos.push(image);
+		const i = photos.findIndex((photos) => photos.key === imageKey);
+		const imageFormData = new FormData();
+		imageFormData.append('file', file);
+		imageFormData.append('order', i.toString());
 
-			const response = await fetch(url, { method: 'POST', body: formData });
-			if (!response.ok) {
-				uploaderError.push(`Ha ocurrido un error al subir la imagen ${file.name}`);
-				throw new Error(`Error uploading file: ${response.status} - ${response.statusText}`);
-			}
-			const data = await response.json();
-
-			if ((data as Cloudinary.AssetError)?.error) {
-				images[i] = { ...image, state: 'error', data: data as Cloudinary.AssetError };
-				return;
-			}
-
-			// Add the uploaded image to the post
-
-			const endpointReq = await fetch('/crear-publicacion/api/add-photos-to-post', {
-				method: 'POST',
-				body: JSON.stringify({ imageData: data, params: page.params, order: i + 1 })
-			});
-			const endpointRes = await endpointReq.json();
-			if (!endpointReq.ok) {
-				uploaderError.push(
-					`Ha ocurrido un error al subir la imagen ${file.name}. ${(endpointRes as { message: string }).message}`
-				);
-				return;
-			}
-			images[i] = { ...image, state: 'successful', data: data as Cloudinary.Asset };
-		} catch (err: any) {
-			// If there’s a failure, revert the last 'uploading' entry
-			if (images[i].state === 'uploading') {
-				images.pop();
-			}
-		}
+		const response = await fetch(`/crear-publicacion/${page.params.publicacion}/fotos/image-api`, {
+			method: 'POST',
+			body: imageFormData
+		});
+		const result: Cloudinary.ImageError | Cloudinary.ImageSuccessful = await response.json();
+		photos[i].data = result.data;
+		photos[i].state = result.state;
 	}
 
 	$effect(() => {
@@ -86,7 +47,7 @@
 				(async () => {
 					uploadingInProgress = true;
 					const newFiles = Array.from(files!);
-					const imageArrayLength = images.length;
+					const imageArrayLength = photos.length;
 					if (imageArrayLength + newFiles.length > 20) {
 						uploaderError.push(`Solo se permiten un máximo de 20 imágenes.`);
 						files = null;
@@ -151,11 +112,11 @@
 						<span>
 							{#if fileDragOver}
 								Suelta aquí
-							{:else if images.length > 0}
+							{:else if photos.length > 0}
 								{#if uploadingInProgress}
 									Subiendo fotos
 								{:else}
-									Aun puedes subir {20 - images.length} fotos
+									Aun puedes subir {20 - photos.length} fotos
 								{/if}
 							{:else}
 								Sube imágenes o arrastra y suelta aquí
@@ -169,7 +130,7 @@
 							multiple
 							id="file-upload"
 							class="sr-only"
-							accept={acceptedTypes}
+							accept={acceptedImageTypes}
 							disabled={uploadingInProgress}
 						/>
 					</div>
@@ -179,7 +140,7 @@
 		</label>
 	</div>
 	<div class="col-span-full">
-		<ImageGrid {images} />
+		<ImageGrid {photos} />
 	</div>
 {/snippet}
 
@@ -194,6 +155,9 @@
 	]}
 >
 	{#snippet button()}
-		<Button type="submit">Guardar</Button>
+		<Link href={`/crear-publicacion/${page.params.publicacion}/ubicacion`}>Anterior</Link>
+		<p class="text-sm text-gray-500">Paso 4 de 4</p>
+
+		<Button type="submit" {disabled}>Siguiente</Button>
 	{/snippet}
 </DoubleColForm>

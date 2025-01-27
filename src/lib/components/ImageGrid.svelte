@@ -1,61 +1,65 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import Exit from '$lib/icons/Exit.svelte';
-	import type { SubmitFunction } from '@sveltejs/kit';
 
 	type Props = {
-		images: Cloudinary.Image[];
+		photos: Cloudinary.Image[];
 	};
 
-	let { images }: Props = $props();
+	let { photos }: Props = $props();
 
-	const deleteHandler: SubmitFunction = ({}) => {
-		return ({ result }) => {
-			console.log(result);
-			if (result.type === 'success' && result.data?.publicId) {
-				images = images.filter(({ key }) => key === result.data?.publicId);
-			}
-			if (result.type === 'error') {
-				applyAction(result);
-			}
-			if (result.type === 'redirect') {
-				goto(result.location);
-			}
-		};
+	let message:
+		| { type: 'text-red-500' | 'notification' | 'text-green-500'; text: string }
+		| undefined = $state(undefined);
+	const deleteHandler = async (publicId: string) => {
+		message = { type: 'notification', text: 'Eliminando imagen...' };
+		const request = await fetch(`/crear-publicacion/${page.params.publicacion}/fotos/image-api`, {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ publicId })
+		});
+		const response: { publicId: string } | Cloudinary.ImageError = await request.json();
+
+		if (!request.ok) {
+			message = { type: 'text-red-500', text: (response as Cloudinary.ImageError)?.data };
+			setTimeout(() => {
+				message = undefined;
+			}, 5000);
+			return;
+		}
+		message = { type: 'text-green-500', text: 'Imagen eliminada' };
+		setTimeout(() => {
+			message = undefined;
+		}, 5000);
+
+		photos = photos.filter(
+			(image) => typeof image.data !== 'string' && image.data && image.data.id !== publicId
+		);
 	};
 </script>
 
 {#snippet image(imgSrc: string, i: number, publicId: string)}
 	<div class="relative inline-block">
-		<img
-			src={imgSrc}
-			alt="image {i}"
-			class="py-2 px-2 pointer-events-none aspect-4/3 object-cover group-hover:opacity-75 rounded-lg"
-		/>
-		<form action="?/delete" method="POST" use:enhance={deleteHandler}>
-			<input type="text" name="publicId" value={publicId} hidden />
-			<button
-				type="submit"
-				class="absolute top-0 right-0 flex size-5.5 rounded-full bg-red-400 ring-2 ring-white items-center justify-center text-white"
-				><Exit class="size-4" /></button
-			>
-		</form>
+		<img src={imgSrc} alt="image {i}" class="py-2 px-2 pointer-events-none aspect-4/3 rounded-lg" />
+		<button
+			type="button"
+			onclick={() => deleteHandler(publicId)}
+			class="absolute top-0 right-0 flex size-6.5 rounded-full bg-red-400 hover:bg-red-600 ring-2 ring-white items-center justify-center text-white cursor-pointer"
+			><Exit class="size-5" /></button
+		>
 	</div>
 {/snippet}
 
 <ul role="list" class="flex flex-wrap gap-1">
-	{#each images as { key, data, state }, i (key)}
+	{#each photos as { key, data, state }, i (key)}
 		<li class="relative">
 			<div
 				class="mt-1 group overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
 			>
 				{#if state === 'successful'}
-					{@const imgSrc = (data as Cloudinary.Asset).eager[0].secure_url}
-					{@render image(imgSrc, i, (data as Cloudinary.Asset).public_id)}
-				{:else if state === 'posted' && data && typeof data === 'object' && 'id' in data}
-					{@const imgSrc = `https://res.cloudinary.com/dldnvubae/image/upload/c_scale,h_90,w_auto/f_auto/q_auto/${data.id}`}
-					{@render image(imgSrc, i, data.id)}
+					{@const id = (data as Cloudinary.ImageSuccessful['data']).id}
+					{@const imgSrc = `https://res.cloudinary.com/dldnvubae/image/upload/c_scale,h_90,w_auto/f_auto/q_auto/${id}`}
+					{@render image(imgSrc, i, id)}
 				{:else if state === 'uploading'}
 					<div class="flex justify-center items-center">
 						<svg
@@ -79,8 +83,18 @@
 						</svg>
 						<p>Subiendo...</p>
 					</div>
+				{:else if state === 'error'}
+					<div class="flex justify-center items-center">
+						<p class="text-red-500">{data as string}</p>
+					</div>
 				{/if}
 			</div>
 		</li>
 	{/each}
 </ul>
+
+{#if message}
+	<p class={message.type}>
+		{message.text}
+	</p>
+{/if}

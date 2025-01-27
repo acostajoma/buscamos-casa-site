@@ -14,31 +14,48 @@ const getPropertyData = async (locals: App.Locals, params: { publicacion: string
 			propertiesWithConstruction: true,
 			propertyFinancialDetails: true
 		}
-	})
-}
-
-type PropertyData = Awaited<ReturnType<typeof getPropertyData>>;
+	});
+};
 
 export const getProperty = async (locals: App.Locals, params: { publicacion: string }) => {
+	const newProperty = await getPropertyData(locals, params);
 	const { cache } = locals;
-	const cachePath = 'crear-publicacion:propertyData:' + params.publicacion;
-	let newProperty : PropertyData;
-	const cacheData = await cache.get(cachePath);
-	if (cacheData) {
-		newProperty = JSON.parse(cacheData);
-	} else {
-		newProperty = await getPropertyData(locals, params);
-		cache.put(cachePath, JSON.stringify(newProperty), { expirationTtl: 600 });
-	};
+
 	if (!newProperty) {
 		error(404, 'Publicación no encontrada');
 	}
 	if (newProperty.postOwnerId !== locals.user?.id) {
 		error(403, 'No tienes permisos para editar esta publicación');
 	}
+	// Putting on cache the ownerId of the property for cases where we need to validate the owner. As this don't change, we can cache it.
+	await cache.put(`property:${newProperty.id}-ownerId`, newProperty.postOwnerId, {
+		expirationTtl: 3600
+	});
 	return newProperty;
-}
+};
 
+export const getPropertyPostOwnerId = async (
+	locals: App.Locals,
+	params: { publicacion: string }
+) => {
+	let ownerId: string | null | undefined = await locals.cache.get(
+		`property:${params.publicacion}-ownerId`
+	);
+	if (!ownerId) {
+		const postData = await locals.db.query.property.findFirst({
+			where: eq(property.id, Number(params.publicacion)),
+			columns: { postOwnerId: true }
+		});
+		ownerId = postData?.postOwnerId;
+	}
+	if (!ownerId) {
+		error(404, 'Publicación no encontrada');
+	}
+	await locals.cache.put(`property:${params.publicacion}-ownerId`, ownerId, {
+		expirationTtl: 3600
+	});
+	return ownerId;
+};
 
 export const validatePropertyForm = async (
 	locals: App.Locals,

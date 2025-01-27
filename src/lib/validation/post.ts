@@ -1,3 +1,4 @@
+import { acceptedImageTypes, allowedImageTypes } from '$lib/utils/constants';
 import { locationMap } from '$lib/utils/location/costaRicaData';
 import { currencies, propertyTypes, saleTypes } from '$lib/utils/postConstants';
 import { required_error } from '$lib/utils/zodErrorMessages';
@@ -130,3 +131,16 @@ export const locationSchema = z
 	});
 
 export type Location = z.infer<typeof locationSchema>;
+
+const MAX_FILE_SIZE = 10000000;
+
+export const imageSchema = z.object({
+	image: z
+		.instanceof(File, { message: 'Debe seleccionar una imagen' })
+		.refine((file) => file?.size <= MAX_FILE_SIZE, `El tamaño máximo permitido son 10mb.`)
+		.refine(
+			(file) => acceptedImageTypes.includes(file?.type),
+			`Solo se permite los formatos: ${allowedImageTypes.join(', ')}.`
+		),
+	order: numeric(0, 20, 1)
+});

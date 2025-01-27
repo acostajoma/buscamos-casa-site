@@ -3,6 +3,7 @@
 		"autenticacion",
 		"AUTOINCREMENT",
 		"cloudflare",
+		"cloudinary",
 		"ganalytics",
 		"publicacion",
 		"saletype",
