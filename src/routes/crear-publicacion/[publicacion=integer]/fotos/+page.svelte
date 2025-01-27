@@ -3,9 +3,9 @@
 	import type { PageData } from './$types';
 
 	const { data }: { data: PageData } = $props();
-	let { signature, timestamp, context, photos } = $derived(data);
+	let { photos } = $derived(data);
 </script>
 
 <div class="container mx-auto">
-	<ImageUploader {signature} {timestamp} {context} {photos} />
+	<ImageUploader {photos} />
 </div>
