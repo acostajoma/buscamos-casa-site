@@ -4,12 +4,12 @@ import { getCloudinarySignature } from '$lib/server/utils';
 import { uploadPreset } from '$lib/utils/constants';
 import { imageSchema } from '$lib/validation/post';
 import { error, json } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { getPropertyPostOwnerId } from '../../../pageUtils.server';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, locals, params }) => {
-	const { user, db, cache } = locals;
+	const { user, db } = locals;
 	if (!user) {
 		error(401, 'No se ha iniciado sesión');
 	}
@@ -34,15 +34,18 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 	if (!form.success) {
 		return json({ state: 'error', data: 'Error al subir la imagen' }, { status: 400 });
 	}
+	const propertyId = parseInt(params.publicacion);
+	const [propertyPhotos] = await db
+		.select({ count: count() })
+		.from(photo)
+		.where(eq(photo.propertyId, propertyId));
 
-	const cacheKey = `property-${params.publicacion}-photos-quantity`;
-	const imageQuantity = parseInt((await cache.get(cacheKey)) ?? '0');
-	if (imageQuantity >= 20) {
+	if (propertyPhotos.count >= 20) {
 		return json({ state: 'error', data: 'No puedes subir más de 20 imágenes' }, { status: 400 });
 	}
 
 	const timestamp = Math.floor(Date.now() / 1000).toString();
-	const context = `user=${user.id}|post=${params.publicacion}`;
+	const context = `user=${user.id}|post=${propertyId}`;
 
 	const signature = getCloudinarySignature({
 		context,
@@ -77,7 +80,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 
 	const photoData = {
 		id: (data as Cloudinary.Asset).public_id,
-		propertyId: parseInt(params.publicacion),
+		propertyId,
 		order: parsedOrder
 	};
 
@@ -98,8 +101,6 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 		}
 		return json({ state: 'error', data: 'Error al subir la imagen' }, { status: 500 });
 	}
-
-	await cache.put(cacheKey, `${imageQuantity + 1}`);
 
 	return json({ state: 'successful', data: photoData });
 };
