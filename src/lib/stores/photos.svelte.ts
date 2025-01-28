@@ -20,6 +20,9 @@ export class PhotoState {
 		if (index >= 0 && index < this.photos.length) {
 			this.photos[index].data = data;
 			this.photos[index].state = state;
+			if (typeof data !== 'string') {
+				this.photos[index].key = data.id;
+			}
 		}
 	}
 	deletePhoto(publicId: string) {

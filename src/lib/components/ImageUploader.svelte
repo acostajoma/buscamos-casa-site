@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { applyAction } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { getPhotoContext } from '$lib/stores/photos.svelte';
 	import { acceptedImageTypes, allowedImageTypes } from '$lib/utils/constants';
@@ -20,6 +22,8 @@
 	let uploadMessage = $derived(
 		uploadingInProgress ? 'Subiendo fotos' : `Aun puedes subir ${20 - photoLength} fotos`
 	);
+
+	let message: undefined | string = $state(undefined);
 
 	async function uploadFile(file: File) {
 		const imageKey = crypto.randomUUID();
@@ -138,6 +142,9 @@
 	<div class="col-span-full">
 		<ImageGrid />
 	</div>
+	{#if message}
+		<p class="text-red-500">{message}</p>
+	{/if}
 {/snippet}
 
 <DoubleColForm
@@ -149,6 +156,29 @@
 			fields: content
 		}
 	]}
+	action="?/updatePhotoOrder"
+	submitFunction={({ formData }) => {
+		formData.delete('files'); // we no longer need it, delete to avoid sending heavy data
+		const photoData = photoState.photos.map((photo, index) => ({
+			key: photo.key,
+			order: index
+		}));
+		if (photoData.length === 0) return;
+		formData.append('photos', JSON.stringify(photoData));
+		return async ({ result }) => {
+			if (result.type === 'failure') {
+				message = result.data?.error;
+				setTimeout(() => {
+					message = undefined;
+				}, 5000);
+			}
+			if (result.type === 'redirect') {
+				goto(result.location);
+			} else {
+				await applyAction(result);
+			}
+		};
+	}}
 >
 	{#snippet button()}
 		<Link href={`/crear-publicacion/${page.params.publicacion}/ubicacion`}>Anterior</Link>
