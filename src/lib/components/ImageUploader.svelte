@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { getPhotoContext } from '$lib/stores/photos.svelte';
 	import { acceptedImageTypes, allowedImageTypes } from '$lib/utils/constants';
 	import { untrack } from 'svelte';
 	import Button from './Button.svelte';
@@ -7,17 +8,18 @@
 	import ImageGrid from './ImageGrid.svelte';
 	import Link from './Link.svelte';
 
-	type Props = {
-		photos: Cloudinary.Image[];
-	};
-	let { photos }: Props = $props();
+	const photoState = getPhotoContext(`crear-publicacion/fotos${page.params.publicacion}`);
+	let photoLength = $derived(photoState.getLength());
 
 	let files = $state<FileList | null | undefined>(null);
 	let fileDragOver = $state(false);
-	let disabled = $derived(photos.length === 0);
+	let disabled = $derived(photoLength === 0);
 
 	let uploaderError = $state<string[]>([]);
 	let uploadingInProgress = $state(false);
+	let uploadMessage = $derived(
+		uploadingInProgress ? 'Subiendo fotos' : `Aun puedes subir ${20 - photoLength} fotos`
+	);
 
 	async function uploadFile(file: File) {
 		const imageKey = crypto.randomUUID();
@@ -26,8 +28,8 @@
 			state: 'uploading',
 			file
 		};
-		photos.push(image);
-		const i = photos.findIndex((photos) => photos.key === imageKey);
+		photoState.photos.push(image);
+		const i = photoState.getImageIndex(imageKey);
 		const imageFormData = new FormData();
 		imageFormData.append('file', file);
 		imageFormData.append('order', i.toString());
@@ -37,8 +39,7 @@
 			body: imageFormData
 		});
 		const result: Cloudinary.ImageError | Cloudinary.ImageSuccessful = await response.json();
-		photos[i].data = result.data;
-		photos[i].state = result.state;
+		photoState.updatePhoto(i, result.data, result.state);
 	}
 
 	$effect(() => {
@@ -47,8 +48,7 @@
 				(async () => {
 					uploadingInProgress = true;
 					const newFiles = Array.from(files!);
-					const imageArrayLength = photos.length;
-					if (imageArrayLength + newFiles.length > 20) {
+					if (photoLength + newFiles.length > 20) {
 						uploaderError.push(`Solo se permiten un máximo de 20 imágenes.`);
 						files = null;
 						return;
@@ -112,12 +112,8 @@
 						<span>
 							{#if fileDragOver}
 								Suelta aquí
-							{:else if photos.length > 0}
-								{#if uploadingInProgress}
-									Subiendo fotos
-								{:else}
-									Aun puedes subir {20 - photos.length} fotos
-								{/if}
+							{:else if photoLength > 0}
+								{uploadMessage}
 							{:else}
 								Sube imágenes o arrastra y suelta aquí
 							{/if}
@@ -140,7 +136,7 @@
 		</label>
 	</div>
 	<div class="col-span-full">
-		<ImageGrid {photos} />
+		<ImageGrid />
 	</div>
 {/snippet}
 

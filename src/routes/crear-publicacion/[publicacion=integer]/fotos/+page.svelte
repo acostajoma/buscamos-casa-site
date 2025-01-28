@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import ImageUploader from '$lib/components/ImageUploader.svelte';
-	import type { PageData } from './$types';
+	import { PhotoState, setPhotoContext } from '$lib/stores/photos.svelte';
+	import { type PageData } from './$types';
 
 	const { data }: { data: PageData } = $props();
-	let { photos } = $derived(data);
+
+	setPhotoContext(`crear-publicacion/fotos${page.params.publicacion}`, new PhotoState(data.photos));
 </script>
 
 <div class="container mx-auto">
-	<ImageUploader {photos} />
+	<ImageUploader />
 </div>

@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Exit from '$lib/icons/Exit.svelte';
+	import { getPhotoContext } from '$lib/stores/photos.svelte';
 
-	type Props = {
-		photos: Cloudinary.Image[];
-	};
-
-	let { photos }: Props = $props();
+	const photoState = getPhotoContext(`crear-publicacion/fotos${page.params.publicacion}`);
 
 	let message:
 		| { type: 'text-red-500' | 'notification' | 'text-green-500'; text: string }
@@ -32,15 +29,17 @@
 			message = undefined;
 		}, 5000);
 
-		photos = photos.filter(
-			(image) => typeof image.data !== 'string' && image.data && image.data.id !== publicId
-		);
+		photoState.deletePhoto(publicId);
 	};
 </script>
 
 {#snippet image(imgSrc: string, i: number, publicId: string)}
 	<div class="relative inline-block">
-		<img src={imgSrc} alt="image {i}" class="py-2 px-2 pointer-events-none aspect-4/3 rounded-lg" />
+		<img
+			src={imgSrc}
+			alt="image {i}"
+			class="py-2 px-2 pointer-events-none aspect-4/3 rounded-lg object-cover"
+		/>
 		<button
 			type="button"
 			onclick={() => deleteHandler(publicId)}
@@ -51,10 +50,10 @@
 {/snippet}
 
 <ul role="list" class="flex flex-wrap gap-1">
-	{#each photos as { key, data, state }, i (key)}
+	{#each photoState.photos as { key, data, state }, i (key)}
 		<li class="relative">
 			<div
-				class="mt-1 group overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
+				class="mt-1 group overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 h-35 w-35"
 			>
 				{#if state === 'successful'}
 					{@const id = (data as Cloudinary.ImageSuccessful['data']).id}
