@@ -109,6 +109,7 @@ export const propertyFinancialDetails = sqliteTable('property_financial_details'
 		.references(() => property.id, { onDelete: 'cascade' }),
 	salePrice: real('sale_price'),
 	rentPrice: real('rent_price'),
+	maintenanceCost: real('rent_price'),
 	currency: text('currency', { enum: currencies }).notNull()
 });
 
@@ -240,7 +241,6 @@ export const photoRelations = relations(photo, ({ one }) => ({
 		references: [property.id]
 	})
 }));
-
 
 export const feature = sqliteTable('features', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
