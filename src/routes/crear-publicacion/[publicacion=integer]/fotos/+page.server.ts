@@ -2,7 +2,7 @@ import { photo } from '$lib/server/db/schema';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { asc, eq } from 'drizzle-orm';
 import type { BatchItem } from 'drizzle-orm/batch';
-import { getProperty, getPropertyPostOwnerId } from '../../pageUtils.server';
+import { getProperty, updateListingStatus } from '../../pageUtils.server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad<{ photos: Cloudinary.Image[] }> = async ({ locals, params }) => {
@@ -37,7 +37,8 @@ export const actions = {
 		if (!user) {
 			redirect(302, '/login');
 		}
-		const postOwnerId = await getPropertyPostOwnerId(locals, params);
+		const propertyData = await getProperty(locals, params);
+		const postOwnerId = propertyData.postOwnerId;
 		if (user.id !== postOwnerId) {
 			error(403, 'No tienes permisos para editar esta publicación');
 		}
@@ -70,6 +71,8 @@ export const actions = {
 		if (batchResponse.some((item) => item?.error !== undefined)) {
 			error(500, 'Ha ocurrido un error');
 		}
-		return redirect(302, '/');
+		const postId = Number(params.publicacion);
+		await updateListingStatus(postId, locals, 'En Revision', propertyData);
+		return redirect(302, `/crear-publicacion/${postId}/publicacion-en-revision`);
 	}
 } satisfies Actions;

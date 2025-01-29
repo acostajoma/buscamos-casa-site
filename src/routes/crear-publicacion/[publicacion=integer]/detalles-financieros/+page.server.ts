@@ -1,7 +1,4 @@
-import {
-	propertiesWithConstruction,
-	propertyFinancialDetails
-} from '$lib/server/db/schema';
+import { propertiesWithConstruction, propertyFinancialDetails } from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
 import { createPropertyWithConstructionSchema } from '$lib/validation/post';
 import { error, fail, redirect } from '@sveltejs/kit';
@@ -9,7 +6,7 @@ import type { BatchItem, BatchResponse } from 'drizzle-orm/batch';
 import { superValidate, type SuperValidated } from 'sveltekit-superforms';
 import type { z } from 'zod';
 import type { Actions, PageServerLoad } from '../$types';
-import { getProperty } from '../../pageUtils.server';
+import { getProperty, updateListingStatus } from '../../pageUtils.server';
 
 type FormData = z.infer<ReturnType<typeof createPropertyWithConstructionSchema>>;
 
@@ -18,7 +15,6 @@ async function validatePropertyForm(
 	params: { publicacion: string },
 	request?: Request
 ) {
-
 	const newProperty = await getProperty(locals, params);
 	if (!newProperty) {
 		error(404, 'Publicación no encontrada');
@@ -65,11 +61,12 @@ export const actions = {
 			rentPrice: data.rentPrice,
 			currency: data.currency
 		};
+		const propertyId = Number(params.publicacion);
 		const batch: [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]] = [
 			db
 				.insert(propertyFinancialDetails)
 				.values({
-					propertyId: Number(params.publicacion),
+					propertyId,
 					...financialDetailsValues
 				})
 				.onConflictDoUpdate({
@@ -104,6 +101,8 @@ export const actions = {
 			console.error('ERROR: ', result);
 			return error(500, 'Error al crear la publicación');
 		}
+
+		await updateListingStatus(propertyId, locals, 'Borrador', property);
 
 		redirect(302, `/crear-publicacion/${params.publicacion}/ubicacion`);
 	}

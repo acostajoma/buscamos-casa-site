@@ -7,7 +7,19 @@ export const propertyTypes: readonly [string, ...string[]] = [
 	'Finca'
 ];
 
-export const listingStates: readonly [string, ...string[]] = [
+export type ListingStates =
+	| 'En Revision'
+	| 'Publicado'
+	| 'Denegado'
+	| 'Vendido'
+	| 'Alquilado'
+	| 'Retirado'
+	| 'Borrador'
+	| 'Expirado'
+	| 'Suspendido'
+	| 'Requiere Correcciones';
+
+export const listingStates: readonly [ListingStates, ...ListingStates[]] = [
 	'En Revision',
 	'Publicado',
 	'Denegado',

@@ -1,4 +1,5 @@
-import { property, saleType } from '$lib/server/db/schema';
+import { property, saleType, type Property } from '$lib/server/db/schema';
+import { type ListingStates } from '$lib/utils/postConstants';
 import { propertySchema } from '$lib/validation/post';
 import { error, fail, redirect, type Action } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -19,7 +20,6 @@ const getPropertyData = async (locals: App.Locals, params: { publicacion: string
 
 export const getProperty = async (locals: App.Locals, params: { publicacion: string }) => {
 	const newProperty = await getPropertyData(locals, params);
-	const { cache } = locals;
 
 	if (!newProperty) {
 		error(404, 'Publicación no encontrada');
@@ -27,12 +27,11 @@ export const getProperty = async (locals: App.Locals, params: { publicacion: str
 	if (newProperty.postOwnerId !== locals.user?.id) {
 		error(403, 'No tienes permisos para editar esta publicación');
 	}
-	// Putting on cache the ownerId of the property for cases where we need to validate the owner. As this don't change, we can cache it.
-	await cache.put(`property:${newProperty.id}-ownerId`, newProperty.postOwnerId, {
-		expirationTtl: 3600
-	});
+
 	return newProperty;
 };
+
+type GetPropertyReturnedType = Awaited<ReturnType<typeof getProperty>>;
 
 export const getPropertyPostOwnerId = async (
 	locals: App.Locals,
@@ -41,13 +40,15 @@ export const getPropertyPostOwnerId = async (
 	let ownerId: string | null | undefined = await locals.cache.get(
 		`property:${params.publicacion}-ownerId`
 	);
-	if (!ownerId) {
-		const postData = await locals.db.query.property.findFirst({
-			where: eq(property.id, Number(params.publicacion)),
-			columns: { postOwnerId: true }
-		});
-		ownerId = postData?.postOwnerId;
-	}
+	if (ownerId) return ownerId;
+
+	const postData = await locals.db.query.property.findFirst({
+		where: eq(property.id, Number(params.publicacion)),
+		columns: { postOwnerId: true }
+	});
+
+	ownerId = postData?.postOwnerId;
+
 	if (!ownerId) {
 		error(404, 'Publicación no encontrada');
 	}
@@ -62,17 +63,8 @@ export const validatePropertyForm = async (
 	request?: Request,
 	params?: { publicacion: string }
 ) => {
-	const { db } = locals;
-
 	if (params?.publicacion) {
-		const newProperty = await db.query.property.findFirst({
-			where: eq(property.id, Number(params.publicacion)),
-			with: {
-				saleType: { columns: { type: true } },
-				propertiesWithConstruction: true,
-				propertyFinancialDetails: true
-			}
-		});
+		const newProperty = await getPropertyData(locals, params);
 		if (!newProperty) {
 			error(404, 'Publicación no encontrada');
 		}
@@ -124,7 +116,7 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 		description: data.description,
 		propertyType: data.propertyType,
 		postOwnerId: user.id,
-		listingStatus: 'Borrador',
+		listingStatus: 'Borrador' as ListingStates,
 		size: data.size,
 		id: params?.publicacion ? Number(params.publicacion) : undefined
 	};
@@ -137,7 +129,8 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 				title: data.title,
 				description: data.description,
 				propertyType: data.propertyType,
-				size: data.size
+				size: data.size,
+				listingStatus: 'Borrador'
 			}
 		})
 		.returning();
@@ -161,4 +154,22 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 	}
 
 	redirect(302, `/crear-publicacion/${newProperty.id}/detalles-financieros`);
+};
+
+export const updateListingStatus = async (
+	id: number,
+	locals: App.Locals,
+	listingStatus: ListingStates,
+	prop: GetPropertyReturnedType | Property
+) => {
+	const { db } = locals;
+
+	if (prop.listingStatus === 'Borrador' || prop.listingStatus === 'En Revision') return;
+
+	const data = await db.update(property).set({ listingStatus }).where(eq(property.id, id));
+
+	if (data?.error) {
+		console.error(data.error);
+		error(500, 'Ha ocurrido un error');
+	}
 };
