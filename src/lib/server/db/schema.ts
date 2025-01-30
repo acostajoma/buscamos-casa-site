@@ -98,7 +98,8 @@ export const propertyRelations = relations(property, ({ one, many }) => ({
 	propertiesWithConstruction: one(propertiesWithConstruction, {
 		fields: [property.id],
 		references: [propertiesWithConstruction.propertyId]
-	})
+	}),
+	propertyFeatures: many(propertyFeature)
 }));
 
 export const propertyFinancialDetails = sqliteTable('property_financial_details', {
@@ -247,6 +248,12 @@ export const feature = sqliteTable('features', {
 	name: text('name').notNull().unique()
 });
 
+export const featureRelations = relations(feature, ({ many }) => ({
+	propertyFeatures: many(propertyFeature)
+}));
+
+export type Feature = typeof feature.$inferSelect;
+
 export const propertyFeature = sqliteTable(
 	'property_features',
 	{
@@ -263,4 +270,15 @@ export const propertyFeature = sqliteTable(
 	})
 );
 
-export type Feature = typeof feature.$inferSelect;
+export const propertyFeatureRelations = relations(propertyFeature, ({ one }) => ({
+	property: one(property, {
+		fields: [propertyFeature.propertyId],
+		references: [property.id]
+	}),
+	feature: one(feature, {
+		fields: [propertyFeature.featureId],
+		references: [feature.id]
+	})
+}));
+
+export type PropertyFeature = typeof propertyFeature.$inferSelect;

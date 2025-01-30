@@ -73,6 +73,6 @@ export const actions = {
 		}
 		const postId = Number(params.publicacion);
 		await updateListingStatus(postId, locals, 'En Revision', propertyData);
-		return redirect(302, `/crear-publicacion/${postId}/publicacion-en-revision`);
+		return redirect(302, `/crear-publicacion/${postId}/caracteristicas`);
 	}
 } satisfies Actions;

@@ -144,3 +144,13 @@ export const imageSchema = z.object({
 		),
 	order: numeric(0, 20, 1)
 });
+
+export const createFeaturesSchema = (featuresArray: string[]) =>
+	z
+		.object({
+			features: z.string().array()
+		})
+		.refine((data) => data.features?.every((feature) => featuresArray.includes(feature)) ?? true, {
+			message: 'Una o más características no son válidas',
+			path: ['features']
+		});
