@@ -14,12 +14,9 @@ type SaleType = { type: 'Venta' | 'Alquiler' | 'Alquiler con opción a compra' }
 export function getPropertyForm(newProperty: {
 	propertyType: string | null;
 	saleType: { type: string | null }[];
-	size: number;
 }) {
 	if (newProperty.propertyType !== 'Lote' && newProperty.propertyType !== 'Finca') {
-		return zod(
-			createPropertyWithConstructionSchema(newProperty.size, newProperty.saleType as SaleType)
-		);
+		return zod(createPropertyWithConstructionSchema(newProperty.saleType as SaleType));
 	}
 
 	return zod(createPropertyDetailsSchema(newProperty.saleType as SaleType));

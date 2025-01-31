@@ -146,6 +146,6 @@ export const actions: Actions = {
 		}
 
 		await updateListingStatus(propertyId, locals, 'En Revision', propertyData as PropertyData);
-		redirect(302, `/crear-publicacion/${propertyId}/publicacion-en-revision`);
+		redirect(302, `/crear-publicacion/${propertyId}/contacto`);
 	}
 };

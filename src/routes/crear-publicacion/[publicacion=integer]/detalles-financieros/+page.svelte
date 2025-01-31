@@ -122,13 +122,23 @@
 			required
 		/>
 	</div>
+	<div class="sm:col-span-3">
+		<Input
+			{form}
+			label="Área de construcción en metros cuadrados(m²)"
+			name="constructionSize"
+			id="constructionSize"
+			type="number"
+			required
+		/>
+	</div>
 {/snippet}
 
 <div class="container mx-auto">
 	<DoubleColForm {form} items={formItems}>
 		{#snippet button()}
 			<Link href={`/crear-publicacion/${page.params.publicacion}`}>Anterior</Link>
-			<p class="text-sm text-gray-500">Paso 2 de 5</p>
+			<p class="text-sm text-gray-500">Paso 2 de 6</p>
 
 			<Button type="submit" {form} disabled={valid === true ? false : undefined}>Siguiente</Button>
 		{/snippet}

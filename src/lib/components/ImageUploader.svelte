@@ -192,7 +192,7 @@
 >
 	{#snippet button()}
 		<Link href={`/crear-publicacion/${page.params.publicacion}/ubicacion`}>Anterior</Link>
-		<p class="text-sm text-gray-500">Paso 4 de 5</p>
+		<p class="text-sm text-gray-500">Paso 4 de 6</p>
 
 		<Button type="submit" {disabled}>Siguiente</Button>
 	{/snippet}
