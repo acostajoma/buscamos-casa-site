@@ -1,8 +1,8 @@
-import type { Feature } from '$lib/server/db/schema';
+import type { Feature, Location } from '$lib/server/db/schema';
 import { property, saleType, type Property } from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
 import { type ListingStates } from '$lib/utils/postConstants';
-import { createFeaturesSchema, propertySchema } from '$lib/validation/post';
+import { createFeaturesSchema, locationSchema, propertySchema } from '$lib/validation/post';
 import { error, fail, redirect, type Action } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
@@ -102,7 +102,6 @@ export const validatePropertyForm = async (
 
 		if (request) {
 			const form = await superValidate(request, zod(propertySchema));
-
 			return { form };
 		}
 
@@ -267,4 +266,34 @@ export async function validateFinancialPropertyForm(
 	}
 
 	return { property: newProperty, form: await superValidate(zodSchema) };
+}
+
+export async function validateLocation(
+	locals: App.Locals,
+	params: { publicacion: string },
+	request?: Request
+) {
+	const { db, user } = locals;
+
+	const propertyData = await db.query.property.findFirst({
+		where: eq(property.id, Number(params.publicacion)),
+		columns: { id: true, postOwnerId: true },
+		with: {
+			location: true
+		}
+	});
+
+	validatePropertyOwnerAccess(user, propertyData);
+	const { location: propertyLocation } = propertyData as Pick<Property, 'postOwnerId' | 'id'> & {
+		location: Location;
+	};
+
+	if (request) {
+		return { form: await superValidate(request, zod(locationSchema)) };
+	}
+	if (propertyLocation) {
+		return { form: await superValidate(propertyLocation, zod(locationSchema)) };
+	}
+
+	return { form: await superValidate(zod(locationSchema)) };
 }

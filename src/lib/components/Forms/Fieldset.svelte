@@ -12,7 +12,7 @@
 		doubleCol?: boolean;
 	};
 
-	let { legend, description, form, name, options, type, doubleCol }: Props = $props();
+	let { legend, description, form, name, options, type, doubleCol = false }: Props = $props();
 	const { errors, value } = formFieldProxy(form, name);
 </script>
 

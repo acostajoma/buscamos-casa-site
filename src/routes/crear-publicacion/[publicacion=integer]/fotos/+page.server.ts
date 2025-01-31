@@ -62,18 +62,22 @@ export const actions = {
 		if (batchItems.length === 0) {
 			return fail(400, { error: 'Debes subir al menos una foto.' });
 		}
-		const batchResponse: readonly D1Response[] = await db.batch(batchItems);
+		const postId = Number(params.publicacion);
+
+		const [batchResponse]: [readonly D1Response[], void] = await Promise.all([
+			db.batch(batchItems),
+			updateListingStatus(
+				postId,
+				locals,
+				'Borrador',
+				propertyData as Pick<Property, 'id' | 'listingStatus' | 'postOwnerId'>
+			)
+		]);
 
 		if (batchResponse.some((item) => item?.error !== undefined)) {
 			error(500, 'Ha ocurrido un error');
 		}
-		const postId = Number(params.publicacion);
-		await updateListingStatus(
-			postId,
-			locals,
-			'En Revision',
-			propertyData as Pick<Property, 'id' | 'listingStatus' | 'postOwnerId'>
-		);
+
 		return redirect(302, `/crear-publicacion/${postId}/caracteristicas`);
 	}
 } satisfies Actions;

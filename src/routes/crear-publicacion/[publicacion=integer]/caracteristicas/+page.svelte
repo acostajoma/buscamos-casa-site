@@ -12,7 +12,7 @@
 	let { data }: { data: PageData } = $props();
 
 	const form = superForm(data.form, {
-		validationMethod: 'oninput',
+		validationMethod: 'auto',
 		validators: zod(createFeaturesSchema(data.allFeatures)),
 		customValidity: false
 	});
@@ -32,12 +32,12 @@
 {#snippet featuresMultipleSelect()}
 	<div class="sm:col-span-full">
 		<Fieldset
-			legend="Tipo de negocio"
+			{form}
+			legend="Características o beneficios de la propiedad"
 			description="Selecciona todas las modalidades que apliquen para la propiedad"
 			name="features"
 			options={allFeatures}
 			type="checkbox"
-			{form}
 			doubleCol={true}
 		></Fieldset>
 	</div>
