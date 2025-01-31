@@ -195,7 +195,12 @@ export const updateListingStatus = async (
 ) => {
 	const { db } = locals;
 
-	if (prop.listingStatus === 'Borrador' || prop.listingStatus === 'En Revision') return;
+	if (
+		listingStatus === prop.listingStatus &&
+		(prop.listingStatus === 'Borrador' || prop.listingStatus === 'En Revision')
+	) {
+		return;
+	}
 
 	const data = await db.update(property).set({ listingStatus }).where(eq(property.id, id));
 

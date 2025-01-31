@@ -1,7 +1,13 @@
-import { property, propertyFeature, type PropertyFeature } from '$lib/server/db/schema.js';
+import {
+	property,
+	propertyFeature,
+	type Property,
+	type PropertyFeature
+} from '$lib/server/db/schema.js';
 import {
 	getAllFeatures,
 	getSuperFormFeatureSchema,
+	updateListingStatus,
 	validatePropertyOwnerAccess
 } from '$lib/server/utils/postsUtils';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
@@ -59,17 +65,18 @@ export const actions: Actions = {
 			db.query.property.findFirst({
 				where: eq(property.id, Number(params.publicacion)),
 				with: { propertyFeatures: true },
-				columns: { id: true, postOwnerId: true }
+				columns: { id: true, postOwnerId: true, listingStatus: true }
 			}),
 			getAllFeatures(locals)
 		]);
 
 		validatePropertyOwnerAccess(user, propertyData);
 
-		const { id: propertyId, propertyFeatures = [] } = propertyData as Omit<
-			PropertyIdAndFeatures,
-			'propertyFeatures'
-		> & { propertyFeatures: PropertyFeature[] };
+		type PropertyData = Pick<Property, 'id' | 'postOwnerId' | 'listingStatus'> & {
+			propertyFeatures: PropertyFeature[];
+		};
+
+		const { id: propertyId, propertyFeatures = [] } = propertyData as PropertyData;
 
 		const allFeaturesName: string[] = [];
 		const featuresMap = new Map<string, number>();
@@ -138,6 +145,7 @@ export const actions: Actions = {
 			return fail(500, { error: 'Error al insertar las características de la propiedad' });
 		}
 
+		await updateListingStatus(propertyId, locals, 'En Revision', propertyData as PropertyData);
 		redirect(302, `/crear-publicacion/${propertyId}/publicacion-en-revision`);
 	}
 };
