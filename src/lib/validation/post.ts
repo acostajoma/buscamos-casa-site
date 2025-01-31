@@ -57,7 +57,6 @@ export const createPropertyDetailsSchema = (
 	});
 
 export const createPropertyWithConstructionSchema = (
-	size: number,
 	saleType: { type: 'Venta' | 'Alquiler' | 'Alquiler con opción a compra' | null }[]
 ) =>
 	z
@@ -72,13 +71,6 @@ export const createPropertyWithConstructionSchema = (
 		.superRefine((data, ctx) => {
 			validateSaleTypePrice(saleType, data, ctx);
 
-			if (data.constructionSize > size) {
-				ctx.addIssue({
-					path: ['constructionSize'],
-					code: z.ZodIssueCode.custom,
-					message: 'El tamaño de la construcción no puede ser mayor que el tamaño del lote'
-				});
-			}
 			if (data.yearBuilt > new Date().getFullYear()) {
 				ctx.addIssue({
 					path: ['yearBuilt'],
