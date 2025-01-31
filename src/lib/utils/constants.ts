@@ -5,6 +5,7 @@ export const onlyLoggedIn = new Set([
 	'/crear-publicacion',
 	'/crear-publicacion/[publicacion=integer]',
 	'/crear-publicacion/[publicacion=integer]/caracteristicas',
+	'/crear-publicacion/[publicacion=integer]/contacto',
 	'/crear-publicacion/[publicacion=integer]/detalles-financieros',
 	'/crear-publicacion/[publicacion=integer]/fotos',
 	'/crear-publicacion/[publicacion=integer]/fotos/image-api',
