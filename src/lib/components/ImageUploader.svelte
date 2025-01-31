@@ -15,10 +15,11 @@
 
 	let files = $state<FileList | null | undefined>(null);
 	let fileDragOver = $state(false);
-	let disabled = $derived(photoLength === 0);
 
 	let uploaderError = $state<string[]>([]);
 	let uploadingInProgress = $state(false);
+	let disabled = $derived(photoLength === 0 || uploadingInProgress);
+
 	let uploadMessage = $derived(
 		uploadingInProgress ? 'Subiendo fotos' : `Aun puedes subir ${20 - photoLength} fotos`
 	);
@@ -45,6 +46,11 @@
 		const result: Cloudinary.ImageError | Cloudinary.ImageSuccessful = await response.json();
 		photoState.updatePhoto(i, result.data, result.state);
 	}
+
+	const setMsgToUndefinedAfter5000ms = () =>
+		setTimeout(() => {
+			message = undefined;
+		}, 50000);
 
 	$effect(() => {
 		if (files) {
@@ -143,7 +149,9 @@
 		<ImageGrid />
 	</div>
 	{#if message}
-		<p class="text-red-500">{message}</p>
+		<div class="col-span-full">
+			<p class="text-red-500">{message}</p>
+		</div>
 	{/if}
 {/snippet}
 
@@ -163,14 +171,16 @@
 			key: photo.key,
 			order: index
 		}));
-		if (photoData.length === 0) return;
+		if (photoData.length === 0) {
+			message = 'Debes subir al menos una foto';
+			setMsgToUndefinedAfter5000ms();
+			return;
+		}
 		formData.append('photos', JSON.stringify(photoData));
 		return async ({ result }) => {
 			if (result.type === 'failure') {
 				message = result.data?.error;
-				setTimeout(() => {
-					message = undefined;
-				}, 5000);
+				setMsgToUndefinedAfter5000ms();
 			}
 			if (result.type === 'redirect') {
 				goto(result.location);
@@ -182,7 +192,7 @@
 >
 	{#snippet button()}
 		<Link href={`/crear-publicacion/${page.params.publicacion}/ubicacion`}>Anterior</Link>
-		<p class="text-sm text-gray-500">Paso 4 de 4</p>
+		<p class="text-sm text-gray-500">Paso 4 de 5</p>
 
 		<Button type="submit" {disabled}>Siguiente</Button>
 	{/snippet}

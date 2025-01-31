@@ -1,55 +1,23 @@
 import { propertiesWithConstruction, propertyFinancialDetails } from '$lib/server/db/schema';
-import { getPropertyForm } from '$lib/utils/forms';
+import { updateListingStatus, validateFinancialPropertyForm } from '$lib/server/utils/postsUtils';
 import { createPropertyWithConstructionSchema } from '$lib/validation/post';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { BatchItem, BatchResponse } from 'drizzle-orm/batch';
-import { superValidate, type SuperValidated } from 'sveltekit-superforms';
+import { type SuperValidated } from 'sveltekit-superforms';
 import type { z } from 'zod';
 import type { Actions, PageServerLoad } from '../$types';
-import { getProperty, updateListingStatus } from '../../pageUtils.server';
 
 type FormData = z.infer<ReturnType<typeof createPropertyWithConstructionSchema>>;
 
-async function validatePropertyForm(
-	locals: App.Locals,
-	params: { publicacion: string },
-	request?: Request
-) {
-	const newProperty = await getProperty(locals, params);
-	if (!newProperty) {
-		error(404, 'Publicación no encontrada');
-	}
-
-	if (newProperty.postOwnerId !== locals.user?.id) {
-		error(403, 'No tienes permisos para editar esta publicación');
-	}
-	const zodSchema = getPropertyForm(newProperty);
-	if (request) {
-		return { property: newProperty, form: await superValidate(request, zodSchema) };
-	}
-	if (newProperty.propertiesWithConstruction || newProperty.propertyFinancialDetails) {
-		const populateForm = {
-			...newProperty.propertyFinancialDetails,
-			...(newProperty.propertiesWithConstruction &&
-				newProperty.propertyType !== 'Lote' &&
-				newProperty.propertyType !== 'Finca' &&
-				newProperty.propertiesWithConstruction)
-		};
-		const form = await superValidate(populateForm, zodSchema);
-		return { property: newProperty, form };
-	}
-
-	return { property: newProperty, form: await superValidate(zodSchema) };
-}
-
 export const load = (async ({ params, locals }) => {
-	return await validatePropertyForm(locals, params);
+	return await validateFinancialPropertyForm(locals, params);
 }) satisfies PageServerLoad;
 
 export const actions = {
 	default: async ({ request, params, locals }) => {
 		const { db } = locals;
-		const { property, form } = await validatePropertyForm(locals, params, request);
+		const { property, form } = await validateFinancialPropertyForm(locals, params, request);
+
 		if (!form.valid) {
 			return fail(400, { form });
 		}

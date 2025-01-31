@@ -150,6 +150,7 @@ export const createFeaturesSchema = (featuresArray: string[]) =>
 		.object({
 			features: z.string().array()
 		})
+		.partial()
 		.refine((data) => data.features?.every((feature) => featuresArray.includes(feature)) ?? true, {
 			message: 'Una o más características no son válidas',
 			path: ['features']

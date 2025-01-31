@@ -1,60 +1,76 @@
 import { property, propertyFeature, type PropertyFeature } from '$lib/server/db/schema.js';
-import { getFeatures, getSuperFormFeatureSchema } from '$lib/server/utils/postsUtils';
-import { error, fail, redirect, type Actions } from '@sveltejs/kit';
+import {
+	getAllFeatures,
+	getSuperFormFeatureSchema,
+	validatePropertyOwnerAccess
+} from '$lib/server/utils/postsUtils';
+import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { and, eq, inArray } from 'drizzle-orm';
-import { getProperty } from '../../pageUtils.server';
 
 export const load = async ({ locals, params }) => {
-	const { user } = locals;
-	if (!user) {
-		redirect(302, '/login');
-	}
-	const property = await getProperty(locals, { publicacion: params.publicacion });
-	if (!property) {
-		error(404, 'Publicación no encontrada');
-	}
-	if (property.postOwnerId !== user.id) {
-		error(403, 'No tienes permisos para editar esta publicación');
-	}
+	const { user, db } = locals;
+	const [propertyIdAndFeatures, allPropertyFeatures] = await Promise.all([
+		db.query.property.findFirst({
+			where: eq(property.id, Number(params.publicacion)),
+			with: {
+				propertyFeatures: {
+					columns: { featureId: true },
+					with: { feature: { columns: { name: true } } }
+				}
+			},
+			columns: { id: true, postOwnerId: true }
+		}),
+		getAllFeatures(locals)
+	]);
 
-	const propertyFeatures = await locals.db.query.propertyFeature.findMany({
-		where: eq(propertyFeature.propertyId, property.id),
-		with: { feature: { columns: { name: true } } },
-		columns: { featureId: true }
-	});
+	validatePropertyOwnerAccess(user, propertyIdAndFeatures);
 
-	const propertyFeaturesNames = propertyFeatures.map((feat) => feat.feature.name);
+	const { propertyFeatures } = propertyIdAndFeatures as PropertyIdAndFeatures;
 
-	const allFeaturesData = await getFeatures(locals);
-	const allFeaturesName = allFeaturesData.map((feature) => feature.name);
+	const propertyFeaturesNames = propertyFeatures.map((item) => item.feature.name);
+	const allFeaturesNames = allPropertyFeatures.map((feature) => feature.name);
+
 	const form = await getSuperFormFeatureSchema({
-		allFeatures: allFeaturesName,
+		allFeatures: propertyFeaturesNames,
 		data: propertyFeaturesNames.length > 0 ? propertyFeaturesNames : undefined
 	});
-	return { form, allFeatures: allFeaturesName };
+	return { form, allFeatures: allFeaturesNames };
 };
 
 export const actions: Actions = {
+	/**
+	 * Actions object containing form submission handler for property features.
+	 * 1. Fetching the property data and all available features in parallel
+	 * 2. Validating that the current user owns the property and has access to edit it, plus
+	 * that the form is valid.
+	 * 3. Processing form data to update property features:
+	 *    - Creates a map of feature names to IDs
+	 *    - Validates form input against schema
+	 *    - Converts selected features to property-feature relationships
+	 * 4. Performs database operations:
+	 *    - Inserts new feature relationships
+	 *    - Removes unselected feature relationships
+	 * 5. Redirects to review page on success
+	 */
 	default: async ({ locals, request, params }) => {
 		const { db, user } = locals;
-		if (!user) {
-			redirect(302, '/login');
-		}
+
 		const [propertyData, allFeaturesData] = await Promise.all([
 			db.query.property.findFirst({
 				where: eq(property.id, Number(params.publicacion)),
 				with: { propertyFeatures: true },
 				columns: { id: true, postOwnerId: true }
 			}),
-			getFeatures(locals)
+			getAllFeatures(locals)
 		]);
 
-		if (!propertyData) {
-			error(404, 'Publicación no encontrada');
-		}
-		if (propertyData.postOwnerId !== user.id) {
-			error(403, 'No tienes permisos para editar esta publicación');
-		}
+		validatePropertyOwnerAccess(user, propertyData);
+
+		const { id: propertyId, propertyFeatures = [] } = propertyData as Omit<
+			PropertyIdAndFeatures,
+			'propertyFeatures'
+		> & { propertyFeatures: PropertyFeature[] };
+
 		const allFeaturesName: string[] = [];
 		const featuresMap = new Map<string, number>();
 
@@ -73,39 +89,42 @@ export const actions: Actions = {
 			data: { features }
 		} = form;
 
-		const featureItems = features.reduce<PropertyFeature[]>((acc, feat) => {
+		const featureItems = features?.reduce<PropertyFeature[]>((acc, feat) => {
 			const id = featuresMap.get(feat);
 			if (id !== undefined) {
-				acc.push({ featureId: id, propertyId: propertyData.id });
+				acc.push({ featureId: id, propertyId });
 			}
 			return acc;
 		}, []);
 
-		const promises: Promise<D1Result<unknown>>[] = [
-			locals.db.insert(propertyFeature).values(featureItems).onConflictDoNothing()
-		];
-
-		const newFeatureIds = new Set(featureItems.map((item) => item.featureId));
+		const promises: Promise<D1Result<unknown>>[] = [];
+		let newFeatureIds: Set<number>;
+		if (featureItems && featureItems.length > 0) {
+			promises.push(locals.db.insert(propertyFeature).values(featureItems).onConflictDoNothing());
+			newFeatureIds = new Set(featureItems.map((item) => item.featureId));
+		}
 
 		// Delete features that are not in the new selection
-		const featureIdsToDelete = propertyData.propertyFeatures.reduce<number[]>((acc, feat) => {
-			if (!newFeatureIds.has(feat.featureId)) {
-				acc.push(feat.featureId);
-			}
-			return acc;
-		}, []);
+		if (propertyFeatures.length > 0) {
+			const featureIdsToDelete = propertyFeatures.reduce<number[]>((acc, feat) => {
+				if (!newFeatureIds?.has(feat.featureId)) {
+					acc.push(feat.featureId);
+				}
+				return acc;
+			}, []);
 
-		if (featureIdsToDelete.length > 0) {
-			promises.push(
-				locals.db
-					.delete(propertyFeature)
-					.where(
-						and(
-							eq(propertyFeature.propertyId, propertyData.id),
-							inArray(propertyFeature.featureId, featureIdsToDelete)
+			if (featureIdsToDelete.length > 0) {
+				promises.push(
+					locals.db
+						.delete(propertyFeature)
+						.where(
+							and(
+								eq(propertyFeature.propertyId, propertyId),
+								inArray(propertyFeature.featureId, featureIdsToDelete)
+							)
 						)
-					)
-			);
+				);
+			}
 		}
 
 		const dbPromises = await Promise.all(promises);
@@ -113,13 +132,12 @@ export const actions: Actions = {
 		const deleteData = dbPromises[1];
 
 		if (
-			insertData?.error ||
-			!insertData.success ||
+			(insertData && (insertData?.error || !insertData.success)) ||
 			(deleteData && (deleteData?.error || !deleteData.success))
 		) {
 			return fail(500, { error: 'Error al insertar las características de la propiedad' });
 		}
 
-		redirect(302, `/crear-publicacion/${propertyData.id}/publicacion-en-revision`);
+		redirect(302, `/crear-publicacion/${propertyId}/publicacion-en-revision`);
 	}
 };

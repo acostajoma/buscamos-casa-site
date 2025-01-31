@@ -1,5 +1,5 @@
+import { createProperty, validatePropertyForm } from '$lib/server/utils/postsUtils';
 import type { Actions, PageServerLoad } from './$types';
-import { createProperty, validatePropertyForm } from './pageUtils.server';
 
 export const load = (async ({ locals }) => {
 	return await validatePropertyForm(locals);

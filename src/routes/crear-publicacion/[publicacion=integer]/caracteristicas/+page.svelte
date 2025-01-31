@@ -47,7 +47,7 @@
 	<DoubleColForm items={formItems} {form}>
 		{#snippet button()}
 			<Link href={`/crear-publicacion/${page.params.publicacion}/fotos`}>Anterior</Link>
-			<p class="text-sm text-gray-500">Paso 2 de 4</p>
+			<p class="text-sm text-gray-500">Paso 5 de 5</p>
 
 			<Button type="submit">Siguiente</Button>
 		{/snippet}

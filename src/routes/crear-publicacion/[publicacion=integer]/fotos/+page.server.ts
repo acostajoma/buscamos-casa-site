@@ -1,26 +1,24 @@
-import { photo } from '$lib/server/db/schema';
+import { photo, property, type Photo, type Property } from '$lib/server/db/schema';
+import { updateListingStatus, validatePropertyOwnerAccess } from '$lib/server/utils/postsUtils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { asc, eq } from 'drizzle-orm';
 import type { BatchItem } from 'drizzle-orm/batch';
-import { getProperty, updateListingStatus } from '../../pageUtils.server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad<{ photos: Cloudinary.Image[] }> = async ({ locals, params }) => {
 	const { user, db } = locals;
-	if (!user) {
-		redirect(302, '/login');
-	}
-	const property = await getProperty(locals, params);
-	if (!property) {
-		error(404, 'Publicación no encontrada');
-	}
-	if (property.postOwnerId !== user.id) {
-		error(403, 'No tienes permisos para editar esta publicación');
-	}
-	const photos = await db.query.photo.findMany({
-		where: eq(photo.propertyId, property.id),
-		orderBy: asc(photo.order)
+	const propertyData = await db.query.property.findFirst({
+		where: eq(property.id, Number(params.publicacion)),
+		columns: { id: true, postOwnerId: true },
+		with: {
+			photos: {
+				orderBy: asc(photo.order)
+			}
+		}
 	});
+	validatePropertyOwnerAccess(user, propertyData);
+
+	const { photos } = propertyData as Pick<Property, 'postOwnerId' | 'id'> & { photos: Photo[] };
 
 	return {
 		photos: photos.map((photo) => ({
@@ -34,14 +32,12 @@ export const load: PageServerLoad<{ photos: Cloudinary.Image[] }> = async ({ loc
 export const actions = {
 	updatePhotoOrder: async ({ request, locals, params }) => {
 		const { user, db } = locals;
-		if (!user) {
-			redirect(302, '/login');
-		}
-		const propertyData = await getProperty(locals, params);
-		const postOwnerId = propertyData.postOwnerId;
-		if (user.id !== postOwnerId) {
-			error(403, 'No tienes permisos para editar esta publicación');
-		}
+		const propertyData = await db.query.property.findFirst({
+			where: eq(property.id, Number(params.publicacion)),
+			columns: { id: true, postOwnerId: true, listingStatus: true }
+		});
+		validatePropertyOwnerAccess(user, propertyData);
+
 		const formData = await request.formData();
 		const photoString = formData.get('photos')?.toString();
 
@@ -64,7 +60,7 @@ export const actions = {
 		) as unknown as [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]];
 
 		if (batchItems.length === 0) {
-			return { message: 'Nothing to update.' };
+			return fail(400, { error: 'Debes subir al menos una foto.' });
 		}
 		const batchResponse: readonly D1Response[] = await db.batch(batchItems);
 
@@ -72,7 +68,12 @@ export const actions = {
 			error(500, 'Ha ocurrido un error');
 		}
 		const postId = Number(params.publicacion);
-		await updateListingStatus(postId, locals, 'En Revision', propertyData);
+		await updateListingStatus(
+			postId,
+			locals,
+			'En Revision',
+			propertyData as Pick<Property, 'id' | 'listingStatus' | 'postOwnerId'>
+		);
 		return redirect(302, `/crear-publicacion/${postId}/caracteristicas`);
 	}
 } satisfies Actions;

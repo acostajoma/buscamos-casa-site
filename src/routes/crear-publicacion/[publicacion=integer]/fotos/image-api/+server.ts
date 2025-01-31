@@ -1,11 +1,11 @@
 import { env } from '$env/dynamic/public';
 import { photo } from '$lib/server/db/schema';
 import { getCloudinarySignature } from '$lib/server/utils';
+import { getPropertyPostOwnerId } from '$lib/server/utils/postsUtils';
 import { uploadPreset } from '$lib/utils/constants';
 import { imageSchema } from '$lib/validation/post';
 import { error, json } from '@sveltejs/kit';
 import { count, eq } from 'drizzle-orm';
-import { getPropertyPostOwnerId } from '../../../pageUtils.server';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, locals, params }) => {

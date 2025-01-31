@@ -65,7 +65,7 @@
 		]}
 	>
 		{#snippet button()}
-			<p class="text-sm text-gray-500">Paso 1 de 4</p>
+			<p class="text-sm text-gray-500">Paso 1 de 5</p>
 
 			<Button type="submit" {form} disabled={valid === true ? false : undefined}>Siguiente</Button>
 		{/snippet}
