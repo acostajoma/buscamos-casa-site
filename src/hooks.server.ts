@@ -1,7 +1,6 @@
 import { dev } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
-import { onlyLoggedIn, onlyLoggedOut } from '$lib/utils/constants';
 import { error, redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
@@ -42,15 +41,14 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 };
 
 const routeGuard: Handle = async ({ event, resolve }) => {
-	const {
-		url: { pathname },
-		route
-	} = event;
+	const { route } = event;
 	const { user } = event.locals;
-	if (route?.id && (onlyLoggedIn.has(route.id) || onlyLoggedIn.has(pathname)) && !user) {
+	const isAuthenticatedRoute = route.id?.startsWith('/(authenticated-users)');
+	const isNonAuthenticatedRoute = route.id?.startsWith('/(non-authenticated-users)');
+	if (isAuthenticatedRoute && !user) {
 		redirect(302, '/inicia-sesion');
 	}
-	if (route?.id && (onlyLoggedOut.has(route.id) || onlyLoggedOut.has(pathname)) && user) {
+	if (isNonAuthenticatedRoute && user) {
 		redirect(302, '/');
 	}
 
