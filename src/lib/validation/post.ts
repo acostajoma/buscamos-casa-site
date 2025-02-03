@@ -151,3 +151,9 @@ export const createFeaturesSchema = (featuresArray: string[]) =>
 				});
 			}
 		});
+
+export const contactDataSchema = z.object({
+	name: text(3, 50),
+	phone: text(8, 20),
+	email: z.string().email()
+});

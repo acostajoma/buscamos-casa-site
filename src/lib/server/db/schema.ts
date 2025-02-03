@@ -282,3 +282,32 @@ export const propertyFeatureRelations = relations(propertyFeature, ({ one }) => 
 }));
 
 export type PropertyFeature = typeof propertyFeature.$inferSelect;
+
+export const propertyContactInformation = sqliteTable(
+	'property_contact_information',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		propertyId: integer('property_id')
+			.notNull()
+			.unique()
+			.references(() => property.id, { onDelete: 'cascade' }),
+		phoneNumber: text('phone_number'),
+		email: text('email'),
+		name: text('name')
+	},
+	(table) => ({
+		propertyIdx: index('idx_property_contact_information_property_id').on(table.propertyId)
+	})
+);
+
+export type PropertyContactInformation = typeof propertyContactInformation.$inferSelect;
+
+export const propertyContactInformationRelations = relations(
+	propertyContactInformation,
+	({ one }) => ({
+		property: one(property, {
+			fields: [propertyContactInformation.propertyId],
+			references: [property.id]
+		})
+	})
+);
