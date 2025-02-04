@@ -29,6 +29,9 @@
 	];
 </script>
 
+<svelte:head>
+	<title>Características de la propiedad</title>
+</svelte:head>
 {#snippet featuresMultipleSelect()}
 	<div class="sm:col-span-full">
 		<Fieldset

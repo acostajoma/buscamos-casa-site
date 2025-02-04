@@ -46,6 +46,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Ubicación de la propiedad</title>
+</svelte:head>
 {#snippet formItems()}
 	<div class="sm:col-span-3">
 		<SelectMenu {form} id="state" name="state" label="Provincia" options={states} />

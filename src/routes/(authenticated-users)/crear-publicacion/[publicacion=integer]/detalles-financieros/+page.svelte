@@ -41,6 +41,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Detalles financieros de la propiedad</title>
+</svelte:head>
 {#snippet financeFields()}
 	<div class="sm:col-span-full">
 		<Fieldset

@@ -5,4 +5,8 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
+<svelte:head>
+	<title>Aspectos generales de publicación</title>
+</svelte:head>
+
 <PublicationForm {data} />

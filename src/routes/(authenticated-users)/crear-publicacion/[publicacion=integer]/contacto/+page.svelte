@@ -8,6 +8,10 @@
 	let { data }: Props = $props();
 </script>
 
+<svelte:head>
+	<title>Información de contacto publicación</title>
+</svelte:head>
+
 {#snippet buttonSnippet()}
 	<Link href={`/crear-publicacion/${page.params.publicacion}/caracteristicas`}>Anterior</Link>
 	<p class="text-sm text-gray-500">Paso 6 de 6</p>

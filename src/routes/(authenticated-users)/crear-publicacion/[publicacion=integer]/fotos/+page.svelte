@@ -9,6 +9,10 @@
 	setPhotoContext(`crear-publicacion/fotos${page.params.publicacion}`, new PhotoState(data.photos));
 </script>
 
+<svelte:head>
+	<title>Fotos de la propiedad</title>
+</svelte:head>
+
 <div class="container mx-auto">
 	<ImageUploader />
 </div>

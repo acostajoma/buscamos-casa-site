@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Publicación en revisión</title>
+</svelte:head>
+
 <div class="relative mt-32 px-6 lg:px-8">
 	<div
 		class="absolute inset-x-0 top-1/2 -z-10 flex -translate-y-1/2 transform-gpu justify-center overflow-hidden blur-3xl sm:top-auto sm:right-[calc(50%-6rem)] sm:bottom-0 sm:translate-y-0 sm:transform-gpu sm:justify-end"
