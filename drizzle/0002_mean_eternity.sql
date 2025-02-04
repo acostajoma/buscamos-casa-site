@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `seller_information_property_id_unique` ON `seller_information` (`property_id`);

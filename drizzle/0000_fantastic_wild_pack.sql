@@ -49,6 +49,16 @@ CREATE TABLE `property` (
 	FOREIGN KEY (`post_owner_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
+CREATE TABLE `property_contact_information` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`property_id` integer NOT NULL,
+	`phone_number` text,
+	`country_code` text,
+	`email` text,
+	`name` text,
+	FOREIGN KEY (`property_id`) REFERENCES `property`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `property_features` (
 	`property_id` integer NOT NULL,
 	`feature_id` integer NOT NULL,
@@ -102,16 +112,16 @@ CREATE TABLE `user` (
 	`id` text PRIMARY KEY NOT NULL,
 	`google_id` text,
 	`facebook_id` text,
-	`email` text NOT NULL,
-	`user_data_id` text,
-	FOREIGN KEY (`user_data_id`) REFERENCES `user_data`(`id`) ON UPDATE no action ON DELETE set null
+	`email` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `user_data` (
 	`id` text PRIMARY KEY NOT NULL,
 	`phone_number` text,
+	`country_code` text,
 	`name` text,
-	`last_name` text
+	`last_name` text,
+	FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `features_name_unique` ON `features` (`name`);--> statement-breakpoint
@@ -123,6 +133,8 @@ CREATE INDEX `idx_photos_property_id` ON `photo` (`property_id`);--> statement-b
 CREATE UNIQUE INDEX `properties_with_construction_property_id_unique` ON `properties_with_construction` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_property_listing_status` ON `property` (`listing_status`);--> statement-breakpoint
 CREATE INDEX `idx_property_created_at` ON `property` (`created_at`);--> statement-breakpoint
+CREATE UNIQUE INDEX `property_contact_information_property_id_unique` ON `property_contact_information` (`property_id`);--> statement-breakpoint
+CREATE INDEX `idx_property_contact_information_property_id` ON `property_contact_information` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_property_feature_property_id` ON `property_features` (`property_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `property_financial_details_property_id_unique` ON `property_financial_details` (`property_id`);--> statement-breakpoint
 CREATE INDEX `idx_saletype_property_id` ON `sale_type` (`property_id`);--> statement-breakpoint
@@ -131,5 +143,4 @@ CREATE INDEX `idx_sellerinformation_property_id` ON `seller_information` (`prope
 CREATE INDEX `user_id_idx` ON `session` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `user_google_id_unique` ON `user` (`google_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `user_facebook_id_unique` ON `user` (`facebook_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `user_user_data_id_unique` ON `user` (`user_data_id`);
+CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);

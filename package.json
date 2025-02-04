@@ -74,6 +74,7 @@
 		"@oslojs/encoding": "^1.1.0",
 		"arctic": "^2.3.4",
 		"dotenv": "^16.4.7",
-		"drizzle-orm": "^0.33.0"
+		"drizzle-orm": "^0.33.0",
+		"svelte-tel-input": "^3.5.2"
 	}
 }

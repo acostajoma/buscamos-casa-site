@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4286e55f-879a-4a4b-9a1a-63b04534bdb9",
-  "prevId": "5759de56-60da-4444-895f-32564163bcbd",
+  "id": "563c0f0f-0089-4958-8c1b-3d46ce5d9026",
+  "prevId": "4286e55f-879a-4a4b-9a1a-63b04534bdb9",
   "tables": {
     "features": {
       "name": "features",
@@ -700,6 +700,13 @@
         }
       },
       "indexes": {
+        "seller_information_property_id_unique": {
+          "name": "seller_information_property_id_unique",
+          "columns": [
+            "property_id"
+          ],
+          "isUnique": true
+        },
         "idx_sellerinformation_property_id": {
           "name": "idx_sellerinformation_property_id",
           "columns": [

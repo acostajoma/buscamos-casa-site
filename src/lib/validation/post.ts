@@ -152,8 +152,21 @@ export const createFeaturesSchema = (featuresArray: string[]) =>
 			}
 		});
 
-export const contactDataSchema = z.object({
-	name: text(3, 50),
-	phone: text(8, 20),
-	email: z.string().email()
-});
+export const contactDataSchema = z
+	.object({
+		name: text(3, 50),
+		phone: text(8, 20),
+		email: text(4, 50).email({ message: 'Correo electrónico inválido' }),
+		countryCode: text(2, 2).default('CR')
+	})
+	.superRefine((data, ctx) => {
+		const phoneRegex = /^\d{8,20}$/;
+		const phoneMatch = phoneRegex.test(data.phone);
+		if (!phoneMatch) {
+			ctx.addIssue({
+				path: ['phone'],
+				code: z.ZodIssueCode.custom,
+				message: 'Número de teléfono inválido.'
+			});
+		}
+	});

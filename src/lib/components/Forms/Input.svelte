@@ -16,6 +16,17 @@
 		disabled?: boolean;
 		placeholder?: string;
 		autocomplete?: FullAutoFill | null | undefined;
+		inputMode?:
+			| 'email'
+			| 'search'
+			| 'tel'
+			| 'text'
+			| 'url'
+			| 'none'
+			| 'numeric'
+			| 'decimal'
+			| null
+			| undefined;
 	};
 	let {
 		label,
@@ -26,7 +37,8 @@
 		required,
 		form,
 		disabled = false,
-		autocomplete
+		autocomplete,
+		inputMode
 	}: Props = $props();
 
 	const dateValue = dateProxy(form, name, { format: 'datetime-local' });
@@ -70,9 +82,10 @@
 			aria-describedby={!required ? `${name}-optional` : undefined}
 			aria-errormessage={`${name}-error`}
 			aria-required={required}
+			inputmode={inputMode}
 			aria-invalid={$errors ? 'true' : undefined}
 			bind:value
-			class="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6
+			class="peer block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200
             user-invalid:!text-red-900 user-invalid:!ring-red-500
 			user-valid:!text-green-900 user-valid:!ring-green-500"
 			{...$constraints}

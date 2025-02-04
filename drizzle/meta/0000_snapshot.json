@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "42ea15e8-f29f-4f59-b96e-dab6fff468ee",
+  "id": "5759de56-60da-4444-895f-32564163bcbd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "features": {
@@ -396,6 +396,86 @@
             "id"
           ],
           "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "property_contact_information": {
+      "name": "property_contact_information",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "property_contact_information_property_id_unique": {
+          "name": "property_contact_information_property_id_unique",
+          "columns": [
+            "property_id"
+          ],
+          "isUnique": true
+        },
+        "idx_property_contact_information_property_id": {
+          "name": "idx_property_contact_information_property_id",
+          "columns": [
+            "property_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "property_contact_information_property_id_property_id_fk": {
+          "name": "property_contact_information_property_id_property_id_fk",
+          "tableFrom": "property_contact_information",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -801,13 +881,6 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "user_data_id": {
-          "name": "user_data_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {
@@ -831,30 +904,9 @@
             "email"
           ],
           "isUnique": true
-        },
-        "user_user_data_id_unique": {
-          "name": "user_user_data_id_unique",
-          "columns": [
-            "user_data_id"
-          ],
-          "isUnique": true
         }
       },
-      "foreignKeys": {
-        "user_user_data_id_user_data_id_fk": {
-          "name": "user_user_data_id_user_data_id_fk",
-          "tableFrom": "user",
-          "tableTo": "user_data",
-          "columnsFrom": [
-            "user_data_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -870,6 +922,13 @@
         },
         "phone_number": {
           "name": "phone_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "country_code": {
+          "name": "country_code",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -891,7 +950,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "user_data_id_user_id_fk": {
+          "name": "user_data_id_user_id_fk",
+          "tableFrom": "user_data",
+          "tableTo": "user",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }

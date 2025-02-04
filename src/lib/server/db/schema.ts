@@ -6,15 +6,12 @@ export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	googleId: text('google_id').unique(),
 	facebookId: text('facebook_id').unique(),
-	email: text('email').notNull().unique(),
-	userDataId: text('user_data_id')
-		.unique()
-		.references(() => userData.id, { onDelete: 'set null' })
+	email: text('email').notNull().unique()
 });
 
 export const userRelations = relations(user, ({ one, many }) => ({
 	userData: one(userData, {
-		fields: [user.userDataId],
+		fields: [user.id],
 		references: [userData.id]
 	}),
 	property: many(property)
@@ -35,11 +32,21 @@ export const session = sqliteTable(
 );
 
 export const userData = sqliteTable('user_data', {
-	id: text('id').primaryKey(),
+	id: text('id')
+		.primaryKey()
+		.references(() => user.id, { onDelete: 'set null' }),
 	phoneNumber: text('phone_number'),
+	countryCode: text('country_code'),
 	name: text('name'),
 	lastName: text('last_name')
 });
+
+export const userDataRelations = relations(userData, ({ one }) => ({
+	user: one(user, {
+		fields: [userData.id],
+		references: [user.id]
+	})
+}));
 
 export type Session = typeof session.$inferSelect;
 
@@ -207,9 +214,11 @@ export const sellerInformation = sqliteTable(
 		id: integer('id').primaryKey({ autoIncrement: true }),
 		propertyId: integer('property_id')
 			.notNull()
+			.unique()
 			.references(() => property.id, { onDelete: 'cascade' }),
 		email: text('email'),
-		phoneNumber: text('phone_number'),
+		phone: text('phone_number'),
+		countryCode: text('country_code'),
 		name: text('name'),
 		lastName: text('last_name')
 	},
@@ -282,32 +291,3 @@ export const propertyFeatureRelations = relations(propertyFeature, ({ one }) => 
 }));
 
 export type PropertyFeature = typeof propertyFeature.$inferSelect;
-
-export const propertyContactInformation = sqliteTable(
-	'property_contact_information',
-	{
-		id: integer('id').primaryKey({ autoIncrement: true }),
-		propertyId: integer('property_id')
-			.notNull()
-			.unique()
-			.references(() => property.id, { onDelete: 'cascade' }),
-		phoneNumber: text('phone_number'),
-		email: text('email'),
-		name: text('name')
-	},
-	(table) => ({
-		propertyIdx: index('idx_property_contact_information_property_id').on(table.propertyId)
-	})
-);
-
-export type PropertyContactInformation = typeof propertyContactInformation.$inferSelect;
-
-export const propertyContactInformationRelations = relations(
-	propertyContactInformation,
-	({ one }) => ({
-		property: one(property, {
-			fields: [propertyContactInformation.propertyId],
-			references: [property.id]
-		})
-	})
-);

@@ -2,8 +2,6 @@ ALTER TABLE `property_financial_details`
 ADD COLUMN `maintenance_cost` real;
 
 INSERT INTO features (name) VALUES
-('A/C'),
-('A/C central'),
 ('Acceso para discapacitados'),
 ('Aire acondicionado'),
 ('Alarma contra incendios'),
