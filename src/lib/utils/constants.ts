@@ -4,3 +4,5 @@ export const allowedImageTypes = ['jpeg', 'jpg', 'png', 'avif', 'tiff', 'webp', 
 export const acceptedImageTypes = allowedImageTypes.map((type) => `image/${type}`).join(',');
 
 export const uploadPreset = 'iod3ewpvyes';
+
+export const cloudinaryUrl = 'https://res.cloudinary.com/dldnvubae';
