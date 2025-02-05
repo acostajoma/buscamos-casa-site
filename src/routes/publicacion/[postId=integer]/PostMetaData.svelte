@@ -27,16 +27,15 @@
 	// Pick the primary image from the photos array (lowest order)
 	let primaryPhoto = post.photos ? [...post.photos].sort((a, b) => a.order - b.order)[0] : null;
 
+	let url = $derived(page.url.toString());
 	// Generate JSON-LD structured data for the listing.
 	let structuredData = $derived.by(() => {
-		// Using window.location.href if available (client side), otherwise fallback.
-		const canonicalUrl = typeof window !== 'undefined' ? window.location.href : '';
 		return serializeSchema({
 			'@context': 'https://schema.org',
 			'@type': 'Offer',
 			name: post.title,
 			description: post.description,
-			url: canonicalUrl,
+			url,
 			price: post.propertyFinancialDetails?.salePrice,
 			priceCurrency: post.propertyFinancialDetails?.currency,
 			itemOffered: {
@@ -79,13 +78,13 @@
 	<meta name="keywords" content={keywords} />
 	<meta name="robots" content={robots} />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="canonical" href={page.url.toString()} />
+	<link rel="canonical" href={url} />
 
 	<!-- Open Graph Tags -->
 	<meta property="og:title" content={post.title} />
 	<meta property="og:description" content={post.description} />
 	<meta property="og:type" content={type} />
-	<meta property="og:url" content={page.url.toString()} />
+	<meta property="og:url" content={url} />
 	<meta property="og:locale" content={locale} />
 	<meta property="og:site_name" content="Buscamos.casa" />
 
