@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { env } from '$env/dynamic/public';
 	import Card from '$lib/components/grid/Card.svelte';
 	import Grid from '$lib/components/grid/Grid.svelte';
 	import Area from '$lib/icons/Area.svelte';
@@ -10,12 +11,16 @@
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import Year from '$lib/icons/Year.svelte';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
+	import * as mapsApi from '@googlemaps/js-api-loader';
+	import { untrack } from 'svelte';
 	import { parsePhoneNumberWithError } from 'svelte-tel-input';
 	import type { CountryCode } from 'svelte-tel-input/types';
 	import type { PropertyWithAllData } from '../../../ambient';
 	import Container from '../Container.svelte';
 	import ImageGallery from './ImageGallery.svelte';
 	import PostMetaData from './PostMetaData.svelte';
+
+	const { Loader } = mapsApi;
 
 	type Props = {
 		post: PropertyWithAllData;
@@ -37,15 +42,45 @@
 
 	let { salePrice, currency } = $derived(propertyFinancialDetails);
 
-	let formattedPhoneNumber = $derived(
-		parsePhoneNumberWithError(
+	let formattedPhoneNumber = $derived.by(() => {
+		const phoneNumber = parsePhoneNumberWithError(
 			sellerInformation.phone as string,
 			sellerInformation.countryCode as CountryCode
-		)
-	);
+		);
+		if (!phoneNumber.isValid) {
+			return null;
+		}
+		return phoneNumber.countryCallingCode + phoneNumber.nationalNumber;
+	});
 
 	let orderedPhotos = $derived(post.photos ? post.photos.sort((a, b) => a.order - b.order) : null);
 	let { url } = $derived(page);
+
+	let mapElement: HTMLElement;
+
+	$effect.pre(() => {
+		untrack(() => {
+			const loader = new Loader({
+				apiKey: env.PUBLIC_GOOGLEMAPS_API_KEY,
+				version: 'weekly'
+			});
+
+			loader.importLibrary('maps').then(({ Map }) => {
+				return loader.importLibrary('marker').then(({ AdvancedMarkerElement }) => {
+					const initialLatLng = {
+						lat: location.latitude as number,
+						lng: location.longitude as number
+					};
+					const map: google.maps.Map | undefined = new Map(mapElement, {
+						center: initialLatLng,
+						zoom: 8,
+						mapId: 'fd53ea48bb9a1791'
+					});
+					new AdvancedMarkerElement({ map, position: initialLatLng });
+				});
+			});
+		});
+	});
 </script>
 
 <PostMetaData {post} {orderedPhotos} />
@@ -91,31 +126,25 @@
 		{/if}
 	</Grid>
 
-	<div class="mt-6">
-		<div class="mt-10">
-			<a
-				href="https://wa.me/{formattedPhoneNumber}?text={encodeURIComponent(
-					`Estoy interesado en la propiedad: ${url}`
-				)}"
-				class="flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
-				><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
-			>
+	{#if formattedPhoneNumber}
+		<div class="mt-6">
+			<div class="mt-10">
+				<a
+					href="https://wa.me/{formattedPhoneNumber}?text={encodeURIComponent(
+						`Estoy interesado en la propiedad: ${url}`
+					)}"
+					class="flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+					><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
+				>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	<div class="my-6">
 		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Ubicación</h3>
 
 		<div class="flex flex-col gap-6 lg:flex-row">
-			<iframe
-				title="Ubicación de la propiedad"
-				src={location.mapUrl}
-				class="h-96 w-full rounded-md"
-				style="border:0;"
-				allowfullscreen
-				loading="lazy"
-				referrerpolicy="no-referrer-when-downgrade"
-			></iframe>
+			<div class="w-full aspect-4/3 max-w-200" id="maps" bind:this={mapElement}></div>
 			<div>
 				<p class="mb-4 text-lg tracking-tight text-gray-900 sm:text-xl">
 					<span class="font-bold">Provincia:</span>
