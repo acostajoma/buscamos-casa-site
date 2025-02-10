@@ -73,7 +73,7 @@
 					};
 					const map: google.maps.Map | undefined = new Map(mapElement, {
 						center: initialLatLng,
-						zoom: 8,
+						zoom: 11,
 						mapId: 'fd53ea48bb9a1791'
 					});
 					new AdvancedMarkerElement({ map, position: initialLatLng });
