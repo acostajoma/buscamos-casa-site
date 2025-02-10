@@ -2,3 +2,9 @@
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 @plugin "../plugins/tailwindcss/userValidation.ts";
+
+@utility container {
+	@media (min-width: 1980px) {
+		max-width: 1980px;
+	}
+}

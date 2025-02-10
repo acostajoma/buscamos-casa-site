@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { cloudinaryUrl } from '$lib/utils/constants';
+	import { type Photo } from '$lib/server/db/schema';
 	import { serializeSchema } from '$lib/utils/formatters';
+	import { getPhotoUrl } from '$lib/utils/photos';
 	import type { PropertyWithAllData } from '../../../ambient';
 
 	type Props = {
@@ -9,8 +10,15 @@
 		robots?: string;
 		type?: string;
 		locale?: string;
+		orderedPhotos: Photo[] | null;
 	};
-	let { post, robots = 'index, follow', type = 'website', locale = 'es_CR' }: Props = $props();
+	let {
+		post,
+		robots = 'index, follow',
+		type = 'website',
+		locale = 'es_CR',
+		orderedPhotos
+	}: Props = $props();
 
 	let keywords = $derived.by(() => {
 		let keywordsString = '';
@@ -18,14 +26,8 @@
 		const saleTypesString = saleType.map((type) => type?.type ?? '').join(', ');
 		return `${location.country}, ${location?.state}, ${location?.city}, ${location?.district}, ${propertyType}, ${saleTypesString} `;
 	});
-	// Helper function to build a photo URL.
-	// Adjust the base URL to match your image hosting.
-	function getPhotoUrl(photoId: string) {
-		return `${cloudinaryUrl}/image/upload/c_scale,h_675,w_auto/f_auto/q_auto/${photoId}`;
-	}
 
-	// Pick the primary image from the photos array (lowest order)
-	let primaryPhoto = post.photos ? [...post.photos].sort((a, b) => a.order - b.order)[0] : null;
+	let primaryPhoto = orderedPhotos ? orderedPhotos[0] : null;
 
 	let url = $derived(page.url.toString());
 	// Generate JSON-LD structured data for the listing.
