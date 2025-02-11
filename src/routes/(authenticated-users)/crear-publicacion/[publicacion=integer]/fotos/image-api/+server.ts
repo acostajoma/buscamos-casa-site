@@ -2,7 +2,6 @@ import { env } from '$env/dynamic/public';
 import { photo } from '$lib/server/db/schema';
 import { getCloudinarySignature } from '$lib/server/utils';
 import { getPropertyPostOwnerId } from '$lib/server/utils/postsUtils';
-import { uploadPreset } from '$lib/utils/constants';
 import { imageSchema } from '$lib/validation/post';
 import { error, json } from '@sveltejs/kit';
 import { count, eq } from 'drizzle-orm';
@@ -50,7 +49,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 	const signature = getCloudinarySignature({
 		context,
 		timestamp,
-		upload_preset: uploadPreset
+		upload_preset: env.PUBLIC_UPLOAD_PRESET
 	});
 
 	const formData = new FormData();
@@ -58,7 +57,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 	formData.set('api_key', env.PUBLIC_CLOUDINARY_API_KEY);
 	formData.set('timestamp', timestamp);
 	formData.set('context', context);
-	formData.set('upload_preset', uploadPreset);
+	formData.set('upload_preset', env.PUBLIC_UPLOAD_PRESET);
 	formData.set('signature', signature);
 
 	const response = await fetch(
