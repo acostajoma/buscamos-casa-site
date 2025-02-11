@@ -26,7 +26,14 @@ const config = {
 		},
 		csp: {
 			directives: {
-				'script-src': ['self', 'https://maps.googleapis.com', 'wasm-unsafe-eval'],
+				'script-src': [
+					'self',
+					'https://maps.googleapis.com',
+					'wasm-unsafe-eval',
+					'ajax.cloudflare.com',
+					'static.cloudflareinsights.com'
+				],
+				'connect-src': ['self', 'cloudflareinsights.com'],
 				'img-src': [
 					'self',
 					'data:',
@@ -38,7 +45,7 @@ const config = {
 					'https://res.cloudinary.com'
 				],
 				'worker-src': ['self', 'blob:'],
-				'style-src': ['self', 'https://fonts.googleapis.com']
+				'style-src': ['self', 'https://fonts.googleapis.com', 'unsafe-inline']
 			},
 			mode: 'auto'
 		},
