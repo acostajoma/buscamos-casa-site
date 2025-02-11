@@ -14,7 +14,7 @@ export const load = (async ({ params, locals: { user, db } }) => {
 		redirect(302, '/inicia-sesion');
 	}
 
-	const [propertyData, userContactData] = await Promise.all([
+	const [propertyData, userContactData] = await db.batch([
 		db.query.property.findFirst({
 			where: eq(property.id, Number(params.publicacion)),
 			with: {
@@ -23,12 +23,6 @@ export const load = (async ({ params, locals: { user, db } }) => {
 			columns: {
 				id: true,
 				postOwnerId: true
-			}
-		}),
-		db.query.user.findFirst({
-			where: eq(userTable.id, user.id),
-			with: {
-				userData: true
 			}
 		})
 	]);
@@ -50,11 +44,10 @@ export const load = (async ({ params, locals: { user, db } }) => {
 		userDataObj.countryCode = countryCode ?? undefined;
 	} else if (userContactData) {
 		const { userData, email } = userContactData;
-		const { name, phoneNumber: phone, countryCode } = userData;
-		userDataObj.name = name ?? undefined;
 		userDataObj.email = email;
-		userDataObj.phone = phone ?? undefined;
-		userDataObj.countryCode = countryCode ?? undefined;
+		userDataObj.name = userData?.name ?? undefined;
+		userDataObj.phone = userData?.phoneNumber ?? undefined;
+		userDataObj.countryCode = userData?.countryCode ?? undefined;
 	}
 
 	const form = await superValidate(userDataObj, zod(contactDataSchema), { errors: false });
