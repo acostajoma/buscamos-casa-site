@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getPhotoUrl } from '$lib/utils/photos';
+	import Glide from '@glidejs/glide';
 	import '@glidejs/glide/dist/css/glide.core.min.css';
-	import Glide, { Breakpoints, Controls } from '@glidejs/glide/dist/glide.modular.esm';
 
 	type Props = {
 		imagesIds: string[];
@@ -16,7 +16,7 @@
 	});
 
 	$effect(() => {
-		glide.mount({ Controls, Breakpoints });
+		glide.mount();
 	});
 </script>
 
@@ -43,11 +43,11 @@
 		</div>
 		<div data-glide-el="controls">
 			<button
-				class="absolute block top-[50%] z-10 px-4 py-4 left-0 ml-2 -translate-y-1/2 text-white bg-black opacity-50 font-bold rounded"
+				class="absolute block top-[50%] z-10 px-4 py-4 left-0 ml-2 -translate-y-1/2 text-white bg-black opacity-50 font-bold rounded cursor-pointer"
 				data-glide-dir="<">&lt;</button
 			>
 			<button
-				class="absolute block top-[50%] z-10 px-4 py-4 right-0 mr-2 -translate-y-1/2 text-white bg-black opacity-50 font-bold rounded"
+				class="absolute block top-[50%] z-10 px-4 py-4 right-0 mr-2 -translate-y-1/2 text-white bg-black opacity-50 font-bold rounded cursor-pointer"
 				data-glide-dir=">">&gt;</button
 			>
 		</div>

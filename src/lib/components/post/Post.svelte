@@ -96,10 +96,10 @@
 	</h3>
 	<div class="mb-6 mt-3">
 		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
-			{#if salePrice}
+			{#if salePrice && saleType.some((type) => type.type === 'Venta')}
 				Precio de venta: {formatCurrency(salePrice, currency)}<br />
 			{/if}
-			{#if rentPrice}
+			{#if rentPrice && saleType.some((type) => type.type === 'Alquiler')}
 				Precio de alquiler: {formatCurrency(rentPrice, currency)}<br />
 			{/if}
 			{#if maintenanceCost && maintenanceCost > 0}
