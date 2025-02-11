@@ -38,4 +38,5 @@ export const saleTypes: [string, ...string[]] = [
 	'Alquiler con opción a compra'
 ];
 
-export const currencies: [string, ...string[]] = ['Colon', 'Dólar'];
+export type Currencies = 'Colon' | 'Dólar';
+export const currencies: [Currencies, ...Currencies[]] = ['Colon', 'Dólar'];
