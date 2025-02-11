@@ -31,9 +31,17 @@ const config = {
 					'https://maps.googleapis.com',
 					'wasm-unsafe-eval',
 					'ajax.cloudflare.com',
-					'static.cloudflareinsights.com'
+					'static.cloudflareinsights.com',
+					'blob:'
 				],
-				'connect-src': ['self', 'cloudflareinsights.com'],
+				'connect-src': [
+					'self',
+					'cloudflareinsights.com',
+					'https://maps.googleapis.com',
+					'https://mapsresources-pa.googleapis.com',
+					'https://maps.gstatic.com',
+					'data:'
+				],
 				'img-src': [
 					'self',
 					'data:',
