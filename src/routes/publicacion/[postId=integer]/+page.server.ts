@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import { property } from '$lib/server/db/schema';
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
@@ -24,12 +25,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	});
 
 	// Quick trick to set listing status to 'Publicado' for testing purposes
-	// await db
-	// 	.update(property)
-	// 	.set({
-	// 		listingStatus: 'Publicado'
-	// 	})
-	// 	.where(eq(property.id, Number(params.postId)));
+	if (dev) {
+		await db
+			.update(property)
+			.set({
+				listingStatus: 'Publicado'
+			})
+			.where(eq(property.id, Number(params.postId)));
+	}
 
 	const deniedAccessStates: ListingStates[] = [
 		'Borrador',
