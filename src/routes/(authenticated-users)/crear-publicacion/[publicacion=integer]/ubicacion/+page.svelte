@@ -89,7 +89,7 @@
 		]}
 	>
 		{#snippet button()}
-			<Link href={`/crear-publicacion/${page.params.publicacion}/detalles-financieros`}>
+			<Link href={`/crear-publicacion/${page.params.publicacion}/detalles-adicionales`}>
 				Anterior
 			</Link>
 			<p class="text-sm text-gray-500">Paso 3 de 6</p>

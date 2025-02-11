@@ -79,6 +79,16 @@
 				required
 			/>
 		</div>
+		<div class="sm:col-span-3">
+			<Input
+				{form}
+				label="Monto de mantenimiento"
+				name="maintenanceCost"
+				id="maintenanceCost"
+				type="number"
+				required={false}
+			/>
+		</div>
 	{/if}
 {/snippet}
 

@@ -184,7 +184,7 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 		error(500, errorMessage);
 	}
 
-	redirect(302, `/crear-publicacion/${newProperty.id}/detalles-financieros`);
+	redirect(302, `/crear-publicacion/${newProperty.id}/detalles-adicionales`);
 };
 
 export const updateListingStatus = async (
