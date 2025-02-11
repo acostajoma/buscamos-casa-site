@@ -14,7 +14,7 @@ kv_namespaces = [
 
 [env.preview]
 d1_databases = [
-    { binding = "DB", database_name = "bc-db-preview", database_id = "11d0a4bd-636c-4ac5-b3a7-45a4b88a0300", preview_database_id = "DB", migrations_dir = "drizzle" },
+    { binding = "DB", database_name = "bc-db-preview", database_id = "a77ccd8e-fec2-41cd-ae9f-4d5ddbec0ccf", preview_database_id = "DB", migrations_dir = "drizzle" },
 ]
 kv_namespaces = [
     { binding = "CACHE_KV", id = "e9b3508001614d2589db26eda5e171eb", preview_id = "e9b3508001614d2589db26eda5e171eb"}, 
@@ -23,7 +23,7 @@ kv_namespaces = [
 
 [env.production]
 d1_databases = [
-    { binding = "DB", database_name = "bc-db-prod", database_id = "334c7c99-7bf1-4c19-9384-3528980b0ba3", preview_database_id = "DB", migrations_dir = "drizzle" },
+    { binding = "DB", database_name = "bc-db-prod", database_id = "cfb3b0f4-08a8-4055-8120-85f465eb0aee", preview_database_id = "DB", migrations_dir = "drizzle" },
 ]
 kv_namespaces = [
     { binding = "CACHE_KV", id = "8997438e91f34f4dbd7c60e03488bb55", preview_id = "8997438e91f34f4dbd7c60e03488bb55"}, 
