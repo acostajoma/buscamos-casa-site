@@ -34,7 +34,7 @@
 							<img
 								src={getPhotoUrl(id)}
 								alt="test"
-								class="aspect-4/3 w-full object-contain mx-auto bg-gray-100"
+								class="aspect-4/3 w-full object-contain mx-auto bg-gray-200"
 							/>
 						</picture>
 					</li>

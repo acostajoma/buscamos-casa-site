@@ -17,6 +17,7 @@
 	import type { CountryCode } from 'svelte-tel-input/types';
 	import type { PropertyWithAllData } from '../../../ambient';
 	import Container from '../Container.svelte';
+	import ListWithDivider from '../ListWithDivider.svelte';
 	import ImageGallery from './ImageGallery.svelte';
 	import PostMetaData from './PostMetaData.svelte';
 
@@ -138,17 +139,19 @@
 	</Grid>
 
 	{#if formattedPhoneNumber}
-		<div class="mt-6">
-			<div class="mt-10">
-				<a
-					href="https://wa.me/{formattedPhoneNumber}?text={encodeURIComponent(
-						`Estoy interesado en la propiedad: ${url}`
-					)}"
-					class="flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
-					><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
-				>
-			</div>
-		</div>
+		<h3 class="mt-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+			Información de contacto
+		</h3>
+		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
+			Nombre del anunciante: {sellerInformation.name}
+		</p>
+		<a
+			href="https://wa.me/{formattedPhoneNumber}?text={encodeURIComponent(
+				`Estoy interesado en la propiedad: ${url}`
+			)}"
+			class="mt-4 flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+			><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
+		>
 	{/if}
 
 	<div class="my-6">
@@ -176,4 +179,18 @@
 			</div>
 		</div>
 	</div>
+
+	{#if propertyFeatures.length > 0}
+		<div class="my-6">
+			<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+				Características
+			</h3>
+
+			<ListWithDivider>
+				{#each propertyFeatures as { feature }}
+					<li class="text-xs sm:text-lg tracking-tight text-gray-900 md:text-xl">{feature.name}</li>
+				{/each}
+			</ListWithDivider>
+		</div>
+	{/if}
 </Container>

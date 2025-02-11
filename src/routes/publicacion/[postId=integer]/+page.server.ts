@@ -13,7 +13,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			location: true,
 			photos: true,
 			propertiesWithConstruction: true,
-			propertyFeatures: true,
+			propertyFeatures: {
+				with: {
+					feature: true
+				}
+			},
 			propertyFinancialDetails: true,
 			saleType: true
 		}
