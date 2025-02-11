@@ -84,7 +84,7 @@
 	</div>
 	<div class="hidden peer-has-[:checked]:block lg:!hidden" role="dialog" aria-modal="true">
 		<div class="fixed inset-0 z-10"></div>
-		<div class="fixed inset-y-0 left-0 z-10 w-full overflow-y-auto bg-white px-6 py-6">
+		<div class="fixed inset-y-0 left-0 z-50 w-full overflow-y-auto bg-white px-6 py-6">
 			<div class="flex items-center justify-between">
 				<div class="flex flex-1">
 					<label for="mobile-menu" class="-m-2.5 rounded-md p-2.5 text-gray-700">
@@ -111,15 +111,17 @@
 						>{title}</a
 					>
 				{/each}
-				<a
-					href="#"
-					class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-					>Información Personal</a
-				>
+				{#if loggedUser}
+					<a
+						href="#"
+						class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+						>Información Personal</a
+					>
 
-				{@render logoutButton(
-					'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer w-full text-left'
-				)}
+					{@render logoutButton(
+						'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer w-full text-left'
+					)}
+				{/if}
 			</div>
 		</div>
 	</div>
