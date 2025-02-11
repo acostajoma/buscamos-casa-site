@@ -117,7 +117,7 @@ export const propertyFinancialDetails = sqliteTable('property_financial_details'
 		.references(() => property.id, { onDelete: 'cascade' }),
 	salePrice: real('sale_price'),
 	rentPrice: real('rent_price'),
-	maintenanceCost: real('rent_price'),
+	maintenanceCost: real('maintenance_cost'),
 	currency: text('currency', { enum: currencies }).notNull()
 });
 

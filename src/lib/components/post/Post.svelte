@@ -40,7 +40,7 @@
 		description
 	} = $derived(post);
 
-	let { salePrice, currency } = $derived(propertyFinancialDetails);
+	let { salePrice, currency, rentPrice, maintenanceCost } = $derived(propertyFinancialDetails);
 
 	let formattedPhoneNumber = $derived.by(() => {
 		const phoneNumber = parsePhoneNumberWithError(
@@ -87,14 +87,25 @@
 
 <Container>
 	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl">{title}</h1>
-	<div class="mb-6 mt-3">
-		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
-			Precio: {formatCurrency(salePrice, currency)}
-		</p>
-	</div>
 </Container>
 <ImageGallery imagesIds={orderedPhotos?.map((p) => p.id) ?? []} />
 <Container>
+	<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+		Aspectos Financieros
+	</h3>
+	<div class="mb-6 mt-3">
+		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
+			{#if salePrice}
+				Precio de venta: {formatCurrency(salePrice, currency)}<br />
+			{/if}
+			{#if rentPrice}
+				Precio de alquiler: {formatCurrency(rentPrice, currency)}<br />
+			{/if}
+			{#if maintenanceCost && maintenanceCost > 0}
+				Costo de mantenimiento: {formatCurrency(maintenanceCost, currency)}
+			{/if}
+		</p>
+	</div>
 	<div class="my-6">
 		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Descripción</h3>
 

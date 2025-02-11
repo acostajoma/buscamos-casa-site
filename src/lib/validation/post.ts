@@ -19,7 +19,8 @@ export const propertySchema = z.object({
 export const propertyDetailsSchema = z.object({
 	salePrice: numeric(0, 10000000000, 0.01, true).nullish(),
 	rentPrice: numeric(0, 10000000000, 0.01, true).nullish(),
-	currency: customEnum(currencies)
+	currency: customEnum(currencies),
+	maintenanceCost: numeric(0, 10000000000, 0.01, true).nullish()
 });
 
 export const validateSaleTypePrice = (
