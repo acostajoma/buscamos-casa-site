@@ -1,8 +1,5 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
-// for information about these interfaces
 declare global {
 	namespace App {
 		interface Locals {
@@ -17,6 +14,9 @@ declare global {
 				DB: D1Database;
 				CACHE_KV: KVNamespace;
 			};
+			ctx: ExecutionContext;
+			caches: CacheStorage & { default: Cache };
+			cf: CfProperties;
 		}
 	}
 

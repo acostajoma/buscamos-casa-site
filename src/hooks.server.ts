@@ -1,20 +1,31 @@
 import { dev } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
-import * as Sentry from '@sentry/sveltekit';
+import * as Sentry from '@sentry/cloudflare';
+import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import { error, redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
-const TRACES_RATE_SAMPLE = 0.9; // In production, we will sample 90% of the traces to start
-Sentry.init({
-	dsn: 'https://91e99e7f2e932483e521c8aa159affb3@o4508807636123648.ingest.us.sentry.io/4508807637696512',
-	tracesSampleRate: dev ? 1 : TRACES_RATE_SAMPLE
-});
+const handleInitSentry: Handle = ({ event, resolve }) => {
+	return event.platform
+		? Sentry.wrapRequestHandler(
+				{
+					options: {
+						dsn: 'https://91e99e7f2e932483e521c8aa159affb3@o4508807636123648.ingest.us.sentry.io/4508807637696512',
+						tracesSampleRate: 1.0
+					},
+					request: event.request as Request<unknown, IncomingRequestCfProperties<unknown>>,
+					context: event.platform.ctx
+				},
+				() => resolve(event)
+			)
+		: resolve(event);
+};
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	if (dev) {
 		const { getPlatformProxy } = await import('wrangler');
-		event.platform = await getPlatformProxy();
+		event.platform = (await getPlatformProxy()) as unknown as App.Platform;
 	}
 	const { platform } = event;
 
@@ -62,5 +73,6 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(Sentry.sentryHandle(), handleAuth, routeGuard);
-export const handleError = Sentry.handleErrorWithSentry();
+export const handle: Handle = sequence(handleInitSentry, sentryHandle(), handleAuth, routeGuard);
+
+export const handleError = handleErrorWithSentry(() => console.error('Error occurred server side'));
