@@ -74,7 +74,7 @@
 		"@googlemaps/js-api-loader": "^1.16.8",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
-		"@sentry/cloudflare": "^8.55.0",
+		"@sentry/cloudflare": "^9.0.1",
 		"@sentry/sveltekit": "^9.0.1",
 		"arctic": "^2.3.4",
 		"dotenv": "^16.4.7",

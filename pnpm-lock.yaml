@@ -21,8 +21,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       '@sentry/cloudflare':
-        specifier: ^8.55.0
-        version: 8.55.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@sentry/sveltekit':
         specifier: ^9.0.1
         version: 9.0.1(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.30.0)(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.20.0)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)))(svelte@5.20.0)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1)))(svelte@5.20.0)(vite@5.4.14(@types/node@22.13.1)(lightningcss@1.29.1))
@@ -1867,13 +1867,9 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
 
-  '@sentry/cloudflare@8.55.0':
-    resolution: {integrity: sha512-ZYrGw2aJQ423mPDx1G5AZo+IGqqUcMTQZe0nKxYN33f/hlJMo+S2NMxTn4XEP0r6uYS9JEB9PjRSq8koo7/ieg==}
-    engines: {node: '>=14.18'}
-
-  '@sentry/core@8.55.0':
-    resolution: {integrity: sha512-6g7jpbefjHYs821Z+EBJ8r4Z7LT5h80YSWRJaylGS4nW5W5Z2KXzpdnyFarv37O7QjauzVC2E+PABmpkw5/JGA==}
-    engines: {node: '>=14.18'}
+  '@sentry/cloudflare@9.0.1':
+    resolution: {integrity: sha512-ww2ZXdvL6t/nmDPxZnQaZYiLFhgX/bKw8LLj21ELCs+Y18Tit/0D2e4nfVVEhbj4AyedD3KVj/RtU1i+kHCn9Q==}
+    engines: {node: '>=18'}
 
   '@sentry/core@9.0.1':
     resolution: {integrity: sha512-RQ3B3NfF+BdmQz1c+vj4OBO+kxvxSsYMcmCDxSEZ7YrS/6Er1kMy0fwfxmdZJMdM1LlzXmO0XWF2g1IO9CzKyQ==}
@@ -5982,13 +5978,11 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sentry/cloudflare@8.55.0':
+  '@sentry/cloudflare@9.0.1':
     dependencies:
-      '@sentry/core': 8.55.0
+      '@sentry/core': 9.0.1
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250204.0
-
-  '@sentry/core@8.55.0': {}
 
   '@sentry/core@9.0.1': {}
 
