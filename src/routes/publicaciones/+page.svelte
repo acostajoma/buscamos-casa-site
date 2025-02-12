@@ -10,12 +10,12 @@
 </script>
 
 <svelte:head>
-	<title>Inicio | Buscamos.casa</title>
+	<title>Publicaciones | Buscamos.casa</title>
 </svelte:head>
 
 <Container>
 	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
-		Ultimas Publicaciones
+		Publicaciones
 	</h1>
 	<GridList posts={data.posts} />
 </Container>

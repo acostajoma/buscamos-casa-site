@@ -1,6 +1,6 @@
 <script lang="ts">
 	type Props = {
-		class: string;
+		class?: string;
 	};
 	let { class: _class = 'size-6' }: Props = $props();
 </script>

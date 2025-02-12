@@ -35,6 +35,7 @@
 								src={getPhotoUrl(id)}
 								alt="test"
 								class="aspect-4/3 w-full object-contain mx-auto bg-gray-200"
+								loading="lazy"
 							/>
 						</picture>
 					</li>

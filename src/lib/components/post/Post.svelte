@@ -44,9 +44,12 @@
 	let { salePrice, currency, rentPrice, maintenanceCost } = $derived(propertyFinancialDetails);
 
 	let formattedPhoneNumber = $derived.by(() => {
+		if (!sellerInformation?.phone || !sellerInformation?.countryCode) {
+			return null;
+		}
 		const phoneNumber = parsePhoneNumberWithError(
-			sellerInformation.phone as string,
-			sellerInformation.countryCode as CountryCode
+			sellerInformation?.phone as string,
+			sellerInformation?.countryCode as CountryCode
 		);
 		if (!phoneNumber.isValid) {
 			return null;
@@ -186,7 +189,7 @@
 				Características
 			</h3>
 
-			<ListWithDivider>
+			<ListWithDivider useGrid>
 				{#each propertyFeatures as { feature }}
 					<li class="text-xs sm:text-lg tracking-tight text-gray-900 md:text-xl">{feature.name}</li>
 				{/each}
