@@ -19,11 +19,7 @@
 		checked = false;
 	});
 
-	const links = [
-		{ title: 'Product', href: '/product' },
-		{ title: 'Features', href: '/features' },
-		{ title: 'Company', href: '/company' }
-	];
+	const links = [{ title: 'Publicaciones', href: '/publicaciones' }];
 </script>
 
 {#snippet logoutButton(_class: string)}
@@ -113,7 +109,7 @@
 				{/each}
 				{#if loggedUser}
 					<a
-						href="#"
+						href="/perfil"
 						class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
 						>Información Personal</a
 					>
