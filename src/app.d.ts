@@ -18,6 +18,7 @@ declare global {
 			env: {
 				DB: D1Database;
 				CACHE_KV: KVNamespace;
+				LOGS_BUCKET: R2Bucket;
 			};
 			ctx: ExecutionContext;
 			caches: CacheStorage & { default: Cache };
@@ -132,6 +133,20 @@ declare global {
 		}
 
 		type Image = { key: string; file?: File } & (ImageUploading | ImageSuccessful | ImageError);
+	}
+
+	namespace Logging {
+		interface Error {
+			error: unknown;
+			status: number;
+			message: string;
+			extra: {
+				request: Request<unknown, CfProperties<unknown>>;
+				cf: App.Platform['cf'] | undefined;
+				user: App.Locals['user'];
+				userSession: App.Locals['session'];
+			};
+		}
 	}
 }
 

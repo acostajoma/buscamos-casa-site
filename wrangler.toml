@@ -10,7 +10,9 @@ d1_databases = [
 kv_namespaces = [
     { binding = "CACHE_KV", id = "fe38d90fef3b4279a1437b1f8566e6ce", preview_id = "fe38d90fef3b4279a1437b1f8566e6ce"}, 
 ]
-
+r2_buckets = [ 
+    { binding = "LOGS_BUCKET" , bucket_name = "bc-r2-dev"} 
+]
 
 [env.preview]
 d1_databases = [
@@ -19,6 +21,10 @@ d1_databases = [
 kv_namespaces = [
     { binding = "CACHE_KV", id = "e9b3508001614d2589db26eda5e171eb", preview_id = "e9b3508001614d2589db26eda5e171eb"}, 
 ]
+r2_buckets = [ 
+    { binding = "LOGS_BUCKET" , bucket_name = "bc-r2-preview"} 
+]
+
 
 
 [env.production]
@@ -27,4 +33,7 @@ d1_databases = [
 ]
 kv_namespaces = [
     { binding = "CACHE_KV", id = "8997438e91f34f4dbd7c60e03488bb55", preview_id = "8997438e91f34f4dbd7c60e03488bb55"}, 
+]
+r2_buckets = [ 
+    { binding = "LOGS_BUCKET" , bucket_name = "bc-r2-prod"} 
 ]

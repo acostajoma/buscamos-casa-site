@@ -20,12 +20,6 @@ importers:
       '@oslojs/encoding':
         specifier: ^1.1.0
         version: 1.1.0
-      '@sentry/browser':
-        specifier: ^9.0.1
-        version: 9.0.1
-      '@sentry/cloudflare':
-        specifier: ^9.0.1
-        version: 9.0.1
       arctic:
         specifier: ^2.3.4
         version: 2.3.4
@@ -1583,34 +1577,6 @@ packages:
     resolution: {integrity: sha512-0PVwmgzZ8+TZ9oGBmdZoQVXflbvuwzN/HRclujpl4N/q3i+y0lqLw8n1bXA8ru3sApDjlmONaNAuYr38y1Kr9w==}
     cpu: [x64]
     os: [win32]
-
-  '@sentry-internal/browser-utils@9.0.1':
-    resolution: {integrity: sha512-/2karfYpQFtnkFrWxQgi/DuOf83OGhIdJcEmRDYDZKvj3mGHQ6n7fzIFD8fc0hPupBA/xi2kHVu7DX7scx5Fbw==}
-    engines: {node: '>=18'}
-
-  '@sentry-internal/feedback@9.0.1':
-    resolution: {integrity: sha512-U43WMmhTXx9+wtXaJRnfoFfHz2Zv9fIEWDinYZQ03yGhjnAj3033Ca+mH+wMM0SQjF0KhGLG8Os4B/OGoQzB2g==}
-    engines: {node: '>=18'}
-
-  '@sentry-internal/replay-canvas@9.0.1':
-    resolution: {integrity: sha512-7PBCkqNZQjbAunQmfSRkMKqviQ+jOqB/dy0nvL/T7EaahoD7VzVCGAbL29cLkPmpP3a9dzYk7ALrUqKLApwhRg==}
-    engines: {node: '>=18'}
-
-  '@sentry-internal/replay@9.0.1':
-    resolution: {integrity: sha512-QzHClQWOgTEjOiBaCoQMytTSyZUKo/F2SYnzeWF30qNHtOKZSXEUugOeF3Ph0wc47NdH/4qPjYZgbNEYARf2qw==}
-    engines: {node: '>=18'}
-
-  '@sentry/browser@9.0.1':
-    resolution: {integrity: sha512-alI1r1NyIARjzEm5493QuOPhiT2W1gelGDV30B1oL5cKo1arjqRLHp8Ny5odlTnyDTFC4EIx5Z69J+iyhW0CvQ==}
-    engines: {node: '>=18'}
-
-  '@sentry/cloudflare@9.0.1':
-    resolution: {integrity: sha512-ww2ZXdvL6t/nmDPxZnQaZYiLFhgX/bKw8LLj21ELCs+Y18Tit/0D2e4nfVVEhbj4AyedD3KVj/RtU1i+kHCn9Q==}
-    engines: {node: '>=18'}
-
-  '@sentry/core@9.0.1':
-    resolution: {integrity: sha512-RQ3B3NfF+BdmQz1c+vj4OBO+kxvxSsYMcmCDxSEZ7YrS/6Er1kMy0fwfxmdZJMdM1LlzXmO0XWF2g1IO9CzKyQ==}
-    engines: {node: '>=18'}
 
   '@sideway/address@4.1.5':
     resolution: {integrity: sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==}
@@ -5172,40 +5138,6 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.34.6':
     optional: true
-
-  '@sentry-internal/browser-utils@9.0.1':
-    dependencies:
-      '@sentry/core': 9.0.1
-
-  '@sentry-internal/feedback@9.0.1':
-    dependencies:
-      '@sentry/core': 9.0.1
-
-  '@sentry-internal/replay-canvas@9.0.1':
-    dependencies:
-      '@sentry-internal/replay': 9.0.1
-      '@sentry/core': 9.0.1
-
-  '@sentry-internal/replay@9.0.1':
-    dependencies:
-      '@sentry-internal/browser-utils': 9.0.1
-      '@sentry/core': 9.0.1
-
-  '@sentry/browser@9.0.1':
-    dependencies:
-      '@sentry-internal/browser-utils': 9.0.1
-      '@sentry-internal/feedback': 9.0.1
-      '@sentry-internal/replay': 9.0.1
-      '@sentry-internal/replay-canvas': 9.0.1
-      '@sentry/core': 9.0.1
-
-  '@sentry/cloudflare@9.0.1':
-    dependencies:
-      '@sentry/core': 9.0.1
-    optionalDependencies:
-      '@cloudflare/workers-types': 4.20250204.0
-
-  '@sentry/core@9.0.1': {}
 
   '@sideway/address@4.1.5':
     dependencies:
