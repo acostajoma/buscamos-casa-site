@@ -43,7 +43,12 @@
 			</div>
 
 			<div class="flex justify-center pt-6 text-sm/4 font-light">
-				<span class="bg-white px-6 text-gray-900">Al continuar, aceptas los Términos de Uso.</span>
+				<span class="bg-white px-6 text-gray-900"
+					>Al continuar, aceptas los <a
+						href="/terminos-y-condiciones"
+						class="font-semibold text-yellow-600 hover:text-yellow-500">Términos de Uso.</a
+					></span
+				>
 			</div>
 		</div>
 	</div>
