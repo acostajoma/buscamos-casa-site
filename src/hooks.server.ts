@@ -2,11 +2,19 @@ import { dev } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
 import * as Sentry from '@sentry/cloudflare';
-import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
-import { error, redirect, type Handle } from '@sveltejs/kit';
+import { error, redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
-const handleInitSentry: Handle = ({ event, resolve }) => {
+const handleInitSentry: Handle = async ({ event, resolve }) => {
+	if (dev) {
+		const { getPlatformProxy } = await import('wrangler');
+		event.platform = (await getPlatformProxy()) as unknown as App.Platform;
+	}
+	const { platform } = event;
+
+	if (!platform) {
+		error(500, { message: 'Ha ocurrido un error interno.' });
+	}
 	return event.platform
 		? Sentry.wrapRequestHandler(
 				{
@@ -23,20 +31,12 @@ const handleInitSentry: Handle = ({ event, resolve }) => {
 };
 
 const handleAuth: Handle = async ({ event, resolve }) => {
-	if (dev) {
-		const { getPlatformProxy } = await import('wrangler');
-		event.platform = (await getPlatformProxy()) as unknown as App.Platform;
-	}
 	const { platform } = event;
-
-	if (!platform) {
-		error(500, 'Ha ocurrido un error interno.');
-	}
-
 	// Setting DB
-	const db = getDB(platform.env);
+	const { env } = platform as App.Platform;
+	const db = getDB(env);
 	event.locals.db = db;
-	event.locals.cache = platform.env.CACHE_KV;
+	event.locals.cache = env.CACHE_KV;
 
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
@@ -73,6 +73,12 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleInitSentry, sentryHandle(), handleAuth, routeGuard);
+export const handle: Handle = sequence(handleInitSentry, handleAuth, routeGuard);
 
-export const handleError = handleErrorWithSentry(() => console.error('Error occurred server side'));
+export const handleError: HandleServerError = async ({ event, error, status, message }) => {
+	const errorId = crypto.randomUUID();
+	Sentry.captureException(error, {
+		extra: { event, errorId, status }
+	});
+	return { message };
+};

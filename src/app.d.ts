@@ -9,6 +9,11 @@ declare global {
 			cache: KVNamespace;
 		}
 
+		// interface Error {
+		// 	message: string;
+		// 	errorId: string;
+		// }
+
 		interface Platform {
 			env: {
 				DB: D1Database;

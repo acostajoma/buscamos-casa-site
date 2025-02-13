@@ -40,6 +40,7 @@ const config = {
 					'https://maps.googleapis.com',
 					'https://mapsresources-pa.googleapis.com',
 					'https://maps.gstatic.com',
+					'https://o4508807636123648.ingest.us.sentry.io/api/4508807637696512/',
 					'data:'
 				],
 				'img-src': [
@@ -51,6 +52,10 @@ const config = {
 					'https://maps.googleapis.com',
 					'https://upload.imagedelivery.net',
 					'https://res.cloudinary.com'
+				],
+				'report-to': ['csp-endpoint'],
+				'report-uri': [
+					'https://o4508807636123648.ingest.us.sentry.io/api/4508807637696512/security/?sentry_key=91e99e7f2e932483e521c8aa159affb3'
 				],
 				'worker-src': ['self', 'blob:'],
 				'style-src': ['self', 'https://fonts.googleapis.com', 'unsafe-inline']
