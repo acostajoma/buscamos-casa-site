@@ -8,3 +8,8 @@
 		max-width: 1980px;
 	}
 }
+
+@theme {
+	--breakpoint-2xs: 380px;
+	--breakpoint-xs: 480px;
+}
