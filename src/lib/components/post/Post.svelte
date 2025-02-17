@@ -8,16 +8,17 @@
 	import Construction from '$lib/icons/Construction.svelte';
 	import Facebook from '$lib/icons/Facebook.svelte';
 	import Garage from '$lib/icons/Garage.svelte';
+	import Url from '$lib/icons/Url.svelte';
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import Year from '$lib/icons/Year.svelte';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
 	import { parsePhoneNumberWithError } from 'svelte-tel-input';
 	import type { CountryCode } from 'svelte-tel-input/types';
+	import { fade } from 'svelte/transition';
 	import type { PropertyWithAllData } from '../../../ambient';
 	import Container from '../Container.svelte';
 	import Link from '../Link.svelte';
 	import ListWithDivider from '../ListWithDivider.svelte';
-	import Modal from '../Modal.svelte';
 	import ImageGallery from './ImageGallery.svelte';
 	import Map from './Map.svelte';
 	import PostMetaData from './PostMetaData.svelte';
@@ -41,6 +42,7 @@
 	} = $derived(post);
 
 	let { salePrice, currency, rentPrice, maintenanceCost } = $derived(propertyFinancialDetails);
+	let pageUrl = $derived(page.url.toString());
 
 	let formattedPhoneNumber = $derived.by(() => {
 		if (!sellerInformation?.phone || !sellerInformation?.countryCode) {
@@ -56,8 +58,18 @@
 		return phoneNumber.countryCallingCode + phoneNumber.nationalNumber;
 	});
 
+	let sharingMessage: undefined | string = $state.raw(undefined);
 	let orderedPhotos = $derived(post.photos ? post.photos.sort((a, b) => a.order - b.order) : null);
 	let { url } = $derived(page);
+
+	function copyUrl() {
+		navigator.clipboard.writeText(pageUrl);
+		sharingMessage = 'URL copiada al portapapeles';
+
+		setTimeout(() => {
+			sharingMessage = undefined;
+		}, 2500);
+	}
 </script>
 
 <PostMetaData {post} {orderedPhotos} />
@@ -130,6 +142,44 @@
 		>
 	{/if}
 
+	<h3 class="mt-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-2">
+		Comparte esta Publicación
+	</h3>
+	<div class="flex gap-4 flex-wrap">
+		<Link
+			target="_blank"
+			href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(
+				pageUrl
+			)}&src=sdkpreparse"
+			class="inline-flex items-center space-x-2 rounded bg-[#4267B2] px-4 py-2 text-white hover:bg-[#36528C] max-w-56"
+		>
+			<Facebook class="h-5 w-5 fill-current" />
+			<span>Facebook</span>
+		</Link>
+		<Link
+			target="_blank"
+			class="inline-flex items-center space-x-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 max-w-56"
+			href="https://wa.me/?text={encodeURIComponent(
+				`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`
+			)}"
+		>
+			<WhatsApp class="h-5 w-5 fill-current" />
+			<span>WhatsApp</span>
+		</Link>
+
+		<button
+			onclick={copyUrl}
+			type="button"
+			class="inline-flex items-center space-x-2 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 max-w-56"
+		>
+			<Url class="h-5 w-5 fill-current" />
+			<span>Copiar URL</span>
+		</button>
+	</div>
+	{#if sharingMessage}
+		<p class="mt-4 text-sm text-gray-700" transition:fade>{sharingMessage}</p>
+	{/if}
+
 	<div class="my-6">
 		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Ubicación</h3>
 
@@ -170,18 +220,3 @@
 		</div>
 	{/if}
 </Container>
-
-<Modal openModalButtonTitle="open">
-	<div class="fb-share-button" data-href="https://buscamos.casa/publicaciones" data-layout="button">
-		<Link
-			target="_blank"
-			href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(
-				page.url.toString()
-			)}&src=sdkpreparse"
-			class="inline-flex items-center space-x-2 rounded bg-[#4267B2] px-4 py-2 text-white hover:bg-[#36528C]"
-		>
-			<Facebook class="h-5 w-5 fill-current" />
-			<span>Compartir</span>
-		</Link>
-	</div>
-</Modal>
