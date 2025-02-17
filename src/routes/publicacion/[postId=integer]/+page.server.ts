@@ -1,8 +1,8 @@
 import { dev } from '$app/environment';
-import { property } from '$lib/server/db/schema';
+import { photo, property } from '$lib/server/db/schema';
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		with: {
 			sellerInformation: true,
 			location: true,
-			photos: true,
+			photos: { orderBy: desc(photo.order) },
 			propertiesWithConstruction: true,
 			propertyFeatures: {
 				with: {

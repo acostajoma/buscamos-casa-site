@@ -49,6 +49,7 @@ export const getPosts = async (db: App.Locals['db'], pageNumber: string | null |
 		})
 		.from(photo)
 		.groupBy(photo.propertyId)
+		.orderBy(desc(photo.order))
 		.as('photosSub');
 
 	const postSelect = {
