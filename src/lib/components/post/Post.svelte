@@ -1,27 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
 	import Card from '$lib/components/grid/Card.svelte';
 	import Grid from '$lib/components/grid/Grid.svelte';
 	import Area from '$lib/icons/Area.svelte';
 	import Bathroom from '$lib/icons/Bathroom.svelte';
 	import Bedroom from '$lib/icons/Bedroom.svelte';
 	import Construction from '$lib/icons/Construction.svelte';
+	import Facebook from '$lib/icons/Facebook.svelte';
 	import Garage from '$lib/icons/Garage.svelte';
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import Year from '$lib/icons/Year.svelte';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
-	import * as mapsApi from '@googlemaps/js-api-loader';
-	import { untrack } from 'svelte';
 	import { parsePhoneNumberWithError } from 'svelte-tel-input';
 	import type { CountryCode } from 'svelte-tel-input/types';
 	import type { PropertyWithAllData } from '../../../ambient';
 	import Container from '../Container.svelte';
+	import Link from '../Link.svelte';
 	import ListWithDivider from '../ListWithDivider.svelte';
+	import Modal from '../Modal.svelte';
 	import ImageGallery from './ImageGallery.svelte';
+	import Map from './Map.svelte';
 	import PostMetaData from './PostMetaData.svelte';
-
-	const { Loader } = mapsApi;
 
 	type Props = {
 		post: PropertyWithAllData;
@@ -59,32 +58,6 @@
 
 	let orderedPhotos = $derived(post.photos ? post.photos.sort((a, b) => a.order - b.order) : null);
 	let { url } = $derived(page);
-
-	let mapElement: HTMLElement;
-
-	$effect.pre(() => {
-		untrack(() => {
-			const loader = new Loader({
-				apiKey: env.PUBLIC_GOOGLEMAPS_API_KEY,
-				version: 'weekly'
-			});
-
-			loader.importLibrary('maps').then(({ Map }) => {
-				return loader.importLibrary('marker').then(({ AdvancedMarkerElement }) => {
-					const initialLatLng = {
-						lat: location.latitude as number,
-						lng: location.longitude as number
-					};
-					const map: google.maps.Map | undefined = new Map(mapElement, {
-						center: initialLatLng,
-						zoom: 11,
-						mapId: 'fd53ea48bb9a1791'
-					});
-					new AdvancedMarkerElement({ map, position: initialLatLng });
-				});
-			});
-		});
-	});
 </script>
 
 <PostMetaData {post} {orderedPhotos} />
@@ -161,7 +134,7 @@
 		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Ubicación</h3>
 
 		<div class="flex flex-col gap-6 lg:flex-row">
-			<div class="w-full aspect-4/3 max-w-200" id="maps" bind:this={mapElement}></div>
+			<Map {location} />
 			<div>
 				<p class="mb-4 text-lg tracking-tight text-gray-900 sm:text-xl">
 					<span class="font-bold">Provincia:</span>
@@ -197,3 +170,18 @@
 		</div>
 	{/if}
 </Container>
+
+<Modal openModalButtonTitle="open">
+	<div class="fb-share-button" data-href="https://buscamos.casa/publicaciones" data-layout="button">
+		<Link
+			target="_blank"
+			href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(
+				page.url.toString()
+			)}&src=sdkpreparse"
+			class="inline-flex items-center space-x-2 rounded bg-[#4267B2] px-4 py-2 text-white hover:bg-[#36528C]"
+		>
+			<Facebook class="h-5 w-5 fill-current" />
+			<span>Compartir</span>
+		</Link>
+	</div>
+</Modal>
