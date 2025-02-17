@@ -57,7 +57,7 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 export const handle: Handle = sequence(handleAuth, routeGuard);
 
 export const handleError: HandleServerError = async ({ event, error, status, message }) => {
-	const { platform } = event;
+	const { platform, url, getClientAddress } = event;
 	const {
 		env: { LOGS_BUCKET: loggingBucket }
 	} = platform as App.Platform;
@@ -66,6 +66,8 @@ export const handleError: HandleServerError = async ({ event, error, status, mes
 		error,
 		status,
 		message,
+		url,
+		clientAddress: await getClientAddress(),
 		extra: {
 			request: event.request,
 			cf: event.platform?.cf,

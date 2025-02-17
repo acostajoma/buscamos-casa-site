@@ -140,6 +140,8 @@ declare global {
 			error: unknown;
 			status: number;
 			message: string;
+			url?: string | URL;
+			clientAddress?: string;
 			extra: {
 				request: Request<unknown, CfProperties<unknown>>;
 				cf: App.Platform['cf'] | undefined;
