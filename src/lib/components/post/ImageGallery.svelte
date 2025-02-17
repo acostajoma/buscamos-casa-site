@@ -24,7 +24,7 @@
 	<div class="glide relative w-full">
 		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides">
-				{#each imagesIds as id (id)}
+				{#each imagesIds as id, i (id)}
 					<li class="glide__slide w-full">
 						<picture>
 							<source srcset={getPhotoUrl(id, 700)} media="(min-width: 1980px)" />
@@ -35,7 +35,7 @@
 								src={getPhotoUrl(id)}
 								alt="test"
 								class="aspect-4/3 w-full object-contain mx-auto bg-gray-200"
-								loading="lazy"
+								loading={i <= 3 ? 'eager' : 'lazy'}
 							/>
 						</picture>
 					</li>
