@@ -9,10 +9,26 @@
 	let { imagesIds }: Props = $props();
 
 	const glide = new Glide('.glide', {
-		type: 'carousel',
+		type: 'slider',
 		startAt: 0,
-		perView: 3,
-		breakpoints: { 1024: { perView: 1 } }
+		perView: 1,
+		peek: { before: 600, after: 600 },
+		breakpoints: {
+			1025: {
+				perView: 1,
+				peek: {
+					before: 0,
+					after: 0
+				}
+			},
+			1536: {
+				perView: 1,
+				peek: {
+					before: 300,
+					after: 300
+				}
+			}
+		}
 	});
 
 	$effect(() => {
@@ -27,15 +43,15 @@
 				{#each imagesIds as id, i (id)}
 					<li class="glide__slide w-full">
 						<picture>
-							<source srcset={getPhotoUrl(id, 700)} media="(min-width: 1980px)" />
-							<source srcset={getPhotoUrl(id, 505)} media="(min-width: 1025px)" />
+							<source srcset={getPhotoUrl(id, 720)} media="(min-width: 1980px)" />
+							<source srcset={getPhotoUrl(id, 680)} media="(min-width: 1025px)" />
 							<source srcset={getPhotoUrl(id, 950)} media="(min-width: 768px)" />
 							<source srcset={getPhotoUrl(id, 480)} media="(max-width: 600px)" />
 							<img
 								src={getPhotoUrl(id)}
-								alt="test"
+								alt="image #{i}"
 								class="aspect-4/3 w-full object-contain mx-auto bg-gray-200"
-								loading={i <= 3 ? 'eager' : 'lazy'}
+								loading={i < 3 ? 'eager' : 'lazy'}
 							/>
 						</picture>
 					</li>
