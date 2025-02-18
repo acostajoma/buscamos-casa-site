@@ -55,7 +55,7 @@
 			type="radio"
 		></Fieldset>
 	</div>
-	{#if property.saleType.some(({ type }) => type === 'Venta')}
+	{#if property.saleType.some(({ type }) => type === 'Venta' || type === 'Alquiler con opción a compra')}
 		<div class="sm:col-span-3">
 			<Input
 				{form}
