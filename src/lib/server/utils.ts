@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { sha1 } from '@oslojs/crypto/sha1';
-import { count, desc, eq, sql } from 'drizzle-orm';
+import { asc, count, desc, eq, sql } from 'drizzle-orm';
 import {
 	location,
 	photo,
@@ -49,7 +49,7 @@ export const getPosts = async (db: App.Locals['db'], pageNumber: string | null |
 		})
 		.from(photo)
 		.groupBy(photo.propertyId)
-		.orderBy(desc(photo.order))
+		.orderBy(asc(photo.order))
 		.as('photosSub');
 
 	const postSelect = {
