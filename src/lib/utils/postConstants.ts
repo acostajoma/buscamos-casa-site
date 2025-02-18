@@ -1,4 +1,4 @@
-export const propertyTypes: readonly [string, ...string[]] = [
+export const propertyTypes: [string, ...string[]] = [
 	'Casa',
 	'Apartamento',
 	'Lote',
