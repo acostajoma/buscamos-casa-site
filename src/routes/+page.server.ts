@@ -10,6 +10,6 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		return cachedPosts as Awaited<ReturnType<typeof getPosts>>;
 	}
 	const { postCount, posts } = await getPosts(db);
-	await cache.put(url.pathname, JSON.stringify({ postCount, posts }), { expirationTtl: 60 });
+	await cache.put(url.pathname, JSON.stringify({ postCount, posts }), { expirationTtl: 300 });
 	return { postCount, posts };
 };
