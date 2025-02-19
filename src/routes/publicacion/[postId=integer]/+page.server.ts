@@ -3,11 +3,10 @@ import { photo, property } from '$lib/server/db/schema';
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
 import { asc, eq } from 'drizzle-orm';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, RouteParams } from './$types';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
-	const { db } = locals;
-	const post = await db.query.property.findFirst({
+async function getPosts(db: App.Locals['db'], params: RouteParams) {
+	return await db.query.property.findFirst({
 		where: eq(property.id, Number(params.postId)),
 		with: {
 			sellerInformation: true,
@@ -23,6 +22,20 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			saleType: true
 		}
 	});
+}
+
+export const load: PageServerLoad = async ({ params, locals, setHeaders, url }) => {
+	const { db, cache } = locals;
+
+	const cacheKey = url.pathname;
+	const cachedPost = await cache.get(cacheKey, 'json');
+	setHeaders({ 'Cache-Control': 'public, max-age=300' });
+	if (cachedPost) {
+		return cachedPost as Awaited<ReturnType<typeof getPosts>>;
+	}
+
+	const post = await getPosts(db, params);
+	await cache.put(cacheKey, JSON.stringify(post), { expirationTtl: 300 });
 
 	// Quick trick to set listing status to 'Publicado' for testing purposes
 	if (dev) {
