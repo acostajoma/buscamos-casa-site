@@ -21,6 +21,7 @@ const config = {
 				exclude: ['<all>']
 			}
 		}),
+
 		csrf: {
 			checkOrigin: true
 		},
@@ -30,8 +31,8 @@ const config = {
 					'self',
 					'https://maps.googleapis.com',
 					'wasm-unsafe-eval',
-					'ajax.cloudflare.com',
-					'static.cloudflareinsights.com',
+					'https://ajax.cloudflare.com',
+					'https://static.cloudflareinsights.com',
 					'blob:'
 				],
 				'connect-src': [
