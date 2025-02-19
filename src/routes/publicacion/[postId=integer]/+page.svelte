@@ -6,7 +6,8 @@
 		data: PageData;
 	};
 	let { data }: Props = $props();
-	let { post } = $derived(data);
 </script>
 
-<Post {post} />
+{#if data.post}
+	<Post post={data.post} />
+{/if}
