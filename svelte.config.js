@@ -33,7 +33,8 @@ const config = {
 					'wasm-unsafe-eval',
 					'https://ajax.cloudflare.com',
 					'https://static.cloudflareinsights.com',
-					'blob:'
+					'blob:',
+					'https://buscamos.casa'
 				],
 				'connect-src': [
 					'self',
