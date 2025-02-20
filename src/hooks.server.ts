@@ -1,4 +1,4 @@
-import { dev } from '$app/environment';
+import { building, dev } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
 import { error, redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
@@ -57,24 +57,26 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 export const handle: Handle = sequence(handleAuth, routeGuard);
 
 export const handleError: HandleServerError = async ({ event, error, status, message }) => {
-	const { platform, url, getClientAddress } = event;
-	const {
-		env: { LOGS_BUCKET: loggingBucket }
-	} = platform as App.Platform;
-	const errorId = crypto.randomUUID();
-	const loggingData: Logging.Error = {
-		error,
-		status,
-		message,
-		url,
-		clientAddress: await getClientAddress(),
-		extra: {
-			request: event.request,
-			cf: event.platform?.cf,
-			user: event.locals.user,
-			userSession: event.locals.session
-		}
-	};
-	await loggingBucket.put(`${errorId}`, JSON.stringify(loggingData));
-	return { message };
+	if (!building) {
+		const { platform, url, getClientAddress } = event;
+		const {
+			env: { LOGS_BUCKET: loggingBucket }
+		} = platform as App.Platform;
+		const errorId = crypto.randomUUID();
+		const loggingData: Logging.Error = {
+			error,
+			status,
+			message,
+			url,
+			clientAddress: await getClientAddress(),
+			extra: {
+				request: event.request,
+				cf: event.platform?.cf,
+				user: event.locals.user,
+				userSession: event.locals.session
+			}
+		};
+		await loggingBucket.put(`${errorId}`, JSON.stringify(loggingData));
+		return { message };
+	}
 };

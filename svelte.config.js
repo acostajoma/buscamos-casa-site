@@ -7,8 +7,13 @@ const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
 	preprocess: [vitePreprocess(), mdsvex()],
-
 	kit: {
+		prerender: {
+			handleHttpError: 'fail',
+			crawl: true,
+			handleEntryGeneratorMismatch: 'fail',
+			entries: ['*', '/error']
+		},
 		adapter: adapter({
 			platformProxy: {
 				configPath: 'wrangler.toml',
