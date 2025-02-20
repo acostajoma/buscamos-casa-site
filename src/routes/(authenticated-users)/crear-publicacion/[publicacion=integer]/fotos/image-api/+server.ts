@@ -1,4 +1,8 @@
-import { env } from '$env/dynamic/public';
+import {
+	PUBLIC_CLOUDINARY_API_KEY,
+	PUBLIC_CLOUDINARY_CLOUD_NAME,
+	PUBLIC_UPLOAD_PRESET
+} from '$env/static/public';
 import { photo } from '$lib/server/db/schema';
 import { getCloudinarySignature } from '$lib/server/utils';
 import { getPropertyPostOwnerId } from '$lib/server/utils/postsUtils';
@@ -49,19 +53,19 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 	const signature = getCloudinarySignature({
 		context,
 		timestamp,
-		upload_preset: env.PUBLIC_UPLOAD_PRESET
+		upload_preset: PUBLIC_UPLOAD_PRESET
 	});
 
 	const formData = new FormData();
 	formData.set('file', image);
-	formData.set('api_key', env.PUBLIC_CLOUDINARY_API_KEY);
+	formData.set('api_key', PUBLIC_CLOUDINARY_API_KEY);
 	formData.set('timestamp', timestamp);
 	formData.set('context', context);
-	formData.set('upload_preset', env.PUBLIC_UPLOAD_PRESET);
+	formData.set('upload_preset', PUBLIC_UPLOAD_PRESET);
 	formData.set('signature', signature);
 
 	const response = await fetch(
-		'https://api.cloudinary.com/v1_1/' + env.PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload',
+		'https://api.cloudinary.com/v1_1/' + PUBLIC_CLOUDINARY_CLOUD_NAME + '/image/upload',
 		{ method: 'POST', body: formData }
 	);
 	if (!response.ok) {
@@ -89,7 +93,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 		console.error('Error al subir la imagen', uploadedImage);
 		const deleteToken = (data as Cloudinary.Asset).delete_token;
 		const cloudinaryDelete = await fetch(
-			`https://api.cloudinary.com/v1_1/${env.PUBLIC_CLOUDINARY_CLOUD_NAME}/delete_by_token`,
+			`https://api.cloudinary.com/v1_1/${PUBLIC_CLOUDINARY_CLOUD_NAME}/delete_by_token`,
 			{
 				method: 'POST',
 				body: new URLSearchParams({ token: deleteToken })
@@ -128,12 +132,12 @@ export const DELETE: RequestHandler = async ({ request, locals, params }) => {
 	const timestamp = Math.floor(Date.now() / 1000).toString();
 	const signature = getCloudinarySignature({ timestamp, public_id: publicId });
 	const formData = new FormData();
-	formData.set('api_key', env.PUBLIC_CLOUDINARY_API_KEY);
+	formData.set('api_key', PUBLIC_CLOUDINARY_API_KEY);
 	formData.set('timestamp', timestamp);
 	formData.set('signature', signature);
 	formData.set('public_id', publicId);
 	const cloudinaryDeletePromise = fetch(
-		`https://api.cloudinary.com/v1_1/${env.PUBLIC_CLOUDINARY_CLOUD_NAME}/image/destroy`,
+		`https://api.cloudinary.com/v1_1/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/destroy`,
 		{
 			method: 'POST',
 			body: formData

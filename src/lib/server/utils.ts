@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import { CLOUDINARY_API_SECRET } from '$env/static/private';
 import { sha1 } from '@oslojs/crypto/sha1';
 import { asc, count, desc, eq, sql } from 'drizzle-orm';
 import {
@@ -16,7 +16,7 @@ export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) =>
 		.map((key) => `${key}=${paramsToSign[key as keyof Cloudinary.ParamsToSign]}`)
 		.join('&');
 
-	const stringToSign = `${paramString}${env.CLOUDINARY_API_SECRET}`;
+	const stringToSign = `${paramString}${CLOUDINARY_API_SECRET}`;
 	const hashedString = sha1(new TextEncoder().encode(stringToSign));
 	const signature = Array.from(new Uint8Array(hashedString))
 		.map((b) => b.toString(16).padStart(2, '0'))

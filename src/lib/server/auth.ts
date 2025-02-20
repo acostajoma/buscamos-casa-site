@@ -1,4 +1,10 @@
-import { env } from '$env/dynamic/private';
+import {
+	ENVIRONMENT,
+	FACEBOOK_CLIENT_ID,
+	FACEBOOK_CLIENT_SECRET,
+	GOOGLE_CLIENT_ID,
+	GOOGLE_CLIENT_SECRET
+} from '$env/static/private';
 import * as table from '$lib/server/db/schema';
 import { sha256 } from '@oslojs/crypto/sha2';
 import {
@@ -11,20 +17,16 @@ import { ArcticFetchError, Facebook, Google, OAuth2RequestError, OAuth2Tokens } 
 import { eq } from 'drizzle-orm';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
-const DEV_GOOGLE_CALLBACK = `${env.ENVIRONMENT}/inicia-sesion/google/callback`;
-const DEV_FACEBOOK_CALLBACK = `${env.ENVIRONMENT}/inicia-sesion/facebook/callback`;
+const DEV_GOOGLE_CALLBACK = `${ENVIRONMENT}/inicia-sesion/google/callback`;
+const DEV_FACEBOOK_CALLBACK = `${ENVIRONMENT}/inicia-sesion/facebook/callback`;
 
 export const sessionCookieName = 'auth-session';
 
-export const google = new Google(
-	env.GOOGLE_CLIENT_ID,
-	env.GOOGLE_CLIENT_SECRET,
-	DEV_GOOGLE_CALLBACK
-);
+export const google = new Google(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, DEV_GOOGLE_CALLBACK);
 
 export const facebook = new Facebook(
-	env.FACEBOOK_CLIENT_ID,
-	env.FACEBOOK_CLIENT_SECRET,
+	FACEBOOK_CLIENT_ID,
+	FACEBOOK_CLIENT_SECRET,
 	DEV_FACEBOOK_CALLBACK
 );
 

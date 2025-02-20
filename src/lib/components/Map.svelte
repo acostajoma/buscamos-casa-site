@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
+	import { PUBLIC_GOOGLEMAPS_API_KEY } from '$env/static/public';
 	import { locationMap } from '$lib/utils/location/costaRicaData';
 	import type { Location } from '$lib/validation/post';
 	import * as mapsApi from '@googlemaps/js-api-loader';
@@ -118,7 +118,7 @@
 	$effect.pre(() => {
 		untrack(() => {
 			const loader = new Loader({
-				apiKey: env.PUBLIC_GOOGLEMAPS_API_KEY,
+				apiKey: PUBLIC_GOOGLEMAPS_API_KEY,
 				version: 'weekly'
 			});
 
