@@ -12,6 +12,7 @@
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import Year from '$lib/icons/Year.svelte';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
+	import { createWhatsAppLink } from '$lib/utils/phone';
 	import { parsePhoneNumberWithError } from 'svelte-tel-input';
 	import type { CountryCode } from 'svelte-tel-input/types';
 	import { fade } from 'svelte/transition';
@@ -133,10 +134,12 @@
 			Nombre del anunciante: {sellerInformation.name}
 		</p>
 		<a
-			href="https://wa.me/{formattedPhoneNumber}?text={encodeURIComponent(
-				`Estoy interesado en la propiedad: ${url}`
-			)}"
-			class="mt-4 flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+			target="_blank"
+			href={createWhatsAppLink(
+				encodeURIComponent(`Estoy interesado en la propiedad: ${url}`),
+				formattedPhoneNumber
+			)}
+			class="mt-4 flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-500 px-8 py-3 text-base font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
 			><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
 		>
 	{/if}
@@ -158,9 +161,9 @@
 		<Link
 			target="_blank"
 			class="inline-flex items-center space-x-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 max-w-56"
-			href="https://wa.me/?text={encodeURIComponent(
-				`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`
-			)}"
+			href={createWhatsAppLink(
+				encodeURIComponent(`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`)
+			)}
 		>
 			<WhatsApp class="h-5 w-5 fill-current" />
 			<span>WhatsApp</span>
