@@ -4,3 +4,7 @@ export const allowedImageTypes = ['jpeg', 'jpg', 'png', 'avif', 'tiff', 'webp', 
 export const acceptedImageTypes = allowedImageTypes.map((type) => `image/${type}`).join(',');
 
 export const cloudinaryUrl = 'https://res.cloudinary.com/dldnvubae';
+
+export const companyPhoneNumber = '50664674972';
+
+export const companyMail = 'contacto@buscamos.casa';

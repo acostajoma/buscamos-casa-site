@@ -1,11 +1,8 @@
-<script>
+<script lang="ts">
+	import TextPage from '$lib/components/TextPage.svelte';
 </script>
 
-<div class="max-w-xl mx-auto py-20">
-	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl">
-		Términos y Condiciones de Uso
-	</h1>
-
+<TextPage title="Términos y Condiciones de uso">
 	<ol class="list-decimal list-inside mt-8 max-w-xl space-y-8 text-gray-600">
 		<li>
 			<span class="font-bold">Aceptación de los Términos:</span>
@@ -106,4 +103,4 @@
 			comunicarte con nosotros a través de los canales de atención disponibles en la plataforma.
 		</li>
 	</ol>
-</div>
+</TextPage>
