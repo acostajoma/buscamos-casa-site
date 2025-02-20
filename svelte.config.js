@@ -9,10 +9,10 @@ const config = {
 	preprocess: [vitePreprocess(), mdsvex()],
 	kit: {
 		prerender: {
-			handleHttpError: 'fail',
+			handleHttpError: 'warn',
 			crawl: true,
 			handleEntryGeneratorMismatch: 'fail',
-			entries: ['*', '/error']
+			entries: ['*']
 		},
 		adapter: adapter({
 			platformProxy: {
