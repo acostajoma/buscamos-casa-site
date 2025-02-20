@@ -1,3 +1,4 @@
 export function createWhatsAppLink(message: string, phoneNumber: string = '') {
-	return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+	const encodedMessage = encodeURIComponent(message);
+	return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 }
