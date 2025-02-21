@@ -32,9 +32,7 @@
 					tu feedback, <a
 						target="_blank"
 						href={createWhatsAppLink(
-							encodeURIComponent(
-								'Estoy interesado en ser de los primeros usuarios de Buscamos.Casa'
-							),
+							'Estoy interesado en ser de los primeros usuarios de Buscamos.Casa',
 							companyPhoneNumber
 						)}
 						class="font-semibold text-amber-600 hover:text-amber-700">escríbenos por WhatsApp</a

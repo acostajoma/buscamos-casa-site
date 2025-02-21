@@ -24,7 +24,7 @@
 		¿Quieres ser de los primeros en enterarte? <a
 			target="_blank"
 			href={createWhatsAppLink(
-				encodeURIComponent('Estoy interesado en ser de los primeros usuarios de Buscamos.Casa'),
+				'Estoy interesado en ser de los primeros usuarios de Buscamos.Casa',
 				companyPhoneNumber
 			)}
 			class="font-semibold text-amber-600">Escríbenos por WhatsApp →</a

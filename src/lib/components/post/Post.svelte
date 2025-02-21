@@ -60,7 +60,7 @@
 	});
 
 	let sharingMessage: undefined | string = $state.raw(undefined);
-	let { url } = $derived(page);
+	let url = $derived(page.url.toString());
 
 	function copyUrl() {
 		navigator.clipboard.writeText(pageUrl);
@@ -135,10 +135,7 @@
 		</p>
 		<a
 			target="_blank"
-			href={createWhatsAppLink(
-				encodeURIComponent(`Estoy interesado en la propiedad: ${url}`),
-				formattedPhoneNumber
-			)}
+			href={createWhatsAppLink(`Estoy interesado en la propiedad: ${url}`, formattedPhoneNumber)}
 			class="mt-4 flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-500 px-8 py-3 text-base font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
 			><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
 		>
