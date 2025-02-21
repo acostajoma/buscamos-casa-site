@@ -9,23 +9,44 @@
 	let { imagesIds }: Props = $props();
 
 	const glide = new Glide('.glide', {
-		type: 'slider',
+		type: 'carousel',
 		startAt: 0,
 		perView: 1,
 		peek: { before: 600, after: 600 },
 		breakpoints: {
-			1025: {
-				perView: 1,
+			640: {
+				// Applies up to 640px (including 640)
 				peek: {
 					before: 0,
 					after: 0
 				}
 			},
-			1536: {
-				perView: 1,
+			1024: {
+				// Applies up to 1024px (including 1024)
 				peek: {
-					before: 300,
-					after: 300
+					before: 75,
+					after: 75
+				}
+			},
+			1280: {
+				// Applies from 1025px up to 1280px (including 1280)
+				peek: {
+					before: 250,
+					after: 250
+				}
+			},
+			1536: {
+				// Applies from 1280px to 1536px (including 1536)
+				peek: {
+					before: 325,
+					after: 325
+				}
+			},
+			1920: {
+				// Applies from 1536px to 1920px (including 1920)
+				peek: {
+					before: 500,
+					after: 500
 				}
 			}
 		}
@@ -36,17 +57,16 @@
 	});
 </script>
 
-<div class="max-w-full">
+<div class="max-w-full 2xl">
 	<div class="glide relative w-full">
 		<div class="glide__track" data-glide-el="track">
 			<ul class="glide__slides">
 				{#each imagesIds as id, i (id)}
 					<li class="glide__slide w-full">
 						<picture>
-							<source srcset={getPhotoUrl(id, 720)} media="(min-width: 1980px)" />
-							<source srcset={getPhotoUrl(id, 680)} media="(min-width: 1025px)" />
-							<source srcset={getPhotoUrl(id, 950)} media="(min-width: 768px)" />
-							<source srcset={getPhotoUrl(id, 480)} media="(max-width: 600px)" />
+							<source srcset={getPhotoUrl(id, 920)} media="(min-width: 1536px)" />
+							<source srcset={getPhotoUrl(id, 780)} media="(min-width: 1280px)" />
+							<source srcset={getPhotoUrl(id, 500)} media="(max-width: 640px)" />
 							<img
 								src={getPhotoUrl(id)}
 								alt="image #{i}"
