@@ -24,8 +24,6 @@
 		"apply:preview": "wrangler d1 migrations apply DB --env preview --remote",
 		"apply:production": "wrangler d1 migrations apply DB --env production --remote",
 		"db:apply": "pnpm run db:generate && pnpm run apply",
-		"pages:secrets:preview": "wrangler pages secret bulk secrets-preview.json --env preview",
-		"pages:secrets:prod": "wrangler pages secret bulk secrets-prod.json --env production",
 		"deploy:preview": "pnpm build:preview && wrangler pages deploy --branch preview",
 		"deploy:prod": "pnpm build:production && wrangler pages deploy"
 	},
