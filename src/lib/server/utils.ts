@@ -1,6 +1,6 @@
 import { CLOUDINARY_API_SECRET } from '$env/static/private';
 import { sha1 } from '@oslojs/crypto/sha1';
-import { and, asc, count, desc, eq, ne, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ne, SQL, sql } from 'drizzle-orm';
 import {
 	location,
 	photo,
@@ -25,25 +25,39 @@ export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) =>
 	return signature;
 };
 
-export const getPosts = async (
-	db: App.Locals['db'],
-	pageNumber: string | null | number = 1,
-	role?: 'admin' | 'user'
-) => {
+type GetPostsOptions = {
+	db: App.Locals['db'];
+	pageNumber?: string | number | null;
+} & (
+	| {
+			role?: 'owner';
+			userId: string;
+	  }
+	| {
+			role?: 'admin' | 'user' | undefined;
+			userId?: undefined;
+	  }
+);
+
+export const getPosts = async ({ db, pageNumber = 1, role = 'user', userId }: GetPostsOptions) => {
 	const limit = 20;
 	const page = typeof pageNumber === 'string' ? parseInt(pageNumber) : pageNumber || 1;
 	const offset = page > 1 ? (page - 1) * limit : 0;
 
-	const filters =
-		role !== 'admin'
-			? eq(property.listingStatus, 'Publicado')
-			: and(
-					ne(property.listingStatus, 'Publicado'),
-					ne(property.listingStatus, 'Borrador'),
-					ne(property.listingStatus, 'Vendido'),
-					ne(property.listingStatus, 'Alquilado'),
-					ne(property.listingStatus, 'Denegado')
-				);
+	let filters: SQL<unknown> | undefined;
+	if (role === 'admin') {
+		filters = and(
+			ne(property.listingStatus, 'Publicado'),
+			ne(property.listingStatus, 'Borrador'),
+			ne(property.listingStatus, 'Vendido'),
+			ne(property.listingStatus, 'Alquilado'),
+			ne(property.listingStatus, 'Denegado')
+		);
+	} else if (role === 'user') {
+		filters = eq(property.listingStatus, 'Publicado');
+	} else if (role === 'owner') {
+		filters = eq(property.postOwnerId, userId as string);
+	}
 
 	// Combine sale types and photos into simpler subqueries
 	const saleTypeSub = db

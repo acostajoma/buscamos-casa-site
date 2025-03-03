@@ -8,6 +8,6 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
 	const { db } = locals;
 
-	const posts = await getPosts(db, 1, 'admin');
+	const posts = await getPosts({ db, pageNumber: 1, role: 'admin' });
 	return { ...posts };
 };

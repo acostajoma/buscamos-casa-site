@@ -64,6 +64,9 @@
 				<div class="hidden lg:block">
 					<FlyoutMenu>
 						<a href="/perfil" class="block p-2 hover:text-yellow-700">Información Personal</a>
+						<a href="/mis-publicaciones" class="block p-2 hover:text-yellow-700"
+							>Mis Publicaciones</a
+						>
 						{@render logoutButton('block p-2 hover:text-yellow-700 cursor-pointer')}
 					</FlyoutMenu>
 				</div>
@@ -113,7 +116,11 @@
 						class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
 						>Información Personal</a
 					>
-
+					<a
+						href="/mis-publicaciones"
+						class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+						>Mis Publicaciones</a
+					>
 					{@render logoutButton(
 						'-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer w-full text-left'
 					)}
