@@ -1,5 +1,9 @@
 import { property, sellerInformation, user as userTable } from '$lib/server/db/schema';
-import { getPropertyPostOwnerId, validatePropertyOwnerAccess } from '$lib/server/utils/postsUtils';
+import {
+	getPropertyPostOwnerId,
+	updateListingStatus,
+	validatePropertyOwnerAccess
+} from '$lib/server/utils/postsUtils';
 import { contactDataSchema } from '$lib/validation/post';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -23,6 +27,12 @@ export const load = (async ({ params, locals: { user, db } }) => {
 			columns: {
 				id: true,
 				postOwnerId: true
+			}
+		}),
+		db.query.user.findFirst({
+			where: eq(userTable.id, user.id),
+			with: {
+				userData: true
 			}
 		})
 	]);
@@ -58,10 +68,10 @@ export const load = (async ({ params, locals: { user, db } }) => {
 export const actions = {
 	default: async ({ request, locals, params }) => {
 		const { user, db } = locals;
-		const postOwnerData = await getPropertyPostOwnerId(locals, params);
+		const postOwnerData = await getPropertyPostOwnerId(locals, params, true);
 		const propertyId = Number(params.publicacion);
 		validatePropertyOwnerAccess(user, {
-			postOwnerId: postOwnerData,
+			postOwnerId: postOwnerData.ownerId,
 			id: propertyId
 		});
 		const form = await superValidate(request, zod(contactDataSchema));
@@ -93,6 +103,13 @@ export const actions = {
 		if (!insertQueryResult.success || insertQueryResult?.error) {
 			return fail(500, { error: 'Ha ocurrido un error' });
 		}
+
+		await updateListingStatus(propertyId, locals, 'En Revision', {
+			postOwnerId: postOwnerData.ownerId,
+			id: propertyId,
+			listingStatus: postOwnerData.listingStatus
+		});
+
 		redirect(302, `/crear-publicacion/${propertyId}/publicacion-en-revision`);
 	}
 } satisfies Actions;

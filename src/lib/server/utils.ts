@@ -1,6 +1,6 @@
 import { CLOUDINARY_API_SECRET } from '$env/static/private';
 import { sha1 } from '@oslojs/crypto/sha1';
-import { asc, count, desc, eq, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ne, sql } from 'drizzle-orm';
 import {
 	location,
 	photo,
@@ -25,12 +25,25 @@ export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) =>
 	return signature;
 };
 
-export const getPosts = async (db: App.Locals['db'], pageNumber: string | null | number = 1) => {
+export const getPosts = async (
+	db: App.Locals['db'],
+	pageNumber: string | null | number = 1,
+	role?: 'admin' | 'user'
+) => {
 	const limit = 20;
 	const page = typeof pageNumber === 'string' ? parseInt(pageNumber) : pageNumber || 1;
 	const offset = page > 1 ? (page - 1) * limit : 0;
 
-	const filters = eq(property.listingStatus, 'Publicado');
+	const filters =
+		role !== 'admin'
+			? eq(property.listingStatus, 'Publicado')
+			: and(
+					ne(property.listingStatus, 'Publicado'),
+					ne(property.listingStatus, 'Borrador'),
+					ne(property.listingStatus, 'Vendido'),
+					ne(property.listingStatus, 'Alquilado'),
+					ne(property.listingStatus, 'Denegado')
+				);
 
 	// Combine sale types and photos into simpler subqueries
 	const saleTypeSub = db
@@ -107,3 +120,5 @@ export const getPosts = async (db: App.Locals['db'], pageNumber: string | null |
 		}))
 	};
 };
+
+export type GetPosts = Awaited<ReturnType<typeof getPosts>>;

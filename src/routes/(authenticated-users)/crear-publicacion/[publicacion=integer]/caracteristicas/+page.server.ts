@@ -145,7 +145,7 @@ export const actions: Actions = {
 			return fail(500, { error: 'Error al insertar las características de la propiedad' });
 		}
 
-		await updateListingStatus(propertyId, locals, 'En Revision', propertyData as PropertyData);
+		await updateListingStatus(propertyId, locals, 'Borrador', propertyData as PropertyData);
 		redirect(302, `/crear-publicacion/${propertyId}/contacto`);
 	}
 };

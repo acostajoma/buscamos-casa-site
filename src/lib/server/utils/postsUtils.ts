@@ -1,10 +1,10 @@
 import type { Feature, Location } from '$lib/server/db/schema';
-import { property, saleType, type Property } from '$lib/server/db/schema';
+import { photo, property, saleType, userRoles, type Property } from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
 import { type ListingStates } from '$lib/utils/postConstants';
 import { createFeaturesSchema, locationSchema, propertySchema } from '$lib/validation/post';
 import { error, fail, redirect, type Action } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -65,18 +65,25 @@ export const getProperty = async (locals: App.Locals, params: { publicacion: str
 
 type GetPropertyReturnedType = Awaited<ReturnType<typeof getProperty>>;
 
-export const getPropertyPostOwnerId = async (
+type GetPropertyPostOwnerIdReturnType<T extends true | false> = T extends false
+	? string
+	: { ownerId: string; listingStatus: ListingStates };
+
+export async function getPropertyPostOwnerId<T extends true | false>(
 	locals: App.Locals,
-	params: { publicacion: string }
-) => {
+	params: { publicacion: string },
+	requireListingStatus: T = false as T
+): Promise<GetPropertyPostOwnerIdReturnType<T>> {
 	let ownerId: string | null | undefined = await locals.cache.get(
 		`property:${params.publicacion}-ownerId`
 	);
-	if (ownerId) return ownerId;
+	if (ownerId && requireListingStatus === false) {
+		return ownerId as GetPropertyPostOwnerIdReturnType<T>;
+	}
 
 	const postData = await locals.db.query.property.findFirst({
 		where: eq(property.id, Number(params.publicacion)),
-		columns: { postOwnerId: true }
+		columns: { postOwnerId: true, listingStatus: true }
 	});
 
 	ownerId = postData?.postOwnerId;
@@ -87,8 +94,15 @@ export const getPropertyPostOwnerId = async (
 	await locals.cache.put(`property:${params.publicacion}-ownerId`, ownerId, {
 		expirationTtl: 3600
 	});
-	return ownerId;
-};
+
+	if (requireListingStatus) {
+		return {
+			ownerId,
+			listingStatus: postData?.listingStatus
+		} as GetPropertyPostOwnerIdReturnType<T>;
+	}
+	return ownerId as GetPropertyPostOwnerIdReturnType<T>;
+}
 
 export const validatePropertyForm = async (
 	locals: App.Locals,
@@ -301,4 +315,40 @@ export async function validateLocation(
 	}
 
 	return { form: await superValidate(zod(locationSchema)) };
+}
+
+export async function getOnePost(db: App.Locals['db'], postId: number) {
+	return await db.query.property.findFirst({
+		where: eq(property.id, postId),
+		with: {
+			sellerInformation: true,
+			location: true,
+			photos: { orderBy: asc(photo.order) },
+			propertiesWithConstruction: true,
+			propertyFeatures: {
+				with: {
+					feature: true
+				}
+			},
+			propertyFinancialDetails: true,
+			saleType: true
+		}
+	});
+}
+
+export async function isAdmin(locals: App.Locals) {
+	const { user, db } = locals;
+	if (!user) {
+		return false;
+	}
+
+	const userRole = await db.query.userRoles.findFirst({
+		where: eq(userRoles.userId, user.id)
+	});
+
+	if (!userRole || userRole.role !== 'admin') {
+		return false;
+	}
+
+	return true;
 }

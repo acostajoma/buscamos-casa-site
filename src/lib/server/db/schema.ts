@@ -14,8 +14,30 @@ export const userRelations = relations(user, ({ one, many }) => ({
 		fields: [user.id],
 		references: [userData.id]
 	}),
+	userRoles: one(userRoles, {
+		fields: [user.id],
+		references: [userRoles.userId]
+	}),
 	property: many(property)
 }));
+
+export const userRoles = sqliteTable('user_roles', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	role: text('role', { enum: ['admin', 'user'] })
+		.notNull()
+		.default('user')
+});
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+	user: one(user, {
+		fields: [userRoles.userId],
+		references: [user.id]
+	})
+}));
+export type UserRoles = typeof userRoles.$inferSelect;
 
 export const session = sqliteTable(
 	'session',

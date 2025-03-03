@@ -22,6 +22,13 @@
       "when": 1738689614659,
       "tag": "0002_mean_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1740099852476,
+      "tag": "0003_bent_brood",
+      "breakpoints": true
     }
   ]
 }

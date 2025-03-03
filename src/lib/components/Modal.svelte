@@ -6,14 +6,21 @@
 
 	type Props = {
 		children: Snippet;
-		openModalButtonTitle: string;
+		openModalButtonTitle?: string;
+		selfOpen?: boolean;
 	};
-	let { children, openModalButtonTitle }: Props = $props();
+	let { children, openModalButtonTitle, selfOpen }: Props = $props();
 
-	let show = $state.raw(false);
+	let show = $state.raw(selfOpen ?? false);
+
+	$effect(() => {
+		show = selfOpen ?? false;
+	});
 </script>
 
-<button type="button" onclick={() => (show = true)}>{openModalButtonTitle}</button>
+{#if openModalButtonTitle}
+	<button type="button" onclick={() => (show = true)}>{openModalButtonTitle}</button>
+{/if}
 
 {#if show}
 	<div

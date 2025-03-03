@@ -4,15 +4,16 @@
 	import Bedroom from '$lib/icons/Bedroom.svelte';
 	import Construction from '$lib/icons/Construction.svelte';
 	import Garage from '$lib/icons/Garage.svelte';
+	import type { GetPosts } from '$lib/server/utils';
 	import { formatCurrency } from '$lib/utils/formatters';
 	import { getPhotoUrl } from '$lib/utils/photos';
 	import { type Component } from 'svelte';
-	import type { PageData } from '../../../.svelte-kit/types/src/routes/publicaciones/$types';
 
 	type Props = {
-		posts: PageData['posts'];
+		posts: GetPosts['posts'];
+		admin?: boolean;
 	};
-	let { posts }: Props = $props();
+	let { posts, admin = false }: Props = $props();
 </script>
 
 {#snippet propertyInfoItem(Icon: Component, amount: number | string | null, description: string)}
@@ -31,7 +32,7 @@
 	{#each posts as post (post.id)}
 		<li>
 			<a
-				href="/publicacion/{post.id}"
+				href="/{admin ? 'admin' : 'publicacion'}/{post.id}"
 				class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow-sm"
 			>
 				<div class="flex flex-1 flex-col py-8 px-2">
@@ -88,6 +89,10 @@
 					</div>
 				</div>
 			</a>
+		</li>
+	{:else}
+		<li>
+			<p class="text-center text-gray-500 text-2xl">No hay publicaciones...</p>
 		</li>
 	{/each}
 </ul>

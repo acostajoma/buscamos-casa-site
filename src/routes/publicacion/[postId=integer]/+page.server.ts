@@ -1,51 +1,21 @@
-import { dev } from '$app/environment';
-import { photo, property } from '$lib/server/db/schema';
+import { getOnePost } from '$lib/server/utils/postsUtils';
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
-import { asc, eq } from 'drizzle-orm';
-import type { PageServerLoad, RouteParams } from './$types';
-
-async function getPosts(db: App.Locals['db'], params: RouteParams) {
-	return await db.query.property.findFirst({
-		where: eq(property.id, Number(params.postId)),
-		with: {
-			sellerInformation: true,
-			location: true,
-			photos: { orderBy: asc(photo.order) },
-			propertiesWithConstruction: true,
-			propertyFeatures: {
-				with: {
-					feature: true
-				}
-			},
-			propertyFinancialDetails: true,
-			saleType: true
-		}
-	});
-}
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals, setHeaders, url }) => {
 	const { db, cache } = locals;
+	const { postId } = params;
 
 	const cacheKey = url.pathname;
 	const cachedPost = await cache.get(cacheKey, 'json');
-	let post: Awaited<ReturnType<typeof getPosts>>;
+	let post: Awaited<ReturnType<typeof getOnePost>>;
 
 	if (cachedPost) {
-		post = cachedPost as Awaited<ReturnType<typeof getPosts>>;
+		post = cachedPost as Awaited<ReturnType<typeof getOnePost>>;
 	} else {
-		post = await getPosts(db, params);
+		post = await getOnePost(db, parseInt(postId));
 		await cache.put(cacheKey, JSON.stringify(post), { expirationTtl: 300 });
-	}
-
-	// Quick trick to set listing status to 'Publicado' for testing purposes
-	if (dev) {
-		await db
-			.update(property)
-			.set({
-				listingStatus: 'Publicado'
-			})
-			.where(eq(property.id, Number(params.postId)));
 	}
 
 	const deniedAccessStates: ListingStates[] = [

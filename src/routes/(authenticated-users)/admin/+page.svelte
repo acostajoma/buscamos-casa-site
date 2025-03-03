@@ -7,17 +7,15 @@
 		data: PageData;
 	};
 	let { data }: Props = $props();
-
-	let { posts } = $derived(data);
 </script>
 
 <svelte:head>
-	<title>Publicaciones | Buscamos.casa</title>
+	<title>Admin: Publicaciones | Buscamos.casa</title>
 </svelte:head>
 
 <Container>
 	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
-		Publicaciones
+		Admin Panel : Publicaciones
 	</h1>
-	<GridList {posts} />
+	<GridList posts={data.posts} admin />
 </Container>
