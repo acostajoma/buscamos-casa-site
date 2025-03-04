@@ -7,4 +7,4 @@ export const cloudinaryUrl = 'https://res.cloudinary.com/dldnvubae';
 
 export const companyPhoneNumber = '50664674972';
 
-export const companyMail = 'contacto@buscamos.casa';
+export const companyMail = 'info@buscamos.casa';

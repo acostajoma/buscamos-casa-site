@@ -2,7 +2,8 @@
 	const year = new Date().getFullYear();
 	const links = [
 		{ name: 'Publicaciones', href: '/publicaciones' },
-		{ name: 'Términos y condiciones', href: '/terminos-y-condiciones' }
+		{ name: 'Términos y condiciones', href: '/terminos-y-condiciones' },
+		{ name: 'Política de privacidad', href: '/privacidad' }
 	];
 </script>
 

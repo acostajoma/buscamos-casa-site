@@ -46,9 +46,9 @@
 					</li>
 					<ol class="list-disc list-inside space-y-4 mt-4">
 						<li>
-							No compartiremos datos con terceros. Toda la información utilizada con fines de mejora
-							será previamente anonimizada para garantizar que no se pueda vincular con personas
-							específicas.
+							Podremos compartir datos con terceros. Sin embargo, toda la información utilizada con
+							estos fines será previamente anonimizada para garantizar que no se pueda vincular con
+							personas específicas y así la privacidad de las personas.
 						</li>
 					</ol>
 				</ol>
