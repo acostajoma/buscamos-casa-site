@@ -1,4 +1,6 @@
-export const imageCdnUrl = 'https://imagedelivery.net/FclsSzNEDEoQxelQsCA3Iw';
+import { PUBLIC_CLOUDINARY_CLOUD_NAME } from '$env/static/public';
+
+export const imageCdnUrl = `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}`;
 
 export const allowedImageTypes = ['jpeg', 'jpg', 'png', 'avif', 'tiff', 'webp', 'heic'];
 export const acceptedImageTypes = allowedImageTypes.map((type) => `image/${type}`).join(',');

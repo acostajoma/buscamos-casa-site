@@ -1,14 +1,13 @@
 <script lang="ts">
 	import Facebook from '$lib/icons/Facebook.svelte';
 	import Google from '$lib/icons/Google.svelte';
-	import { imageCdnUrl } from '$lib/utils/constants';
 </script>
 
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">
 		<img
 			class="mx-auto h-10 w-auto"
-			src="{imageCdnUrl}/5c6fafb3-06f9-4c87-6368-110713d3ac00/icon"
+			src="https://res.cloudinary.com/dldnvubae/image/upload/c_thumb,f_auto,q_auto,w_80/v1738775687/r31f2flzuno2iixvpbtb"
 			alt="Buscamos Casa"
 		/>
 		<h2 class="mt-6 text-center text-2xl/9 font-bold tracking-tight text-gray-900">

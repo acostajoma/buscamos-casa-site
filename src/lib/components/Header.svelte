@@ -3,7 +3,6 @@
 	import { afterNavigate } from '$app/navigation';
 	import Exit from '$lib/icons/Exit.svelte';
 	import HamburgerMenu from '$lib/icons/HamburgerMenu.svelte';
-	import { imageCdnUrl } from '$lib/utils/constants';
 	import FlyoutMenu from './FlyoutMenu.svelte';
 	import Link from './Link.svelte';
 
@@ -33,7 +32,7 @@
 		<span class="sr-only">Buscamos Casa</span>
 		<img
 			class="h-8 w-auto"
-			src="{imageCdnUrl}/5c6fafb3-06f9-4c87-6368-110713d3ac00/icon"
+			src="https://res.cloudinary.com/dldnvubae/image/upload/c_thumb,f_auto,q_auto,w_80/v1738775687/r31f2flzuno2iixvpbtb"
 			alt="Buscamos Casa"
 		/>
 	</a>
