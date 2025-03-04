@@ -1,7 +1,10 @@
-import { building, dev } from '$app/environment';
+import { dev } from '$app/environment';
+import { ENVIRONMENT } from '$env/static/private';
+import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import * as auth from '$lib/server/auth.js';
 import { getDB } from '$lib/server/db';
-import { error, redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
+import { handleErrorWithSentry, initCloudflareSentryHandle, sentryHandle } from '@sentry/sveltekit';
+import { error, redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
@@ -54,29 +57,39 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleAuth, routeGuard);
+export const handle: Handle = sequence(
+	initCloudflareSentryHandle({
+		dsn: PUBLIC_SENTRY_DSN,
+		tracesSampleRate: dev ? 1.0 : 0.5,
+		environment: ENVIRONMENT,
+		beforeSend(event, hint) {
+			// Check if it's a 404 error.  We look at the exception and the request.
+			const exception = event.exception?.values?.[0];
 
-export const handleError: HandleServerError = async ({ event, error, status, message }) => {
-	if (!building) {
-		const { platform, url, getClientAddress } = event;
-		const {
-			env: { LOGS_BUCKET: loggingBucket }
-		} = platform as App.Platform;
-		const errorId = crypto.randomUUID();
-		const loggingData: Logging.Error = {
-			error,
-			status,
-			message,
-			url,
-			clientAddress: await getClientAddress(),
-			extra: {
-				request: event.request,
-				cf: event.platform?.cf,
-				user: event.locals.user,
-				userSession: event.locals.session
+			if (
+				exception &&
+				exception.type === 'NotFoundError' && // Check for SvelteKit's NotFoundError
+				event.request?.url
+			) {
+				// Check the response status code in the original request.  We do BOTH
+				// checks because the way 404s are handled can differ slightly.
+				if (hint?.originalException instanceof Response && hint.originalException.status === 404) {
+					return null; // Drop the event
+				}
+
+				// Check if the exception message indicates a 404.
+				//  We do this because sometimes originalException is not a Response.
+				if (exception.value?.includes('404')) {
+					return null;
+				}
 			}
-		};
-		await loggingBucket.put(`${errorId}`, JSON.stringify(loggingData));
-		return { message };
-	}
-};
+
+			return event; // Send the event
+		}
+	}),
+	sentryHandle(),
+	handleAuth,
+	routeGuard
+);
+
+export const handleError = handleErrorWithSentry(console.error);
