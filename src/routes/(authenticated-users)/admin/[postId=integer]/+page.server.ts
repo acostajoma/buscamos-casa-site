@@ -30,7 +30,7 @@ const postAction = async ({ locals, params }: RequestEvent, listingStatus: Listi
 	 * Validate if the user is an admin
 	 * If the user is not an admin, the function will throw an error page
 	 */
-	if (!isAdmin(locals)) {
+	if (!(await isAdmin(locals))) {
 		error(404, 'La Página no existe');
 	}
 
