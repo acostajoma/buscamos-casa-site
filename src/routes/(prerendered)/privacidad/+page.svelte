@@ -3,7 +3,7 @@
 	import { companyMail } from '$lib/utils/constants';
 </script>
 
-<TextPage title="Términos y Condiciones de uso">
+<TextPage title="Política de Privacidad">
 	<p class="mt-8 text-gray-600">
 		En Buscamos.casa, valoramos la privacidad de nuestros usuarios y nos comprometemos a proteger
 		sus datos personales. Esta Política de Privacidad describe cómo recopilamos, utilizamos,
