@@ -60,7 +60,7 @@ const routeGuard: Handle = async ({ event, resolve }) => {
 export const handle: Handle = sequence(
 	initCloudflareSentryHandle({
 		dsn: PUBLIC_SENTRY_DSN,
-		tracesSampleRate: dev ? 1.0 : 0.5,
+		tracesSampleRate: dev ? 1.0 : 0.2,
 		environment: ENVIRONMENT,
 		beforeSend(event, hint) {
 			// Check if it's a 404 error.  We look at the exception and the request.
