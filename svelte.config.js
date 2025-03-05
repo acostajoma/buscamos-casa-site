@@ -65,7 +65,8 @@ const config = {
 					'https://o4508807636123648.ingest.us.sentry.io/api/4508807637696512/security/?sentry_key=91e99e7f2e932483e521c8aa159affb3'
 				],
 				'worker-src': ['self', 'blob:'],
-				'style-src': ['self', 'https://fonts.googleapis.com', 'unsafe-inline']
+				'style-src': ['self', 'https://fonts.googleapis.com', 'unsafe-inline'],
+				'child-src': ['self', 'blob:']
 			},
 			mode: 'auto'
 		},
