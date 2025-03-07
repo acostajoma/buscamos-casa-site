@@ -14,7 +14,7 @@
 <div class="flex justify-between">
 	<label
 		for={forId}
-		class="block text-sm font-semibold leading-6 text-gray-900 {additionalClasses ?? ''}"
+		class="block text-sm font-semibold leading-6 text-gray-900 {additionalClasses || ''}"
 	>
 		{@render children()}
 	</label>

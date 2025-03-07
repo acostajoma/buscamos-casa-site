@@ -60,7 +60,7 @@
 	 */
 	function validateLocationData() {
 		errorMessage = '';
-		const cantons = locationMap.get($propertyState ?? '');
+		const cantons = locationMap.get($propertyState || '');
 		const districts = cantons?.get($canton as string);
 		if (!cantons) {
 			$propertyState = '';

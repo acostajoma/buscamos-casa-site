@@ -77,7 +77,7 @@
 <Container>
 	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl">{title}</h1>
 </Container>
-<ImageGallery imagesIds={post.photos?.map((p) => p.id) ?? []} />
+<ImageGallery imagesIds={post.photos?.map((p) => p.id) || []} />
 <Container>
 	<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
 		Aspectos Financieros

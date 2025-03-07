@@ -11,10 +11,10 @@
 	};
 	let { children, openModalButtonTitle, selfOpen }: Props = $props();
 
-	let show = $state.raw(selfOpen ?? false);
+	let show = $state.raw(selfOpen || false);
 
 	$effect(() => {
-		show = selfOpen ?? false;
+		show = selfOpen || false;
 	});
 </script>
 

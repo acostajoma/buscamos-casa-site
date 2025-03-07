@@ -23,7 +23,7 @@
 	let keywords = $derived.by(() => {
 		let keywordsString = '';
 		const { location, propertyType, listingStatus, saleType } = post;
-		const saleTypesString = saleType.map((type) => type?.type ?? '').join(', ');
+		const saleTypesString = saleType.map((type) => type?.type || '').join(', ');
 		return `${location.country}, ${location?.state}, ${location?.city}, ${location?.district}, ${propertyType}, ${saleTypesString} `;
 	});
 
