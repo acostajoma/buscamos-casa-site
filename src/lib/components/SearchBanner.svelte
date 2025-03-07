@@ -15,8 +15,8 @@
 
 	const { form: formStores } = form;
 
-	let minSliderValue = $state(0); // value from 0-1
-	let maxSliderValue = $state(1); // value from 0-1
+	// let minSliderValue = $state(0); // value from 0-1
+	// let maxSliderValue = $state(1); // value from 0-1
 
 	let states = $state(locationMap.keys().toArray() ?? []);
 

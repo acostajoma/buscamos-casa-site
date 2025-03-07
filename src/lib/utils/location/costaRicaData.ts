@@ -1,18 +1,16 @@
-import { SvelteMap, SvelteSet } from 'svelte/reactivity';
-
 /* cSpell:disable Disables spell errors */
-export const locationMap = new SvelteMap([
+export const locationMap = new Map([
 	[
 		'San José',
-		new SvelteMap([
-			['Acosta', new SvelteSet(['Cangrejal', 'Guaitil', 'Palmichal', 'Sabanillas', 'San Ignacio'])],
+		new Map([
+			['Acosta', new Set(['Cangrejal', 'Guaitil', 'Palmichal', 'Sabanillas', 'San Ignacio'])],
 			[
 				'Alajuelita',
-				new SvelteSet(['Alajuelita', 'Concepción', 'San Antonio', 'San Felipe', 'San Josecito'])
+				new Set(['Alajuelita', 'Concepción', 'San Antonio', 'San Felipe', 'San Josecito'])
 			],
 			[
 				'Aserrí',
-				new SvelteSet([
+				new Set([
 					'Aserrí',
 					'Legua',
 					'Monterrey',
@@ -22,10 +20,10 @@ export const locationMap = new SvelteMap([
 					'Vuelta de Jorco'
 				])
 			],
-			['Curridabat', new SvelteSet(['Curridabat', 'Granadilla', 'Sánchez', 'Tirrases'])],
+			['Curridabat', new Set(['Curridabat', 'Granadilla', 'Sánchez', 'Tirrases'])],
 			[
 				'Desamparados',
-				new SvelteSet([
+				new Set([
 					'Damas',
 					'Desamparados',
 					'Frailes',
@@ -41,11 +39,11 @@ export const locationMap = new SvelteMap([
 					'San Rafael Arriba'
 				])
 			],
-			['Dota', new SvelteSet(['Copey', 'Jardín', 'Santa María'])],
-			['Escazú', new SvelteSet(['Escazú', 'San Antonio', 'San Rafael'])],
+			['Dota', new Set(['Copey', 'Jardín', 'Santa María'])],
+			['Escazú', new Set(['Escazú', 'San Antonio', 'San Rafael'])],
 			[
 				'Goicoechea',
-				new SvelteSet([
+				new Set([
 					'Calle Blancos',
 					'Guadalupe',
 					'Ipis',
@@ -57,7 +55,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'León Cortés Castro',
-				new SvelteSet([
+				new Set([
 					'Llano Bonito',
 					'San Andrés',
 					'San Antonio',
@@ -66,10 +64,10 @@ export const locationMap = new SvelteMap([
 					'Santa Cruz'
 				])
 			],
-			['Montes de Oca', new SvelteSet(['Mercedes', 'Sabanilla', 'San Pedro', 'San Rafael'])],
+			['Montes de Oca', new Set(['Mercedes', 'Sabanilla', 'San Pedro', 'San Rafael'])],
 			[
 				'Mora',
-				new SvelteSet([
+				new Set([
 					'Colón',
 					'Guayabo',
 					'Jaris',
@@ -79,10 +77,10 @@ export const locationMap = new SvelteMap([
 					'Tabarcia'
 				])
 			],
-			['Moravia', new SvelteSet(['La Trinidad', 'San Jerónimo', 'San Vicente'])],
+			['Moravia', new Set(['La Trinidad', 'San Jerónimo', 'San Vicente'])],
 			[
 				'Puriscal',
-				new SvelteSet([
+				new Set([
 					'Barbacoas',
 					'Candelarita',
 					'Chires',
@@ -96,7 +94,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Pérez Zeledón',
-				new SvelteSet([
+				new Set([
 					'Barú',
 					'Cajón',
 					'Daniel Flores',
@@ -113,7 +111,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'San José',
-				new SvelteSet([
+				new Set([
 					'Carmen',
 					'Catedral',
 					'Hatillo',
@@ -127,37 +125,22 @@ export const locationMap = new SvelteMap([
 					'Zapote'
 				])
 			],
-			[
-				'Santa Ana',
-				new SvelteSet(['Brasil', 'Piedades', 'Pozos', 'Salitral', 'Santa Ana', 'Uruca'])
-			],
-			['Tarrazú', new SvelteSet(['San Carlos', 'San Lorenzo', 'San Marcos'])],
-			[
-				'Tibás',
-				new SvelteSet(['Anselmo Llorente', 'Cinco Esquinas', 'Colima', 'León XIII', 'San Juan'])
-			],
-			[
-				'Turrubares',
-				new SvelteSet(['Carara', 'San Juan de Mata', 'San Luis', 'San Pablo', 'San Pedro'])
-			],
+			['Santa Ana', new Set(['Brasil', 'Piedades', 'Pozos', 'Salitral', 'Santa Ana', 'Uruca'])],
+			['Tarrazú', new Set(['San Carlos', 'San Lorenzo', 'San Marcos'])],
+			['Tibás', new Set(['Anselmo Llorente', 'Cinco Esquinas', 'Colima', 'León XIII', 'San Juan'])],
+			['Turrubares', new Set(['Carara', 'San Juan de Mata', 'San Luis', 'San Pablo', 'San Pedro'])],
 			[
 				'Vázquez de Coronado',
-				new SvelteSet([
-					'Cascajal',
-					'Dulce Nombre de Jesús',
-					'Patalillo',
-					'San Isidro',
-					'San Rafael'
-				])
+				new Set(['Cascajal', 'Dulce Nombre de Jesús', 'Patalillo', 'San Isidro', 'San Rafael'])
 			]
 		])
 	],
 	[
 		'Alajuela',
-		new SvelteMap([
+		new Map([
 			[
 				'Alajuela',
-				new SvelteSet([
+				new Set([
 					'Alajuela',
 					'Carrizal',
 					'Desamparados',
@@ -176,7 +159,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Atenas',
-				new SvelteSet([
+				new Set([
 					'Atenas',
 					'Concepción',
 					'Escobal',
@@ -189,7 +172,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Grecia',
-				new SvelteSet([
+				new Set([
 					'Bolivar',
 					'Grecia',
 					'Puente de Piedra',
@@ -199,11 +182,11 @@ export const locationMap = new SvelteMap([
 					'Tacares'
 				])
 			],
-			['Guatuso', new SvelteSet(['Buenavista', 'Cote', 'Katira', 'San Rafael'])],
-			['Los Chiles', new SvelteSet(['Caño Negro', 'El Amparo', 'Los Chiles', 'San Jorge'])],
+			['Guatuso', new Set(['Buenavista', 'Cote', 'Katira', 'San Rafael'])],
+			['Los Chiles', new Set(['Caño Negro', 'El Amparo', 'Los Chiles', 'San Jorge'])],
 			[
 				'Naranjo',
-				new SvelteSet([
+				new Set([
 					'Cirrí Sur',
 					'El Rosario',
 					'Naranjo',
@@ -214,13 +197,10 @@ export const locationMap = new SvelteMap([
 					'San Miguel'
 				])
 			],
-			[
-				'Orotina',
-				new SvelteSet(['Coyolar', 'El Mastate', 'Hacienda Vieja', 'La Ceiba', 'Orotina'])
-			],
+			['Orotina', new Set(['Coyolar', 'El Mastate', 'Hacienda Vieja', 'La Ceiba', 'Orotina'])],
 			[
 				'Palmares',
-				new SvelteSet([
+				new Set([
 					'Buenos Aires',
 					'Candelaria',
 					'Esquipulas',
@@ -230,14 +210,11 @@ export const locationMap = new SvelteMap([
 					'Zaragoza'
 				])
 			],
-			[
-				'Poás',
-				new SvelteSet(['Carrillos', 'Sabana Redonda', 'San Juan', 'San Pedro', 'San Rafael'])
-			],
-			['Río Cuarto', new SvelteSet(['Río Cuarto', 'Santa Isabel', 'Santa Rita'])],
+			['Poás', new Set(['Carrillos', 'Sabana Redonda', 'San Juan', 'San Pedro', 'San Rafael'])],
+			['Río Cuarto', new Set(['Río Cuarto', 'Santa Isabel', 'Santa Rita'])],
 			[
 				'San Carlos',
-				new SvelteSet([
+				new Set([
 					'Aguas Zarcas',
 					'Buenavista',
 					'Cutris',
@@ -253,10 +230,10 @@ export const locationMap = new SvelteMap([
 					'Venecia'
 				])
 			],
-			['San Mateo', new SvelteSet(['Desmonte', 'Jesús María', 'Labrador', 'San Mateo'])],
+			['San Mateo', new Set(['Desmonte', 'Jesús María', 'Labrador', 'San Mateo'])],
 			[
 				'San Ramón',
-				new SvelteSet([
+				new Set([
 					'Alfaro',
 					'Concepción',
 					'Peñas Blancas',
@@ -275,11 +252,11 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Sarchí',
-				new SvelteSet(['Rodríguez', 'San Pedro', 'Sarchí Norte', 'Sarchí Sur', 'Toro Amarillo'])
+				new Set(['Rodríguez', 'San Pedro', 'Sarchí Norte', 'Sarchí Sur', 'Toro Amarillo'])
 			],
 			[
 				'Upala',
-				new SvelteSet([
+				new Set([
 					'Aguas Claras',
 					'Bijagua',
 					'Canalete',
@@ -292,17 +269,17 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Zarcero',
-				new SvelteSet(['Brisas', 'Guadalupe', 'Laguna', 'Palmira', 'Tapesco', 'Zapote', 'Zarcero'])
+				new Set(['Brisas', 'Guadalupe', 'Laguna', 'Palmira', 'Tapesco', 'Zapote', 'Zarcero'])
 			]
 		])
 	],
 	[
 		'Cartago',
-		new SvelteMap([
-			['Alvarado', new SvelteSet(['Capellades', 'Cervantes', 'Pacayas'])],
+		new Map([
+			['Alvarado', new Set(['Capellades', 'Cervantes', 'Pacayas'])],
 			[
 				'Cartago',
-				new SvelteSet([
+				new Set([
 					'Aguacaliente o San Francisco',
 					'Carmen',
 					'Corralillo',
@@ -316,11 +293,11 @@ export const locationMap = new SvelteMap([
 					'Tierra Blanca'
 				])
 			],
-			['El Guarco', new SvelteSet(['El Tejar', 'Patio de Agua', 'San Isidro', 'Tobosi'])],
-			['Jiménez', new SvelteSet(['Juan Viñas', 'Pejibaye', 'Tucurrique'])],
+			['El Guarco', new Set(['El Tejar', 'Patio de Agua', 'San Isidro', 'Tobosi'])],
+			['Jiménez', new Set(['Juan Viñas', 'Pejibaye', 'Tucurrique'])],
 			[
 				'La Unión',
-				new SvelteSet([
+				new Set([
 					'Concepción',
 					'Dulce Nombre',
 					'Río Azul',
@@ -331,24 +308,14 @@ export const locationMap = new SvelteMap([
 					'Tres Ríos'
 				])
 			],
-			[
-				'Oreamuno',
-				new SvelteSet(['Cipreses', 'Cot', 'Potrero Cerrado', 'San Rafael', 'Santa Rosa'])
-			],
+			['Oreamuno', new Set(['Cipreses', 'Cot', 'Potrero Cerrado', 'San Rafael', 'Santa Rosa'])],
 			[
 				'Paraíso',
-				new SvelteSet([
-					'Birrisito',
-					'Cachí',
-					'Llanos de Santa Lucía',
-					'Orosi',
-					'Paraíso',
-					'Santiago'
-				])
+				new Set(['Birrisito', 'Cachí', 'Llanos de Santa Lucía', 'Orosi', 'Paraíso', 'Santiago'])
 			],
 			[
 				'Turrialba',
-				new SvelteSet([
+				new Set([
 					'Chirripó',
 					'La Isabel',
 					'La Suiza',
@@ -367,10 +334,10 @@ export const locationMap = new SvelteMap([
 	],
 	[
 		'Heredia',
-		new SvelteMap([
+		new Map([
 			[
 				'Barva',
-				new SvelteSet([
+				new Set([
 					'Barva',
 					'San José de la Montaña',
 					'San Pablo',
@@ -379,29 +346,19 @@ export const locationMap = new SvelteMap([
 					'Santa Lucía'
 				])
 			],
-			['Belén', new SvelteSet(['La Asunción', 'La Ribera', 'San Antonio'])],
-			['Flores', new SvelteSet(['Barrantes', 'Llorente', 'San Joaquín'])],
-			['Heredia', new SvelteSet(['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'])],
-			['San Isidro', new SvelteSet(['Concepción', 'San Francisco', 'San Isidro', 'San José'])],
-			['San Pablo', new SvelteSet(['Rincón de Sabanilla', 'San Pablo'])],
-			[
-				'San Rafael',
-				new SvelteSet(['Concepción', 'San Josecito', 'San Rafael', 'Santiago', 'Ángeles'])
-			],
+			['Belén', new Set(['La Asunción', 'La Ribera', 'San Antonio'])],
+			['Flores', new Set(['Barrantes', 'Llorente', 'San Joaquín'])],
+			['Heredia', new Set(['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'])],
+			['San Isidro', new Set(['Concepción', 'San Francisco', 'San Isidro', 'San José'])],
+			['San Pablo', new Set(['Rincón de Sabanilla', 'San Pablo'])],
+			['San Rafael', new Set(['Concepción', 'San Josecito', 'San Rafael', 'Santiago', 'Ángeles'])],
 			[
 				'Santa Bárbara',
-				new SvelteSet([
-					'Jesús',
-					'Purabá',
-					'San Juan',
-					'San Pedro',
-					'Santa Bárbara',
-					'Santo Domingo'
-				])
+				new Set(['Jesús', 'Purabá', 'San Juan', 'San Pedro', 'Santa Bárbara', 'Santo Domingo'])
 			],
 			[
 				'Santo Domingo',
-				new SvelteSet([
+				new Set([
 					'Paracito',
 					'Pará',
 					'San Miguel',
@@ -414,36 +371,27 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Sarapiquí',
-				new SvelteSet([
-					'Cureña',
-					'La Virgen',
-					'Las Horquetas',
-					'Llanuras del Gaspar',
-					'Puerto Viejo'
-				])
+				new Set(['Cureña', 'La Virgen', 'Las Horquetas', 'Llanuras del Gaspar', 'Puerto Viejo'])
 			]
 		])
 	],
 	[
 		'Guanacaste',
-		new SvelteMap([
-			['Abangares', new SvelteSet(['Colorado', 'Las Juntas', 'San Juan', 'Sierra'])],
-			['Bagaces', new SvelteSet(['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'])],
-			['Carrillo', new SvelteSet(['Belén', 'Filadelfia', 'Palmira', 'Sardinal'])],
-			['Cañas', new SvelteSet(['Bebedero', 'Cañas', 'Palmira', 'Porozal', 'San Miguel'])],
-			[
-				'Hojancha',
-				new SvelteSet(['Hojancha', 'Huacas', 'Matambú', 'Monte Romo', 'Puerto Carrillo'])
-			],
-			['La Cruz', new SvelteSet(['La Cruz', 'La Garita', 'Santa Cecilia', 'Santa Elena'])],
-			['Liberia', new SvelteSet(['Cañas Dulces', 'Curubandé', 'Liberia', 'Mayorga', 'Nacascolo'])],
+		new Map([
+			['Abangares', new Set(['Colorado', 'Las Juntas', 'San Juan', 'Sierra'])],
+			['Bagaces', new Set(['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'])],
+			['Carrillo', new Set(['Belén', 'Filadelfia', 'Palmira', 'Sardinal'])],
+			['Cañas', new Set(['Bebedero', 'Cañas', 'Palmira', 'Porozal', 'San Miguel'])],
+			['Hojancha', new Set(['Hojancha', 'Huacas', 'Matambú', 'Monte Romo', 'Puerto Carrillo'])],
+			['La Cruz', new Set(['La Cruz', 'La Garita', 'Santa Cecilia', 'Santa Elena'])],
+			['Liberia', new Set(['Cañas Dulces', 'Curubandé', 'Liberia', 'Mayorga', 'Nacascolo'])],
 			[
 				'Nandayure',
-				new SvelteSet(['Bejuco', 'Carmona', 'Porvenir', 'San Pablo', 'Santa Rita', 'Zapotal'])
+				new Set(['Bejuco', 'Carmona', 'Porvenir', 'San Pablo', 'Santa Rita', 'Zapotal'])
 			],
 			[
 				'Nicoya',
-				new SvelteSet([
+				new Set([
 					'Belén de Nosarita',
 					'Mansión',
 					'Nicoya',
@@ -455,7 +403,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Santa Cruz',
-				new SvelteSet([
+				new Set([
 					'Bolsón',
 					'Cabo Velas',
 					'Cartagena',
@@ -469,7 +417,7 @@ export const locationMap = new SvelteMap([
 			],
 			[
 				'Tilarán',
-				new SvelteSet([
+				new Set([
 					'Arenal',
 					'Cabeceras',
 					'Líbano',
@@ -484,10 +432,10 @@ export const locationMap = new SvelteMap([
 	],
 	[
 		'Puntarenas',
-		new SvelteMap([
+		new Map([
 			[
 				'Buenos Aires',
-				new SvelteSet([
+				new Set([
 					'Biolley',
 					'Boruca',
 					'Brunka',
@@ -499,21 +447,14 @@ export const locationMap = new SvelteMap([
 					'Volcán'
 				])
 			],
-			['Corredores', new SvelteSet(['Canoas', 'Corredor', 'La Cuesta', 'Laurel'])],
+			['Corredores', new Set(['Canoas', 'Corredor', 'La Cuesta', 'Laurel'])],
 			[
 				'Coto Brus',
-				new SvelteSet([
-					'Aguabuena',
-					'Gutiérrez Braun',
-					'Limoncito',
-					'Pittier',
-					'Sabalito',
-					'San Vito'
-				])
+				new Set(['Aguabuena', 'Gutiérrez Braun', 'Limoncito', 'Pittier', 'Sabalito', 'San Vito'])
 			],
 			[
 				'Esparza',
-				new SvelteSet([
+				new Set([
 					'Caldera',
 					'Espíritu Santo',
 					'Macacona',
@@ -522,13 +463,13 @@ export const locationMap = new SvelteMap([
 					'San Rafael'
 				])
 			],
-			['Garabito', new SvelteSet(['Jacó', 'Lagunillas', 'Tárcoles'])],
-			['Golfito', new SvelteSet(['Golfito', 'Guaycará', 'Pavón', 'Puerto Jiménez'])],
-			['Montes de Oro', new SvelteSet(['La Unión', 'Miramar', 'San Isidro'])],
-			['Monteverde', new SvelteSet(['Monteverde'])],
+			['Garabito', new Set(['Jacó', 'Lagunillas', 'Tárcoles'])],
+			['Golfito', new Set(['Golfito', 'Guaycará', 'Pavón', 'Puerto Jiménez'])],
+			['Montes de Oro', new Set(['La Unión', 'Miramar', 'San Isidro'])],
+			['Monteverde', new Set(['Monteverde'])],
 			[
 				'Osa',
-				new SvelteSet([
+				new Set([
 					'Bahía Ballena',
 					'Bahía Drake',
 					'Palmar',
@@ -537,10 +478,10 @@ export const locationMap = new SvelteMap([
 					'Sierpe'
 				])
 			],
-			['Parrita', new SvelteSet(['Parrita'])],
+			['Parrita', new Set(['Parrita'])],
 			[
 				'Puntarenas',
-				new SvelteSet([
+				new Set([
 					'Acapulco',
 					'Arancibia',
 					'Barranca',
@@ -558,30 +499,22 @@ export const locationMap = new SvelteMap([
 					'Puntarenas'
 				])
 			],
-			['Quepos', new SvelteSet(['Naranjito', 'Quepos', 'Savegre'])]
+			['Quepos', new Set(['Naranjito', 'Quepos', 'Savegre'])]
 		])
 	],
 	[
 		'Limón',
-		new SvelteMap([
-			['Guácimo', new SvelteSet(['Guácimo', 'Mercedes', 'Pocora'])],
-			['Limón', new SvelteSet(['Limón', 'Matama', 'Río Blanco', 'Valle La Estrella'])],
-			['Matina', new SvelteSet(['Batán', 'Carrandí', 'Matina'])],
+		new Map([
+			['Guácimo', new Set(['Guácimo', 'Mercedes', 'Pocora'])],
+			['Limón', new Set(['Limón', 'Matama', 'Río Blanco', 'Valle La Estrella'])],
+			['Matina', new Set(['Batán', 'Carrandí', 'Matina'])],
 			[
 				'Pococí',
-				new SvelteSet([
-					'Cariari',
-					'Colorado',
-					'Guápiles',
-					'Jiménez',
-					'La Colonia',
-					'Rita',
-					'Roxana'
-				])
+				new Set(['Cariari', 'Colorado', 'Guápiles', 'Jiménez', 'La Colonia', 'Rita', 'Roxana'])
 			],
 			[
 				'Siquirres',
-				new SvelteSet([
+				new Set([
 					'Alegría',
 					'El Cairo',
 					'Florida',
@@ -591,7 +524,7 @@ export const locationMap = new SvelteMap([
 					'Siquirres'
 				])
 			],
-			['Talamanca', new SvelteSet(['Bratsi', 'Cahuita', 'Sixaola', 'Telire'])]
+			['Talamanca', new Set(['Bratsi', 'Cahuita', 'Sixaola', 'Telire'])]
 		])
 	]
 ]);
