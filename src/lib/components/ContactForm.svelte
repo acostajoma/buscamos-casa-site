@@ -76,6 +76,6 @@
 				fields: content
 			}
 		]}
-		button={buttonSnippet ?? button}
+		button={buttonSnippet || button}
 	></DoubleColForm>
 </div>

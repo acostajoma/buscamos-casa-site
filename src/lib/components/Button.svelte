@@ -31,7 +31,7 @@
 		onclick = undefined
 	}: Props = $props();
 
-	const { tainted, isTainted, submitting, allErrors } = form ?? {};
+	const { tainted, isTainted, submitting, allErrors } = form || {};
 
 	let disabled = $derived.by(() => {
 		if (_disabled !== undefined) return _disabled;

@@ -26,15 +26,15 @@
 	const cantonEmptyState = ['Selecciona una provincia'];
 	const districtEmptyState = ['Selecciona un cantón'];
 
-	let states = $state(locationMap.keys().toArray() ?? []);
+	const states = Array.from(locationMap.keys()) || [];
 	let cantons: string[] = $derived(
-		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ??
+		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ||
 			cantonEmptyState
 	);
 	let districts: string[] = $derived(
 		($formStores.state && $formStores.city
 			? locationMap.get($formStores.state)?.get($formStores.city)?.keys().toArray()
-			: districtEmptyState) ?? districtEmptyState
+			: districtEmptyState) || districtEmptyState
 	);
 </script>
 

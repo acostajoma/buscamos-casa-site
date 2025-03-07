@@ -25,7 +25,7 @@
 	const { value: stateValue } = formFieldProxy(form, 'state');
 	const { value: cantonValue } = formFieldProxy(form, 'city');
 
-	let states = $state(locationMap.keys().toArray() ?? []);
+	const states = Array.from(locationMap.keys()) || [];
 	let cantons = $state(locationMap.get($stateValue)?.keys().toArray() ?? []);
 	let districts = $state(locationMap.get($stateValue)?.get($cantonValue)?.keys().toArray() ?? []);
 

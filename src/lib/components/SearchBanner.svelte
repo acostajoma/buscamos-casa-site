@@ -18,16 +18,16 @@
 	// let minSliderValue = $state(0); // value from 0-1
 	// let maxSliderValue = $state(1); // value from 0-1
 
-	let states = $state(locationMap.keys().toArray() ?? []);
+	const states = Array.from(locationMap.keys()) || [];
 
 	let cantons: string[] = $derived(
-		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ??
+		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ||
 			cantonEmptyState
 	);
 	let districts: string[] = $derived(
 		($formStores.state && $formStores.city
 			? locationMap.get($formStores.state)?.get($formStores.city)?.keys().toArray()
-			: districtEmptyState) ?? districtEmptyState
+			: districtEmptyState) || districtEmptyState
 	);
 
 	// $effect(() => {

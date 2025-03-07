@@ -31,7 +31,7 @@
 		>
 			<p class="sr-only">{description}</p>
 			<Icon class="size-4 sm:size-5" />
-			{amount ?? 0}
+			{amount || 0}
 		</span>
 	</div>
 {/snippet}

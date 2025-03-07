@@ -34,7 +34,7 @@
 	const { value: propertyState } = formFieldProxy(form, 'state');
 
 	// Initial Lat/Lng
-	const initialLatLng = { lat: $latitude ?? 9.936128, lng: $longitude ?? -84.105166 };
+	const initialLatLng = { lat: $latitude || 9.936128, lng: $longitude || -84.105166 };
 
 	/**
 	 * Performs geocoding on lat/lng and updates fields.
