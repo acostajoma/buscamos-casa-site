@@ -109,7 +109,7 @@ export const locationSchema = z
 		}
 		if (!locationMap.get(data.state)?.has(data.city)) {
 			ctx.addIssue({
-				path: ['canton'],
+				path: ['city'],
 				code: z.ZodIssueCode.custom,
 				message: 'El cantón no es válido'
 			});

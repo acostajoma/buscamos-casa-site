@@ -11,5 +11,8 @@ export const less_or_equal_than = (max: number, formatNumber?: boolean) => {
 	const val = formatNumber ? max.toLocaleString('es-ES') : max;
 	return `El valor debe ser menor o igual que ${val}.`;
 };
-export const greater_or_equal_than = (min: number) => `El valor debe ser mayor o igual que ${min}.`;
+export const greater_or_equal_than = (min: number, formatNumber?: boolean) => {
+	const val = formatNumber ? min.toLocaleString('es-ES') : min;
+	return `El valor debe ser mayor o igual que ${val}.`;
+};
 export const not_in_the_list_error = 'El valor no se encuentra en la lista.';

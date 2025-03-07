@@ -1,23 +1,42 @@
 <script lang="ts">
 	import CheckBoxMark from '$lib/icons/CheckBoxMark.svelte';
+	import type { Snippet } from 'svelte';
 	import { formFieldProxy, type SuperForm } from 'sveltekit-superforms';
 	import Radio from './Radio.svelte';
+
 	type Props = {
-		legend: string;
-		description: string;
+		legend?: string;
+		description?: string;
 		form: SuperForm<any>;
 		name: string;
 		options: string[] | readonly [string, ...string[]];
 		type: 'radio' | 'checkbox';
 		doubleCol?: boolean;
+		legendSnippet?: Snippet;
 	};
 
-	let { legend, description, form, name, options, type, doubleCol = false }: Props = $props();
+	let {
+		legend,
+		description,
+		form,
+		name,
+		options,
+		type,
+		doubleCol = false,
+		legendSnippet
+	}: Props = $props();
 	const { errors, value } = formFieldProxy(form, name);
 </script>
 
 <fieldset>
-	<legend class="text-sm/6 font-semibold text-gray-900">{legend}</legend>
+	{#if legendSnippet}
+		{@render legendSnippet()}
+	{:else if legend}
+		<legend class="text-sm/6 font-semibold text-gray-900">
+			{legend}
+		</legend>
+	{/if}
+
 	{#if description}
 		<p class="mt-1 text-sm/6 text-gray-600">{description}</p>
 	{/if}

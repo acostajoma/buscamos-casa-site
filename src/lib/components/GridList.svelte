@@ -37,7 +37,7 @@
 {/snippet}
 
 {#if posts.length > 0}
-	<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+	<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 2xl:grid-cols-3">
 		{#each posts as post (post.id)}
 			<li>
 				<div class="shadow-sm bg-white flex flex-col divide-y divide-gray-200 rounded-b-lg">

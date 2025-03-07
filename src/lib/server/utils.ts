@@ -30,16 +30,24 @@ type GetPostsOptions = {
 	pageNumber?: string | number | null;
 } & (
 	| {
-			role?: 'owner';
+			role?: 'owner' | 'admin';
 			userId: string;
+			providedFilters: undefined;
 	  }
 	| {
-			role?: 'admin' | 'user' | undefined;
+			role?: 'user';
 			userId?: undefined;
+			providedFilters?: SQL<unknown>[];
 	  }
 );
 
-export const getPosts = async ({ db, pageNumber = 1, role = 'user', userId }: GetPostsOptions) => {
+export const getPosts = async ({
+	db,
+	pageNumber = 1,
+	role = 'user',
+	userId,
+	providedFilters
+}: GetPostsOptions) => {
 	const limit = 20;
 	const page = typeof pageNumber === 'string' ? parseInt(pageNumber) : pageNumber || 1;
 	const offset = page > 1 ? (page - 1) * limit : 0;
@@ -54,7 +62,10 @@ export const getPosts = async ({ db, pageNumber = 1, role = 'user', userId }: Ge
 			ne(property.listingStatus, 'Denegado')
 		);
 	} else if (role === 'user') {
-		filters = eq(property.listingStatus, 'Publicado');
+		filters =
+			providedFilters && providedFilters.length > 0
+				? and(...providedFilters, eq(property.listingStatus, 'Publicado'))
+				: eq(property.listingStatus, 'Publicado');
 	} else if (role === 'owner') {
 		filters = eq(property.postOwnerId, userId as string);
 	}

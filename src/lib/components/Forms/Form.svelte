@@ -17,6 +17,7 @@
 			| null
 			| undefined;
 		submitFunction?: SubmitFunction;
+		debug?: boolean;
 	};
 	let {
 		children,
@@ -24,7 +25,8 @@
 		class: _class,
 		form: superform,
 		enctype,
-		submitFunction
+		submitFunction,
+		debug = false
 	}: Props = $props();
 	const { form, message, formId } = superform || {};
 
@@ -42,7 +44,7 @@
 	{/if}
 </form>
 
-{#if dev && form}
+{#if dev && form && debug}
 	<div class="min-w-80 pt-10">
 		<p>This SuperDebug Section will only appear on dev mode</p>
 		<SuperDebug data={$form} />

@@ -10,3 +10,5 @@ export const cloudinaryUrl = 'https://res.cloudinary.com/dldnvubae';
 export const companyPhoneNumber = '50664674972';
 
 export const companyMail = 'info@buscamos.casa';
+
+export const maxNumberValue = 1000000000;

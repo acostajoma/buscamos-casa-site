@@ -1,30 +1,33 @@
 <script lang="ts">
+	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
 	import clamp from '$lib/utils/numbers';
+	import type { Currencies } from '$lib/utils/postConstants';
 
 	type Props = {
 		start?: number;
 		end?: number;
+		min?: number;
+		max?: number;
+		currency?: Currencies;
 	};
 
-	let { start = $bindable(0), end = $bindable(1) }: Props = $props();
+	let { start = $bindable(0), end = $bindable(1), min, max, currency }: Props = $props();
 	let leftHandle: HTMLDivElement | undefined = $state();
 	let body: HTMLDivElement | undefined = $state();
 	let slider: HTMLDivElement | undefined = $state();
 
-	function getEventCords(event: MouseEvent | TouchEvent) {
-		let evt: MouseEvent | Touch;
-		if (event.type === 'touchstart') {
-			evt = (event as TouchEvent).touches[0];
-		} else {
-			evt = event as MouseEvent;
+	function formatValues(value: number, toFixed: number) {
+		if (currency) {
+			return formatCurrency(value, currency, toFixed);
 		}
-		return { x: evt.clientX, y: evt.clientY };
+		return formatNumber(value, toFixed);
 	}
 
 	function draggable(node: HTMLElement) {
 		let x: number;
 		let y: number;
-		function handleMousedown(event: MouseEvent | TouchEvent) {
+
+		function handleStart(event: MouseEvent | TouchEvent) {
 			const coords = getEventCords(event);
 			x = coords.x;
 			y = coords.y;
@@ -34,47 +37,61 @@
 					detail: { x, y }
 				})
 			);
-			window.addEventListener('mousemove', handleMousemove);
-			window.addEventListener('mouseup', handleMouseup);
-			window.addEventListener('touchmove', handleMousemove);
-			window.addEventListener('touchend', handleMouseup);
-		}
-		function handleMousemove(event: MouseEvent | TouchEvent) {
-			const coords = getEventCords(event);
-			const dx = coords.x - x;
-			const dy = coords.y - y;
-			x = coords.x;
-			y = coords.y;
-			node.dispatchEvent(
-				new CustomEvent('dragmove', {
-					detail: { x, y, dx, dy }
-				})
-			);
+
+			const moveEvent = event.type === 'touchstart' ? 'touchmove' : 'mousemove';
+			const endEvent = event.type === 'touchstart' ? 'touchend' : 'mouseup';
+
+			const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
+				const coords = getEventCords(moveEvent);
+				const dx = coords.x - x;
+				const dy = coords.y - y;
+				x = coords.x;
+				y = coords.y;
+				node.dispatchEvent(
+					new CustomEvent('dragmove', {
+						detail: { x, y, dx, dy }
+					})
+				);
+			};
+
+			const endHandler = (endEvent: MouseEvent | TouchEvent) => {
+				const coords = getEventCords(endEvent);
+				x = coords.x;
+				y = coords.y;
+				node.dispatchEvent(
+					new CustomEvent('dragend', {
+						detail: { x, y }
+					})
+				);
+				window.removeEventListener(moveEvent, moveHandler);
+				window.removeEventListener(endEvent, endHandler);
+			};
+
+			window.addEventListener(moveEvent, moveHandler);
+			window.addEventListener(endEvent, endHandler);
 		}
 
-		function handleMouseup(event: MouseEvent | TouchEvent) {
-			const coords = getEventCords(event);
-			x = coords.x;
-			y = coords.y;
-			node.dispatchEvent(
-				new CustomEvent('dragend', {
-					detail: { x, y }
-				})
-			);
-			window.removeEventListener('mousemove', handleMousemove);
-			window.removeEventListener('mouseup', handleMouseup);
-			window.removeEventListener('touchmove', handleMousemove);
-			window.removeEventListener('touchend', handleMouseup);
-		}
-		node.addEventListener('mousedown', handleMousedown);
-		node.addEventListener('touchstart', handleMousedown);
+		node.addEventListener('mousedown', handleStart);
+		node.addEventListener('touchstart', handleStart);
+
 		return {
 			destroy() {
-				node.removeEventListener('mousedown', handleMousedown);
-				node.removeEventListener('touchstart', handleMousedown);
+				node.removeEventListener('mousedown', handleStart);
+				node.removeEventListener('touchstart', handleStart);
 			}
 		};
 	}
+
+	function getEventCords(event: MouseEvent | TouchEvent) {
+		let evt: MouseEvent | Touch;
+		if (event.type.startsWith('touch')) {
+			evt = (event as TouchEvent).changedTouches[0];
+		} else {
+			evt = event as MouseEvent;
+		}
+		return { x: evt.clientX, y: evt.clientY };
+	}
+
 	function setHandlePosition(which: 'start' | 'end') {
 		return function (event: MouseEvent | TouchEvent) {
 			event.preventDefault();
@@ -147,8 +164,8 @@
 		></div>
 	</div>
 	<div class="flex justify-between mt-5">
-		<span>{start}</span>
-		<span>{end}</span>
+		<span>{min !== undefined ? formatValues(min, 0) : start}</span>
+		<span>{max !== undefined ? formatValues(max, 0) : end}</span>
 	</div>
 </div>
 
