@@ -4,6 +4,7 @@
 
 	type BaseProps = {
 		children: Snippet;
+		additionalClasses?: string;
 		class?: string;
 		disabled?: boolean;
 		form?: SuperForm<any>;
@@ -25,8 +26,9 @@
 		type = 'button',
 		children,
 		disabled: _disabled = undefined,
+		additionalClasses,
 		class:
-			_class = 'rounded-md bg-yellow-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed hover:cursor-pointer',
+			_class = `rounded-md bg-yellow-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed hover:cursor-pointer${additionalClasses ? ` ${additionalClasses}` : ''}`,
 		form = undefined,
 		onclick = undefined
 	}: Props = $props();

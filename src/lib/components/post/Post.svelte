@@ -159,7 +159,7 @@
 			target="_blank"
 			class="inline-flex items-center space-x-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 max-w-56"
 			href={createWhatsAppLink(
-				encodeURIComponent(`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`)
+				`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`
 			)}
 		>
 			<WhatsApp class="h-5 w-5 fill-current" />

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { locationMap } from '$lib/utils/location/costaRicaData';
+	import { locationMap, states } from '$lib/utils/location/costaRicaData';
+	import { getCantonsArray } from '$lib/utils/location/helpers';
 	import type { SearchSchema } from '$lib/validation/search';
 	import { type Infer, type SuperForm } from 'sveltekit-superforms';
 	import Button from './Button.svelte';
@@ -17,18 +18,21 @@
 
 	// let minSliderValue = $state(0); // value from 0-1
 	// let maxSliderValue = $state(1); // value from 0-1
-
-	const states = Array.from(locationMap.keys()) || [];
-
 	let cantons: string[] = $derived(
-		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ||
-			cantonEmptyState
+		$formStores.state ? getCantonsArray($formStores.state) : cantonEmptyState
 	);
 	let districts: string[] = $derived(
 		($formStores.state && $formStores.city
-			? locationMap.get($formStores.state)?.get($formStores.city)?.keys().toArray()
+			? Array.from(locationMap.get($formStores.state)?.get($formStores.city)?.keys() || [])
 			: districtEmptyState) || districtEmptyState
 	);
+
+	let buttonDisabled = $derived.by(() => {
+		if ($formStores.state) return false;
+		if (!$formStores.city || $formStores.city === cantonEmptyState[0]) return true;
+		if (!$formStores.district || $formStores.district === districtEmptyState[0]) return true;
+		return false;
+	});
 
 	// $effect(() => {
 	// 	$formStores.price.min = minSliderValue * maxNumberValue;
@@ -57,10 +61,10 @@
 					<SelectMenu id="state" label="Provincia" name="state" {form} options={states}
 					></SelectMenu>
 				</div>
-				<div class="col-span-2 sm:col-span-2">
+				<div class="col-span-2">
 					<SelectMenu id="city" label="Canton" name="city" {form} options={cantons}></SelectMenu>
 				</div>
-				<div class="col-span-2 sm:col-span-2">
+				<div class="col-span-2">
 					<SelectMenu id="district" label="Distrito" name="district" {form} options={districts}
 					></SelectMenu>
 				</div>
@@ -119,7 +123,11 @@
 						</div>
 					</div>
 				{/if} -->
-				<Button type="submit" {form}>Buscar</Button>
+				<div class="col-start-2 col-span-2 sm:col-start-6 sm:col-span-1">
+					<Button type="submit" additionalClasses="w-full" {form} disabled={buttonDisabled}
+						>Buscar</Button
+					>
+				</div>
 			</form>
 		</div>
 	</div>

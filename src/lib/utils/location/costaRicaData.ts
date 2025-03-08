@@ -1,4 +1,13 @@
 /* cSpell:disable Disables spell errors */
+export const states = [
+	'San José',
+	'Alajuela',
+	'Cartago',
+	'Heredia',
+	'Guanacaste',
+	'Puntarenas',
+	'Limón'
+];
 export const locationMap = new Map([
 	[
 		'San José',

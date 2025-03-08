@@ -3,7 +3,7 @@
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
 	import GridList from '$lib/components/GridList.svelte';
 	import SidebarFilters from '$lib/components/SidebarFilters.svelte';
-	import { locationMap } from '$lib/utils/location/costaRicaData';
+	import { locationMap, states } from '$lib/utils/location/costaRicaData';
 	import { searchSchema } from '$lib/validation/search';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
@@ -26,14 +26,14 @@
 	const cantonEmptyState = ['Selecciona una provincia'];
 	const districtEmptyState = ['Selecciona un cantón'];
 
-	const states = Array.from(locationMap.keys()) || [];
 	let cantons: string[] = $derived(
-		($formStores.state ? locationMap.get($formStores.state)?.keys().toArray() : cantonEmptyState) ||
-			cantonEmptyState
+		($formStores.state
+			? Array.from(locationMap.get($formStores.state)?.keys() || [])
+			: cantonEmptyState) || cantonEmptyState
 	);
 	let districts: string[] = $derived(
 		($formStores.state && $formStores.city
-			? locationMap.get($formStores.state)?.get($formStores.city)?.keys().toArray()
+			? Array.from(locationMap.get($formStores.state)?.get($formStores.city)?.keys() || [])
 			: districtEmptyState) || districtEmptyState
 	);
 </script>

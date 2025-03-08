@@ -6,7 +6,7 @@
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Map from '$lib/components/Map.svelte';
-	import { locationMap } from '$lib/utils/location/costaRicaData';
+	import { locationMap, states } from '$lib/utils/location/costaRicaData';
 	import { locationSchema } from '$lib/validation/post';
 	import { untrack } from 'svelte';
 	import { formFieldProxy, superForm } from 'sveltekit-superforms';
@@ -15,7 +15,7 @@
 
 	let { data }: { data: PageData } = $props();
 	const form = superForm(data.form, {
-		validationMethod: 'oninput',
+		validationMethod: 'onblur',
 		validators: zod(locationSchema),
 		customValidity: false,
 		dataType: 'json'
@@ -24,15 +24,13 @@
 
 	const { value: stateValue } = formFieldProxy(form, 'state');
 	const { value: cantonValue } = formFieldProxy(form, 'city');
-
-	const states = Array.from(locationMap.keys()) || [];
-	let cantons = $state(locationMap.get($stateValue)?.keys().toArray() ?? []);
-	let districts = $state(locationMap.get($stateValue)?.get($cantonValue)?.keys().toArray() ?? []);
+	let cantons = $state(Array.from(locationMap.get($stateValue)?.keys() || []));
+	let districts = $state(Array.from(locationMap.get($stateValue)?.get($cantonValue)?.keys() || []));
 
 	$effect(() => {
 		if ($stateValue) {
 			untrack(() => {
-				cantons = locationMap.get($stateValue)?.keys().toArray() ?? [];
+				cantons = Array.from(locationMap.get($stateValue)?.keys() || []);
 			});
 		}
 	});
@@ -40,7 +38,7 @@
 	$effect(() => {
 		if ($cantonValue) {
 			untrack(() => {
-				districts = locationMap.get($stateValue)?.get($cantonValue)?.keys().toArray() ?? [];
+				districts = Array.from(locationMap.get($stateValue)?.get($cantonValue)?.keys() || []);
 			});
 		}
 	});
