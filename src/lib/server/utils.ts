@@ -1,6 +1,6 @@
 import { CLOUDINARY_API_SECRET } from '$env/static/private';
 import { sha1 } from '@oslojs/crypto/sha1';
-import { and, asc, count, desc, eq, ne, SQL, sql } from 'drizzle-orm';
+import { and, count, desc, eq, ne, SQL, sql } from 'drizzle-orm';
 import {
 	location,
 	photo,
@@ -80,16 +80,6 @@ export const getPosts = async ({
 		.groupBy(saleType.propertyId)
 		.as('saleTypeSub');
 
-	const photosSub = db
-		.select({
-			propertyId: photo.propertyId,
-			photoIds: sql`json_group_array(${photo.id})`.as('photoIds')
-		})
-		.from(photo)
-		.groupBy(photo.propertyId)
-		.orderBy(asc(photo.order))
-		.as('photosSub');
-
 	const postSelect = {
 		id: property.id,
 		title: property.title,
@@ -109,7 +99,7 @@ export const getPosts = async ({
 		numBathrooms: propertiesWithConstruction.numBathrooms,
 		numBedrooms: propertiesWithConstruction.numBedrooms,
 		yearBuilt: propertiesWithConstruction.yearBuilt,
-		photoIds: photosSub.photoIds
+		photoId: photo.id
 	};
 
 	// Single queries for count & results in parallel
@@ -127,7 +117,7 @@ export const getPosts = async ({
 			.from(property)
 			.leftJoin(location, eq(property.id, location.propertyId))
 			.leftJoin(saleTypeSub, eq(property.id, saleTypeSub.propertyId))
-			.leftJoin(photosSub, eq(property.id, photosSub.propertyId))
+			.leftJoin(photo, and(eq(property.id, photo.propertyId), eq(photo.order, 0)))
 			.leftJoin(propertiesWithConstruction, eq(property.id, propertiesWithConstruction.propertyId))
 			.leftJoin(propertyFinancialDetails, eq(property.id, propertyFinancialDetails.propertyId))
 			.where(filters)
@@ -136,12 +126,12 @@ export const getPosts = async ({
 			.offset(offset)
 	]);
 
+	console.log('postsRaw', postsRaw);
 	return {
 		postCount: postCount[0].postCount,
 		posts: postsRaw.map((post) => ({
 			...post,
-			saleType: post.saleType ? JSON.parse(post.saleType as string) : [],
-			photoIds: post.photoIds ? JSON.parse(post.photoIds as string) : []
+			saleType: post.saleType ? JSON.parse(post.saleType as string) : []
 		}))
 	};
 };

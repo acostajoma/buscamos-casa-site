@@ -1,4 +1,5 @@
 import { getPosts } from '$lib/server/utils';
+import { getData } from '$lib/server/utils/postsUtils';
 import { searchSchema } from '$lib/validation/search';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -8,12 +9,9 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const { db, cache } = locals;
 	const form = await superValidate(zod(searchSchema));
 
-	const cachedPosts = await cache.get(url.pathname, 'json');
+	const postsData = await getData(url.pathname, () => getPosts({ db }), cache);
+
+	const { postCount, posts } = postsData;
 	setHeaders({ 'Cache-Control': 'public, max-age=300' });
-	if (cachedPosts) {
-		return { ...(cachedPosts as Awaited<ReturnType<typeof getPosts>>), form };
-	}
-	const { postCount, posts } = await getPosts({ db });
-	await cache.put(url.pathname, JSON.stringify({ postCount, posts }), { expirationTtl: 300 });
 	return { postCount, posts, form };
 };
