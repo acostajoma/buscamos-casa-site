@@ -1,7 +1,9 @@
 import { location } from '$lib/server/db/schema';
 import { getPosts } from '$lib/server/utils';
+import { getData } from '$lib/server/utils/postsUtils';
 import { searchSchema } from '$lib/validation/search';
 import { error } from '@sveltejs/kit';
+import type { SQL } from 'drizzle-orm';
 import { eq } from 'drizzle-orm/mysql-core/expressions';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -56,13 +58,7 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		zod(searchSchema)
 	);
 
-	const cacheKey = url.pathname + url.search;
-	const cachedPosts = await cache.get(cacheKey, 'json');
-	setHeaders({ 'Cache-Control': 'public, max-age=300' });
-	if (cachedPosts) {
-		return { ...(cachedPosts as Awaited<ReturnType<typeof getPosts>>), form };
-	}
-	const filters = [];
+	const filters: SQL<unknown>[] = [];
 	if (state) {
 		filters.push(eq(location.state, state));
 	}
@@ -75,8 +71,14 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		filters.push(eq(location.district, district));
 	}
 
-	const { postCount, posts } = await getPosts({ db, pageNumber, providedFilters: filters });
-	await cache.put(cacheKey, JSON.stringify({ postCount, posts }), { expirationTtl: 300 });
+	const cacheKey = url.pathname + url.search;
+	const postsData = await getData(
+		cacheKey,
+		() => getPosts({ db, pageNumber, providedFilters: filters }),
+		cache
+	);
+	const { postCount, posts } = postsData;
+	setHeaders({ 'Cache-Control': 'public, max-age=300' });
 
 	return { postCount, posts, form };
 };

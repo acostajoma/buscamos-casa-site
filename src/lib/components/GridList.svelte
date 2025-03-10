@@ -46,16 +46,17 @@
 						class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-t-lg text-center"
 					>
 						<div class="flex flex-1 flex-col py-8 px-2">
-							{#if post.photoIds[0]}
+							{#if post.photoId}
+								{@const { photoId } = post}
 								<picture>
-									<source srcset={getPhotoUrl(post.photoIds[0], 375)} media="(min-width: 1280px)" />
-									<source srcset={getPhotoUrl(post.photoIds[0], 340)} media="(min-width: 640px)" />
-									<source srcset={getPhotoUrl(post.photoIds[0], 300)} media="(min-width: 640px)" />
-									<source srcset={getPhotoUrl(post.photoIds[0], 580)} media="(min-width: 450px)" />
-									<source srcset={getPhotoUrl(post.photoIds[0], 400)} media="(max-width: 450px)" />
+									<source srcset={getPhotoUrl(post.photoId, 375)} media="(min-width: 1280px)" />
+									<source srcset={getPhotoUrl(post.photoId, 340)} media="(min-width: 640px)" />
+									<source srcset={getPhotoUrl(post.photoId, 300)} media="(min-width: 640px)" />
+									<source srcset={getPhotoUrl(post.photoId, 580)} media="(min-width: 450px)" />
+									<source srcset={getPhotoUrl(post.photoId, 400)} media="(max-width: 450px)" />
 									<img
 										class="mx-auto w-full aspect-4/3 hrink-0"
-										src={getPhotoUrl(post.photoIds[0], 400)}
+										src={getPhotoUrl(post.photoId, 400)}
 										alt="imagen post {post.id}"
 										loading="lazy"
 									/>
