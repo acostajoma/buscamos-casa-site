@@ -7,7 +7,8 @@ export const load = (async ({ locals }) => {
 		db,
 		pageNumber: 1,
 		role: 'owner',
-		userId: locals.user?.id as string // Guaranteed to be defined
+		userId: locals.user?.id as string, // Guaranteed to be defined
+		providedFilters: undefined
 	});
 	return { ...posts };
 }) satisfies PageServerLoad;
