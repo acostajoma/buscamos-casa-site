@@ -43,7 +43,7 @@
 		<div class="flex flex-1">
 			<div class="hidden lg:flex lg:gap-x-12">
 				{#each links as { title, href } (title)}
-					<a {href} class="text-sm/6 font-semibold text-gray-900">{title}</a>
+					<a {href} class="text-sm/6 font-semibold text-gray-900 hover:text-brand-2">{title}</a>
 				{/each}
 			</div>
 			<div class="flex lg:hidden">
@@ -62,11 +62,9 @@
 			{#if loggedUser}
 				<div class="hidden lg:block">
 					<FlyoutMenu>
-						<a href="/perfil" class="block p-2 hover:text-yellow-700">Información Personal</a>
-						<a href="/mis-publicaciones" class="block p-2 hover:text-yellow-700"
-							>Mis Publicaciones</a
-						>
-						{@render logoutButton('block p-2 hover:text-yellow-700 cursor-pointer')}
+						<a href="/perfil" class="block p-2 hover:text-brand-2">Información Personal</a>
+						<a href="/mis-publicaciones" class="block p-2 hover:text-brand-2">Mis Publicaciones</a>
+						{@render logoutButton('block p-2 hover:text-brand-2 cursor-pointer')}
 					</FlyoutMenu>
 				</div>
 				<Link href="/crear-publicacion">Crear Post</Link>

@@ -13,7 +13,7 @@
 		children,
 		target,
 		class:
-			_class = 'rounded-md bg-yellow-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500'
+			_class = 'rounded-md bg-brand-1 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-1'
 	}: Props = $props();
 </script>
 
