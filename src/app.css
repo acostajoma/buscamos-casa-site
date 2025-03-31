@@ -10,6 +10,12 @@
 }
 
 @theme {
+	/* breakpoints */
 	--breakpoint-2xs: 380px;
 	--breakpoint-xs: 480px;
+	/* colors */
+	--color-brand-1: #de9f17;
+	--color-brand-2: #cf9a15;
+	--color-brand-3: #fff68a;
+	--color-brand-4: #ffcf45;
 }
