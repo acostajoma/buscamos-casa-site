@@ -9,6 +9,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Información de contacto publicación</title>
 </svelte:head>
 

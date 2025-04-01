@@ -3,6 +3,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Publicación en revisión</title>
 </svelte:head>
 

@@ -7,6 +7,7 @@
 
 <svelte:head>
 	<title>Crear publicación</title>
+	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <PublicationForm {data} />

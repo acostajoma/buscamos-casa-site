@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /cerrar-sesion/
+Disallow: /crear-publicacion/
+Disallow: /mis-publicaciones/
+Disallow: /perfil/
+Disallow: /api/
+Allow: /
+
+Sitemap: https://buscamos.casa/sitemap.xml

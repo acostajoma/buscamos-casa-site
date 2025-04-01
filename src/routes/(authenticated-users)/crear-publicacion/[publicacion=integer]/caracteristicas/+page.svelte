@@ -30,6 +30,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Características de la propiedad</title>
 </svelte:head>
 {#snippet featuresMultipleSelect()}

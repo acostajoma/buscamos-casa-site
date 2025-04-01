@@ -10,6 +10,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Fotos de la propiedad</title>
 </svelte:head>
 

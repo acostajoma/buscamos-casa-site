@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import Post from '$lib/components/post/Post.svelte';
 	import type { PageData } from './$types';
 
@@ -7,6 +8,11 @@
 	};
 	let { data }: Props = $props();
 </script>
+
+<svelte:head>
+	<title>Admin Post: #{page.params.postId} | Buscamos.casa</title>
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
 
 {#if data.post}
 	<div class="flex justify-end space-x-4 mx-4">

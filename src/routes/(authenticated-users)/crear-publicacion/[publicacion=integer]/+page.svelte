@@ -6,6 +6,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Aspectos generales de publicación</title>
 </svelte:head>
 

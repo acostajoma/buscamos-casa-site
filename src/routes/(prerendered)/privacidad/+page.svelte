@@ -1,9 +1,22 @@
 <script lang="ts">
+	import MetaData from '$lib/components/MetaData.svelte';
 	import TextPage from '$lib/components/TextPage.svelte';
 	import { companyMail } from '$lib/utils/constants';
+	import { type MetaDataConfig } from '$lib/utils/metadata';
+
+	const title = 'Política de Privacidad';
+	const pageConfig: MetaDataConfig = {
+		title,
+		description:
+			'Conoce nuestra política de privacidad. En Buscamos.casa, nos comprometemos a proteger tus datos personales. Descubre cómo recopilamos, utilizamos y protegemos tu información.',
+		keywords: ['política de privacidad', 'protección de datos', 'privacidad'],
+		robots: 'index, follow',
+		ogImageUrl: '/images/destacada.jpg'
+	};
 </script>
 
-<TextPage title="Política de Privacidad">
+<MetaData {pageConfig} />
+<TextPage {title}>
 	<p class="mt-8 text-gray-600">
 		En Buscamos.casa, valoramos la privacidad de nuestros usuarios y nos comprometemos a proteger
 		sus datos personales. Esta Política de Privacidad describe cómo recopilamos, utilizamos,

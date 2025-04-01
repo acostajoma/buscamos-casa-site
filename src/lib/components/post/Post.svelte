@@ -72,7 +72,10 @@
 	}
 </script>
 
-<PostMetaData {post} orderedPhotos={post.photos} />
+{#if !page.url.pathname.startsWith('/admin')}
+	<!-- Avoid adding metadata if is on the admin page -->
+	<PostMetaData {post} orderedPhotos={post.photos} />
+{/if}
 
 <Container>
 	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl">{title}</h1>

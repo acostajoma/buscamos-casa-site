@@ -7,6 +7,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Mis Publicaciones | Buscamos.casa</title>
 </svelte:head>
 
