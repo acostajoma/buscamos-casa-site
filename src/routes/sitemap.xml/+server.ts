@@ -1,71 +1,76 @@
-// src/routes/sitemap.xml/+server.ts
-import { SitemapStream, streamToPromise } from 'sitemap';
-import { Readable } from 'stream';
-import { error } from '@sveltejs/kit';
+import { property } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
+import type { RequestHandler } from './$types';
 
-// Assume you have a way to get your D1 database instance
-// This depends on how you set up Drizzle/D1 bindings in SvelteKit
-// import { db } from '$lib/server/db'; // Example path to your DB setup
-// import { propertiesTable } from '$lib/server/db/schema'; // Example table schema
-// import { sql } from 'drizzle-orm';
+export const prerender = false;
 
-export async function GET({ platform, setHeaders }) {
-	const hostname = 'https://buscamos.casa'; // Your production domain
+// Do not add HP "/" as it will have a separate treatment
+const staticPaths: string[] = [
+	'/inicia-sesion',
+	'/privacidad',
+	'/terminos-y-condiciones',
+	'/publicaciones'
+];
 
-	try {
-		// --- Fetch Dynamic URLs (Properties) ---
-		// Adapt this query to your Drizzle/D1 setup
-		const db = platform?.env.DB; // Example: Access D1 binding via platform context
-		if (!db) throw new Error('Database binding not found');
-
-		// Efficiently get only needed data (e.g., id/slug, lastUpdated)
-		// Ensure you have an index on lastUpdated if possible
-		const properties = await db
-			.prepare(
-				"SELECT id, slug, lastUpdated FROM properties WHERE status = 'Publicado'" // Adjust table/column names and status
-			)
-			.all<{ id: number; slug: string | null; lastUpdated: string }>();
-
-		const propertyLinks = properties.rows.map((p) => ({
-			// Choose URL structure: /publicacion/ID or /propiedad/SLUG
-			url: `<span class="math-inline">\{hostname\}/es/publicacion/</span>{p.id}`,
-			lastmod: p.lastUpdated, // Ensure this is in YYYY-MM-DD format in DB or format here
-			changefreq: 'weekly',
-			priority: 0.8
-			// Add links for hreflang if needed
-			// links: [
-			//  { lang: 'es-CR', url: `<span class="math-inline">\{hostname\}/es/publicacion/</span>{p.id}` },
-			//  { lang: 'en', url: `<span class="math-inline">\{hostname\}/en/publication/</span>{p.id}` },
-			// ]
-		}));
-
-		// --- Static URLs ---
-		const staticLinks = [
-			{ url: `${hostname}/es/`, changefreq: 'daily', priority: 1.0 },
-			{ url: `${hostname}/en/`, changefreq: 'daily', priority: 1.0 },
-			{ url: `${hostname}/es/contacto`, changefreq: 'monthly', priority: 0.7 }
-			// Add other static pages
-		];
-
-		// Combine all URLs
-		const allLinks = [...staticLinks, ...propertyLinks];
-
-		// --- Generate XML ---
-		const stream = new SitemapStream({ hostname });
-		const xml = await streamToPromise(Readable.from(allLinks).pipe(stream)).then((data) =>
-			data.toString()
-		);
-
-		// --- Set Headers and Return Response ---
-		setHeaders({
-			'Content-Type': 'application/xml',
-			// Cache for a reasonable time (e.g., 1 hour) to reduce D1 load
-			'Cache-Control': 'public, max-age=3600'
-		});
-
-		return new Response(xml);
-	} catch (err: any) {
-		console.error('Error generating sitemap:', err);
-		throw error(500, `Failed to generate sitemap: ${err.message}`);
-	}
-}
+export const GET: RequestHandler = async ({ url, locals: { db } }) => {
+	const baseUrl = url.origin;
+	const postData = await db.query.property.findMany({
+		where: eq(property.listingStatus, 'Publicado'),
+		columns: {
+			id: true,
+			updatedAt: true,
+			createdAt: true
+		},
+		orderBy: (property, { desc }) => [desc(property.updatedAt), desc(property.createdAt)]
+	});
+	return new Response(
+		`<?xml version="1.0" encoding="UTF-8" ?>
+		<urlset
+			xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+			xmlns:xhtml="https://www.w3.org/1999/xhtml"
+			xmlns:mobile="https://www.google.com/schemas/sitemap-mobile/1.0"
+			xmlns:news="https://www.google.com/schemas/sitemap-news/0.9"
+			xmlns:image="https://www.google.com/schemas/sitemap-image/1.1"
+			xmlns:video="https://www.google.com/schemas/sitemap-video/1.1"
+		>
+			<url>
+				<loc>${baseUrl}/</loc>
+				<changefreq>weekly</changefreq>
+				<priority>1</priority>
+			</url>
+			${staticPaths
+				.map(
+					(path) => `<url>
+					<loc>${baseUrl}${path}</loc>
+					<changefreq>weekly</changefreq>
+					<priority>0.7</priority>
+				</url>`
+				)
+				.join('')}
+			${postData
+				.map(
+					(post) => `<url>
+					<loc>${baseUrl}/publicacion/${post.id}</loc>
+					<lastmod>${new Date(post.updatedAt || post.createdAt).toISOString()}</lastmod>
+					<changefreq>daily</changefreq>
+					<priority>0.8</priority>
+				</url>`
+				)
+				.join('')}
+		</urlset>`.trim(),
+		{
+			headers: {
+				'Content-Type': 'application/xml',
+				'Cache-Control': 'public, max-age=86400, s-maxage=86400' // cache for a day
+			},
+			cf: {
+				cacheTtlByStatus: {
+					'200-299': 86400,
+					'404': 1,
+					'500-599': 0
+				}
+			},
+			status: 200
+		}
+	);
+};
