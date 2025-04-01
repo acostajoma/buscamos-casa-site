@@ -3,6 +3,7 @@
 	import { type Photo } from '$lib/server/db/schema';
 	import { serializeSchema } from '$lib/utils/formatters';
 	import { getPhotoUrl } from '$lib/utils/photos';
+	import { createPostMetadataSchema } from '$lib/utils/post';
 	import type { PropertyWithAllData } from '../../../ambient';
 
 	type Props = {
@@ -32,44 +33,7 @@
 	let url = $derived(page.url.toString());
 	// Generate JSON-LD structured data for the listing.
 	let structuredData = $derived.by(() => {
-		return serializeSchema({
-			'@context': 'https://schema.org',
-			'@type': 'Offer',
-			name: post.title,
-			description: post.description,
-			url,
-			price: post.propertyFinancialDetails?.salePrice,
-			priceCurrency: post.propertyFinancialDetails?.currency,
-			itemOffered: {
-				'@type': 'Product',
-				name: post.title,
-				description: post.description,
-				image: primaryPhoto ? getPhotoUrl(primaryPhoto.id) : undefined,
-				additionalProperty: [
-					{
-						'@type': 'PropertyValue',
-						name: 'Property Type',
-						value: post.propertyType
-					},
-					{
-						'@type': 'PropertyValue',
-						name: 'Size',
-						value: post.size
-					},
-					{
-						'@type': 'PropertyValue',
-						name: 'Listing Status',
-						value: post.listingStatus
-					}
-				]
-			},
-			seller: {
-				'@type': 'Person',
-				name: post.sellerInformation
-					? `${post.sellerInformation.name} ${post.sellerInformation.lastName || ''}`.trim()
-					: ''
-			}
-		});
+		return serializeSchema(createPostMetadataSchema(post, url, primaryPhoto?.id));
 	});
 </script>
 

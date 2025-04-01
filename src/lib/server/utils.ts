@@ -126,7 +126,6 @@ export const getPosts = async ({
 			.offset(offset)
 	]);
 
-	console.log('postsRaw', postsRaw);
 	return {
 		postCount: postCount[0].postCount,
 		posts: postsRaw.map((post) => ({
