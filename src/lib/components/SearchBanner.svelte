@@ -47,15 +47,20 @@
 			style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"
 		></div>
 	</div>
-	<div class="mx-auto max-w-3xl py-10 sm:py-36 lg:py-48">
+	<div class="mx-auto max-w-3xl py-10 sm:py-24 lg:py-36">
 		<div class="text-center">
-			<h1 class="text-4xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl">
-				Busca tu propiedad ideal
+			<h1 class="text-3xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">
+				Encuentra Casas y Apartamentos en Costa Rica
 			</h1>
+			<p class="text-xs sm:text-sm text-gray-700 mt-2 sm:mt-6 mx-4">
+				Bienvenido a Buscamos.casa, tu portal de confianza para encontrar las mejores propiedades en
+				venta y alquiler en todo Costa Rica. Explora listados actualizados de casas, apartamentos y
+				terrenos y encuentra hoy mismo tu hogar ideal.
+			</p>
 			<form
 				action="/publicaciones"
 				method="GET"
-				class="grid grid-cols-4 gap-6 sm:grid-cols-6 px-6 sm:px-0 mt-10"
+				class="grid grid-cols-4 gap-6 sm:grid-cols-6 px-6 sm:px-0 mt-6 sm:mt-10"
 			>
 				<div class="col-span-4 sm:col-span-2">
 					<SelectMenu id="state" label="Provincia" name="state" {form} options={states}

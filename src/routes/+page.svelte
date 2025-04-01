@@ -23,7 +23,7 @@
 	<title>Encuentra tu hogar ideal | Buscamos.casa</title>
 	<meta
 		name="description"
-		content="Descubre las mejores propiedades en venta y alquiler. Encuentra tu hogar ideal con Buscamos.casa."
+		content="Descubre las mejores propiedades en venta y alquiler en Costa Rica. Encuentra tu hogar ideal con Buscamos.casa."
 	/>
 	<meta
 		name="keywords"
@@ -41,15 +41,15 @@
 	/>
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://www.buscamos.casa/" />
-	<meta property="og:locale" content="es_ES" />
+	<meta property="og:locale" content="es_CR" />
 	<meta property="og:site_name" content="Buscamos.casa" />
 	<meta property="og:image" content="/images/destacada.jpg" />
 </svelte:head>
 
 <SearchBanner form={searchForm} />
 <Container>
-	<h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
+	<h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
 		Ultimas Publicaciones
-	</h1>
+	</h2>
 	<GridList posts={data.posts} />
 </Container>
