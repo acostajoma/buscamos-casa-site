@@ -1,7 +1,28 @@
 <script lang="ts">
+	import MetaData from '$lib/components/MetaData.svelte';
 	import Facebook from '$lib/icons/Facebook.svelte';
 	import Google from '$lib/icons/Google.svelte';
+	import { type MetaDataConfig } from '$lib/utils/metadata';
+
+	const pageConfig: MetaDataConfig = {
+		title: 'Inicia Sesión | Regístrate',
+		description:
+			'Inicia sesión o regístrate en Buscamos.casa para publicar propiedades, contactar vendedores y encontrar tu hogar ideal.',
+		keywords: [
+			'iniciar sesión',
+			'registrarse',
+			'crear cuenta',
+			'publicar propiedades',
+			'contactar vendedores',
+			'encontrar hogar',
+			'Buscamos.casa'
+		],
+		robots: 'index, nofollow',
+		ogImageUrl: '/images/destacada.jpg'
+	};
 </script>
+
+<MetaData {pageConfig} />
 
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">

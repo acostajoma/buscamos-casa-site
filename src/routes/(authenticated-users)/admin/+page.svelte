@@ -11,6 +11,7 @@
 
 <svelte:head>
 	<title>Admin: Publicaciones | Buscamos.casa</title>
+	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <Container>

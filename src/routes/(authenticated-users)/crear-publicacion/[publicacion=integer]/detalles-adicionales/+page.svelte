@@ -42,6 +42,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Detalles financieros de la propiedad</title>
 </svelte:head>
 {#snippet financeFields()}

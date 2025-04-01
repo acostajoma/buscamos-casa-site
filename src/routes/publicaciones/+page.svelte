@@ -2,12 +2,31 @@
 	import Button from '$lib/components/Button.svelte';
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
 	import GridList from '$lib/components/GridList.svelte';
+	import MetaData from '$lib/components/MetaData.svelte';
 	import SidebarFilters from '$lib/components/SidebarFilters.svelte';
 	import { locationMap, states } from '$lib/utils/location/costaRicaData';
+	import { type MetaDataConfig } from '$lib/utils/metadata';
 	import { searchSchema } from '$lib/validation/search';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { type PageData } from './$types';
+
+	const title = 'Publicaciones de Propiedades en Costa Rica | Buscamos.casa';
+	const pageConfig: MetaDataConfig = {
+		title,
+		description:
+			'Encuentra tu hogar ideal en Costa Rica. Explora una amplia selección de propiedades en venta y alquiler. Filtra por ubicación, tipo de propiedad y más. ¡Encuentra tu casa hoy!',
+		keywords: [
+			'propiedades en venta',
+			'propiedades en alquiler',
+			'bienes raíces Costa Rica',
+			'casas en venta',
+			'apartamentos en alquiler',
+			'Buscamos.casa'
+		],
+		robots: 'index, follow',
+		ogImageUrl: '/images/destacada.jpg'
+	};
 
 	type Props = {
 		data: PageData;
@@ -38,10 +57,7 @@
 	);
 </script>
 
-<svelte:head>
-	<title>Publicaciones | Buscamos.casa</title>
-</svelte:head>
-
+<MetaData {pageConfig} />
 <SidebarFilters>
 	{#snippet formFields()}
 		<div class="border-t border-gray-200 pt-4 pb-4">

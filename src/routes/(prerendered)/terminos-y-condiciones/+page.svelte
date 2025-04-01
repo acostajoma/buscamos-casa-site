@@ -1,8 +1,29 @@
 <script lang="ts">
+	import MetaData from '$lib/components/MetaData.svelte';
 	import TextPage from '$lib/components/TextPage.svelte';
+	import { type MetaDataConfig } from '$lib/utils/metadata';
+
+	const title = 'Términos y Condiciones de uso';
+	const pageConfig: MetaDataConfig = {
+		title,
+		description:
+			'Consulta los Términos y Condiciones de uso de Buscamos.casa. Conoce las reglas y responsabilidades al usar nuestra plataforma para la publicación y búsqueda de propiedades.',
+		keywords: [
+			'términos de uso',
+			'condiciones de uso',
+			'reglas de la plataforma',
+			'responsabilidades',
+			'Buscamos.casa',
+			'publicación de propiedades',
+			'búsqueda de propiedades'
+		],
+		robots: 'index, follow',
+		ogImageUrl: '/images/destacada.jpg'
+	};
 </script>
 
-<TextPage title="Términos y Condiciones de uso">
+<MetaData {pageConfig} />
+<TextPage {title}>
 	<ol class="list-decimal list-inside mt-8 max-w-xl space-y-8 text-gray-600">
 		<li>
 			<span class="font-bold">Aceptación de los Términos:</span>

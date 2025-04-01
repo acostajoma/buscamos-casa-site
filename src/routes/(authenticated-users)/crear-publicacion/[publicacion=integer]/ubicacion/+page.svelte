@@ -45,6 +45,8 @@
 </script>
 
 <svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+
 	<title>Ubicación de la propiedad</title>
 </svelte:head>
 {#snippet formItems()}
