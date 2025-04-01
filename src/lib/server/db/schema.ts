@@ -242,7 +242,8 @@ export const sellerInformation = sqliteTable(
 		phone: text('phone_number'),
 		countryCode: text('country_code'),
 		name: text('name'),
-		lastName: text('last_name')
+		lastName: text('last_name'),
+		isAgent: integer('is_agent', { mode: 'boolean' }).default(false)
 	},
 	(table) => ({
 		propertyIdx: index('idx_sellerinformation_property_id').on(table.propertyId)

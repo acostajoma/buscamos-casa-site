@@ -1,4 +1,5 @@
-export const propertyTypes: [string, ...string[]] = [
+export type PropertyTypes = 'Casa' | 'Apartamento' | 'Lote' | 'Oficina' | 'Bodega' | 'Finca';
+export const propertyTypes: [PropertyTypes, ...PropertyTypes[]] = [
 	'Casa',
 	'Apartamento',
 	'Lote',
