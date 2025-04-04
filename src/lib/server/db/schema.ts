@@ -96,7 +96,8 @@ export const property = sqliteTable(
 			.notNull()
 			.default(sql`(current_timestamp)`),
 		updatedAt: text('updated_at'),
-		deletedAt: text('deleted_at')
+		deletedAt: text('deleted_at'),
+		externalURL: text('external_url')
 	},
 	(table) => ({
 		listingStatusIdx: index('idx_property_listing_status').on(table.listingStatus),
@@ -243,7 +244,9 @@ export const sellerInformation = sqliteTable(
 		countryCode: text('country_code'),
 		name: text('name'),
 		lastName: text('last_name'),
-		isAgent: integer('is_agent', { mode: 'boolean' }).default(false)
+		isRegisteredAgentOrBroker: integer('is_registered_agent_or_broker', {
+			mode: 'boolean'
+		}).default(false)
 	},
 	(table) => ({
 		propertyIdx: index('idx_sellerinformation_property_id').on(table.propertyId)
@@ -251,6 +254,36 @@ export const sellerInformation = sqliteTable(
 );
 
 export type SellerInformation = typeof sellerInformation.$inferSelect;
+
+export const sellerInformationRelations = relations(sellerInformation, ({ one }) => ({
+	property: one(property, {
+		fields: [sellerInformation.propertyId],
+		references: [property.id]
+	}),
+	agentOrBroker: one(agentOrBroker, {
+		fields: [sellerInformation.id],
+		references: [agentOrBroker.sellerInformationId]
+	})
+}));
+
+export const agentOrBroker = sqliteTable('agent_or_broker', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	sellerInformationId: integer('seller_information_id')
+		.notNull()
+		.references(() => sellerInformation.id, { onDelete: 'cascade' }),
+	imageId: text('image_id'),
+	imageAlt: text('image_alt'),
+	instagramUserName: text('instagram_user_name')
+});
+
+export const agentOrBrokerRelations = relations(agentOrBroker, ({ one }) => ({
+	sellerInformation: one(sellerInformation, {
+		fields: [agentOrBroker.sellerInformationId],
+		references: [sellerInformation.id]
+	})
+}));
+
+export type AgentOrBroker = typeof agentOrBroker.$inferSelect;
 
 export const photo = sqliteTable(
 	'photo',

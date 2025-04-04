@@ -1,0 +1,1 @@
+ALTER TABLE `agent_or_broker` ADD `instagram_user_name` text;

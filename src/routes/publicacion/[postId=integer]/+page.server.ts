@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params, locals, setHeaders, url }) 
 		error(406, 'Esta propiedad ha sido marcada como vendida o alquilada.');
 	}
 
-	setHeaders({ 'Cache-Control': 'public, max-age=300' });
+	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
 
 	return {
 		post

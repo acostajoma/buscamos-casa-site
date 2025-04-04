@@ -6,8 +6,8 @@ import { z } from 'zod';
 import { customEnum, numeric, text } from './generalZodTypes';
 
 export const propertySchema = z.object({
-	title: text(5, 50),
-	description: text(5, 500),
+	title: text(5, 100),
+	description: text(5, 1000),
 	propertyType: customEnum(propertyTypes).default(propertyTypes[0]),
 	saleType: customEnum(saleTypes)
 		.array()

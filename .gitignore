@@ -31,5 +31,6 @@ vite.config.ts.timestamp-*
 .wrangler
 secrets-preview.json
 secrets-prod.json
+queries
 # Sentry Config File
 .env.sentry-build-plugin
