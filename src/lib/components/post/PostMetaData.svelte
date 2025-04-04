@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { type Photo } from '$lib/server/db/schema';
+	import type { PropertyWithAllData } from '$lib/server/utils/postsUtils';
 	import { serializeSchema } from '$lib/utils/formatters';
 	import { getPhotoUrl } from '$lib/utils/photos';
 	import { createPostMetadataSchema } from '$lib/utils/post';
-	import type { PropertyWithAllData } from '../../../ambient';
 
 	type Props = {
-		post: PropertyWithAllData;
+		post: NonNullable<PropertyWithAllData>;
 		robots?: string;
 		type?: string;
 		locale?: string;
-		orderedPhotos: Photo[] | null;
+		orderedPhotos: Omit<Photo, 'propertyId'>[] | null;
 	};
 	let {
 		post,
@@ -23,9 +23,9 @@
 
 	let keywords = $derived.by(() => {
 		let keywordsString = '';
-		const { location, propertyType, listingStatus, saleType } = post;
-		const saleTypesString = saleType.map((type) => type?.type || '').join(', ');
-		return `${location.country}, ${location?.state}, ${location?.city}, ${location?.district}, ${propertyType}, ${saleTypesString} `;
+		const { location, propertyType, listingStatus, saleType } = post || {};
+		const saleTypesString = saleType?.map((type) => type?.type || '').join(', ');
+		return `${location?.country}, ${location?.state}, ${location?.city}, ${location?.district}, ${propertyType}, ${saleTypesString} `;
 	});
 
 	let primaryPhoto = orderedPhotos ? orderedPhotos[0] : null;

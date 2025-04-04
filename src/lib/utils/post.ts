@@ -1,4 +1,5 @@
-import type { PropertyWithAllData } from '../../ambient';
+import type { PropertyWithAllData } from '$lib/server/utils/postsUtils';
+
 import { getPhotoUrl } from './photos';
 import type { ListingStates, PropertyTypes } from './postConstants';
 
@@ -49,6 +50,7 @@ export function createPostMetadataSchema(
 	url: string,
 	primaryPhotoId?: string
 ) {
+	if (!post) return {};
 	const additionalProperty = [];
 	if (post?.propertiesWithConstruction) {
 		additionalProperty.push({
@@ -72,7 +74,7 @@ export function createPostMetadataSchema(
 			priceCurrency: post.propertyFinancialDetails?.currency === 'Dólar' ? 'USD' : 'CRC',
 			availability: mapStatusToAvailability(post.listingStatus),
 			seller: {
-				'@type': post.sellerInformation?.isAgent ? 'RealEstateAgent' : 'Person',
+				'@type': post.sellerInformation?.agentOrBroker ? 'RealEstateAgent' : 'Person',
 				name: post.sellerInformation
 					? `${post.sellerInformation.name} ${post.sellerInformation.lastName || ''}`.trim()
 					: 'Buscamos.casa',

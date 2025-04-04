@@ -11,12 +11,11 @@
 	import Url from '$lib/icons/Url.svelte';
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import Year from '$lib/icons/Year.svelte';
+	import type { PropertyWithAllData } from '$lib/server/utils/postsUtils';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
 	import { createWhatsAppLink } from '$lib/utils/phone';
-	import { parsePhoneNumberWithError } from 'svelte-tel-input';
-	import type { CountryCode } from 'svelte-tel-input/types';
 	import { fade } from 'svelte/transition';
-	import type { PropertyWithAllData } from '../../../ambient';
+	import CardHeading from '../CardHeading.svelte';
 	import Container from '../Container.svelte';
 	import Link from '../Link.svelte';
 	import ListWithDivider from '../ListWithDivider.svelte';
@@ -25,42 +24,26 @@
 	import PostMetaData from './PostMetaData.svelte';
 
 	type Props = {
-		post: PropertyWithAllData;
+		post: NonNullable<PropertyWithAllData>;
 	};
 	let { post }: Props = $props();
 
 	let {
+		description,
 		location,
-		title,
-		saleType,
 		propertiesWithConstruction,
 		propertyFeatures,
-		propertyFinancialDetails,
+		propertyFinancialDetails: { salePrice, currency, rentPrice, maintenanceCost },
 		sellerInformation,
+		saleType,
+		title,
 		size,
-		propertyType,
-		description
+		propertyType
 	} = $derived(post);
 
-	let { salePrice, currency, rentPrice, maintenanceCost } = $derived(propertyFinancialDetails);
 	let pageUrl = $derived(page.url.toString());
 
-	let formattedPhoneNumber = $derived.by(() => {
-		if (!sellerInformation?.phone || !sellerInformation?.countryCode) {
-			return null;
-		}
-		const phoneNumber = parsePhoneNumberWithError(
-			sellerInformation?.phone as string,
-			sellerInformation?.countryCode as CountryCode
-		);
-		if (!phoneNumber.isValid) {
-			return null;
-		}
-		return phoneNumber.countryCallingCode + phoneNumber.nationalNumber;
-	});
-
 	let sharingMessage: undefined | string = $state.raw(undefined);
-	let url = $derived(page.url.toString());
 
 	function copyUrl() {
 		navigator.clipboard.writeText(pageUrl);
@@ -129,61 +112,15 @@
 		{/if}
 	</Grid>
 
-	{#if formattedPhoneNumber}
-		<h3 class="mt-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
-			Información de contacto
-		</h3>
-		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
-			Nombre del anunciante: {sellerInformation.name}
-		</p>
-		<a
-			target="_blank"
-			href={createWhatsAppLink(`Estoy interesado en la propiedad: ${url}`, formattedPhoneNumber)}
-			class="mt-4 flex max-w-sm flex-1 items-center justify-center rounded-md border border-transparent bg-green-500 px-8 py-3 text-base font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
-			><WhatsApp class="mr-2 h-6 w-6 fill-white" />Pregunta por esta propiedad</a
-		>
-	{/if}
-
-	<h3 class="mt-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-2">
-		Comparte esta Publicación
+	<h3 class="my-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+		Información de contacto
 	</h3>
-	<div class="flex gap-4 flex-wrap">
-		<Link
-			target="_blank"
-			href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(
-				pageUrl
-			)}&src=sdkpreparse"
-			class="inline-flex items-center space-x-2 rounded bg-[#4267B2] px-4 py-2 text-white hover:bg-[#36528C] max-w-56"
-		>
-			<Facebook class="h-5 w-5 fill-current" />
-			<span>Facebook</span>
-		</Link>
-		<Link
-			target="_blank"
-			class="inline-flex items-center space-x-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 max-w-56"
-			href={createWhatsAppLink(
-				`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`
-			)}
-		>
-			<WhatsApp class="h-5 w-5 fill-current" />
-			<span>WhatsApp</span>
-		</Link>
+	<CardHeading {sellerInformation} {pageUrl} externalUrl={post.externalURL} />
 
-		<button
-			onclick={copyUrl}
-			type="button"
-			class="inline-flex items-center space-x-2 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 max-w-56"
-		>
-			<Url class="h-5 w-5 fill-current" />
-			<span>Copiar URL</span>
-		</button>
-	</div>
-	{#if sharingMessage}
-		<p class="mt-4 text-sm text-gray-700" transition:fade>{sharingMessage}</p>
-	{/if}
-
-	<div class="my-6">
-		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Ubicación</h3>
+	<div class="my-10">
+		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
+			Ubicación de la propiedad
+		</h3>
 
 		<div class="flex flex-col gap-6 lg:flex-row">
 			<Map {location} />
@@ -216,9 +153,50 @@
 
 			<ListWithDivider useGrid>
 				{#each propertyFeatures as { feature }}
-					<li class="text-xs sm:text-lg tracking-tight text-gray-900 md:text-xl">{feature.name}</li>
+					<li class="text-xs sm:text-lg tracking-tight text-gray-900 md:text-xl">
+						{feature.name}
+					</li>
 				{/each}
 			</ListWithDivider>
 		</div>
 	{/if}
+	<div id="sharing-section">
+		<h3 class="mt-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-2">
+			Comparte esta Publicación
+		</h3>
+		<div class="flex gap-4 flex-wrap">
+			<Link
+				target="_blank"
+				href="https://www.facebook.com/sharer/sharer.php?u={encodeURIComponent(
+					pageUrl
+				)}&src=sdkpreparse"
+				class="inline-flex items-center space-x-2 rounded bg-[#4267B2] px-4 py-2 text-white hover:bg-[#36528C] max-w-56"
+			>
+				<Facebook class="h-5 w-5 fill-current" />
+				<span>Facebook</span>
+			</Link>
+			<Link
+				target="_blank"
+				class="inline-flex items-center space-x-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 max-w-56"
+				href={createWhatsAppLink(
+					`Mira esta propiedad que está publicada en Buscamos.casa: ${pageUrl}`
+				)}
+			>
+				<WhatsApp class="h-5 w-5 fill-current" />
+				<span>WhatsApp</span>
+			</Link>
+
+			<button
+				onclick={copyUrl}
+				type="button"
+				class="inline-flex items-center space-x-2 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 max-w-56"
+			>
+				<Url class="h-5 w-5 fill-current" />
+				<span>Copiar URL</span>
+			</button>
+		</div>
+		{#if sharingMessage}
+			<p class="mt-4 text-sm text-gray-700" transition:fade>{sharingMessage}</p>
+		{/if}
+	</div>
 </Container>

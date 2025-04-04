@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		cache
 	);
 	const { postCount, posts } = postsData;
-	setHeaders({ 'Cache-Control': 'public, max-age=300' });
+	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
 
 	return { postCount, posts, form };
 };

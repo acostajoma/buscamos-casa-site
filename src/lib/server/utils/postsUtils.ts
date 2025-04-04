@@ -2,7 +2,7 @@ import { dev } from '$app/environment';
 import type { Feature, Location } from '$lib/server/db/schema';
 import { photo, property, saleType, userRoles, type Property } from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
-import { type ListingStates } from '$lib/utils/postConstants';
+import { type ListingStates, type PropertyTypes } from '$lib/utils/postConstants';
 import { createFeaturesSchema, locationSchema, propertySchema } from '$lib/validation/post';
 import { error, fail, redirect, type Action } from '@sveltejs/kit';
 import { asc, eq } from 'drizzle-orm';
@@ -150,10 +150,10 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 		return fail(400, { form });
 	}
 
-	const values = {
+	const values: Partial<Property> = {
 		title: data.title,
 		description: data.description,
-		propertyType: data.propertyType,
+		propertyType: data.propertyType as PropertyTypes,
 		postOwnerId: user?.id as string, // user is guaranteed to be defined as per validatePropertyForm function checks if user exists
 		listingStatus: 'Borrador' as ListingStates,
 		size: data.size,
@@ -161,13 +161,13 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 	};
 	const [newProperty] = await db
 		.insert(property)
-		.values(values)
+		.values(values as Property)
 		.onConflictDoUpdate({
 			target: [property.id],
 			set: {
 				title: data.title,
 				description: data.description,
-				propertyType: data.propertyType,
+				propertyType: data.propertyType as PropertyTypes,
 				size: data.size,
 				listingStatus: 'Borrador'
 			}
@@ -322,20 +322,45 @@ export async function getOnePost(db: App.Locals['db'], postId: number) {
 	return await db.query.property.findFirst({
 		where: eq(property.id, postId),
 		with: {
-			sellerInformation: true,
+			sellerInformation: {
+				with: {
+					agentOrBroker: {
+						columns: {
+							imageAlt: true,
+							imageId: true,
+							instagramUserName: true
+						}
+					}
+				}
+			},
 			location: true,
-			photos: { orderBy: asc(photo.order) },
+			photos: {
+				orderBy: asc(photo.order),
+				columns: {
+					order: true,
+					id: true
+				}
+			},
 			propertiesWithConstruction: true,
 			propertyFeatures: {
+				columns: {
+					featureId: false,
+					propertyId: false
+				},
 				with: {
-					feature: true
+					feature: {
+						columns: {
+							name: true
+						}
+					}
 				}
 			},
 			propertyFinancialDetails: true,
-			saleType: true
+			saleType: { columns: { type: true } }
 		}
 	});
 }
+export type PropertyWithAllData = Awaited<ReturnType<typeof getOnePost>>;
 
 export async function isAdmin(locals: App.Locals) {
 	const { user, db } = locals;

@@ -31,7 +31,7 @@ export const load = async ({ locals, params }) => {
 
 	validatePropertyOwnerAccess(user, propertyIdAndFeatures);
 
-	const { propertyFeatures } = propertyIdAndFeatures as PropertyIdAndFeatures;
+	const { propertyFeatures = [] } = propertyIdAndFeatures || {};
 
 	const propertyFeaturesNames = propertyFeatures.map((item) => item.feature.name);
 	const allFeaturesNames = allPropertyFeatures.map((feature) => feature.name);
