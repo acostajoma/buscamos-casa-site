@@ -2,10 +2,8 @@
 	import Website from '$lib/icons/Website.svelte';
 	import WhatsApp from '$lib/icons/WhatsApp.svelte';
 	import type { PropertyWithAllData } from '$lib/server/utils/postsUtils';
-	import { createWhatsAppLink } from '$lib/utils/phone';
+	import { createWhatsAppLink, getFormattedPhoneNumber } from '$lib/utils/phone';
 	import { getPhotoUrl } from '$lib/utils/photos';
-	import { parsePhoneNumberWithError } from 'svelte-tel-input';
-	import type { CountryCode } from 'svelte-tel-input/types';
 
 	type Props = {
 		sellerInformation: NonNullable<PropertyWithAllData>['sellerInformation'];
@@ -14,19 +12,9 @@
 	};
 	let { sellerInformation, pageUrl, externalUrl }: Props = $props();
 	let { agentOrBroker, name } = $derived(sellerInformation);
-	let formattedPhoneNumber = $derived.by(() => {
-		if (!sellerInformation?.phone || !sellerInformation?.countryCode) {
-			return null;
-		}
-		const phoneNumber = parsePhoneNumberWithError(
-			sellerInformation?.phone as string,
-			sellerInformation?.countryCode as CountryCode
-		);
-		if (!phoneNumber.isValid) {
-			return null;
-		}
-		return phoneNumber.countryCallingCode + phoneNumber.nationalNumber;
-	});
+	let formattedPhoneNumber = $derived(
+		getFormattedPhoneNumber(sellerInformation?.phone, sellerInformation?.countryCode)
+	);
 
 	let formattedExternalUrl = $derived.by(() => {
 		if (!externalUrl) return 'pagina del vendedor';

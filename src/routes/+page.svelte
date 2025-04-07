@@ -1,7 +1,10 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
+	import GridContactList from '$lib/components/GridContactList.svelte';
 	import GridList from '$lib/components/GridList.svelte';
+	import MetaData from '$lib/components/MetaData.svelte';
 	import SearchBanner from '$lib/components/SearchBanner.svelte';
+	import type { MetaDataConfig } from '$lib/utils/metadata';
 	import { searchSchema } from '$lib/validation/search';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
@@ -17,39 +20,38 @@
 		customValidity: false,
 		dataType: 'json'
 	});
+	const pageConfig: MetaDataConfig = {
+		title: 'Encuentra tu hogar ideal | Buscamos.casa',
+		canonicalUrl: 'https://www.buscamos.casa/',
+		description:
+			'Descubre las mejores propiedades en venta y alquiler en Costa Rica. Encuentra tu hogar ideal con Buscamos.casa.',
+		keywords: [
+			'bienes raíces',
+			'casas en venta',
+			'alquiler de propiedades',
+			'compra de casa',
+			'inmobiliaria',
+			'Casas en venta en Costa Rica'
+		],
+		robots: 'index, follow',
+		ogImageUrl: '/images/destacada.jpg',
+		ogLocale: 'es_CR',
+		ogType: 'website'
+	};
 </script>
 
-<svelte:head>
-	<title>Encuentra tu hogar ideal | Buscamos.casa</title>
-	<meta
-		name="description"
-		content="Descubre las mejores propiedades en venta y alquiler en Costa Rica. Encuentra tu hogar ideal con Buscamos.casa."
-	/>
-	<meta
-		name="keywords"
-		content="bienes raíces, casas en venta, alquiler de propiedades, compra de casa, inmobiliaria"
-	/>
-	<meta name="robots" content="index, follow" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="canonical" href="https://www.buscamos.casa/" />
-
-	<!-- Open Graph Tags -->
-	<meta property="og:title" content="Encuentra tu hogar ideal | Buscamos.casa" />
-	<meta
-		property="og:description"
-		content="Descubre las mejores propiedades en venta y alquiler. Encuentra tu hogar ideal con Buscamos.casa."
-	/>
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://www.buscamos.casa/" />
-	<meta property="og:locale" content="es_CR" />
-	<meta property="og:site_name" content="Buscamos.casa" />
-	<meta property="og:image" content="/images/destacada.jpg" />
-</svelte:head>
+<MetaData {pageConfig} />
 
 <SearchBanner form={searchForm} />
 <Container>
-	<h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
-		Ultimas Publicaciones
+	{#if data.exclusiveVendors}
+		<h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl mb-9">
+			Vendedores exclusivos
+		</h2>
+		<GridContactList vendors={data.exclusiveVendors} />
+	{/if}
+	<h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl xl:text-4xl my-16">
+		Últimas Publicaciones
 	</h2>
 	<GridList posts={data.posts} />
 </Container>

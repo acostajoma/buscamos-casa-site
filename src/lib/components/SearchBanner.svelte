@@ -67,7 +67,7 @@
 					></SelectMenu>
 				</div>
 				<div class="col-span-2">
-					<SelectMenu id="city" label="Canton" name="city" {form} options={cantons}></SelectMenu>
+					<SelectMenu id="city" label="Cantón" name="city" {form} options={cantons}></SelectMenu>
 				</div>
 				<div class="col-span-2">
 					<SelectMenu id="district" label="Distrito" name="district" {form} options={districts}

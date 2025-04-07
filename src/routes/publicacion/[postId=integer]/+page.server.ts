@@ -1,4 +1,6 @@
-import { getData, getOnePost } from '$lib/server/utils/postsUtils';
+import { getData } from '$lib/server/utils/dataFetcher';
+import { getOnePost } from '$lib/server/utils/postsUtils';
+
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';

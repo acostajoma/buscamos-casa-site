@@ -1,6 +1,6 @@
 import { location } from '$lib/server/db/schema';
 import { getPosts } from '$lib/server/utils';
-import { getData } from '$lib/server/utils/postsUtils';
+import { getData } from '$lib/server/utils/dataFetcher';
 import { searchSchema } from '$lib/validation/search';
 import { error } from '@sveltejs/kit';
 import type { SQL } from 'drizzle-orm';
