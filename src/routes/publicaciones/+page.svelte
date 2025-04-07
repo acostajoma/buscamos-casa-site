@@ -81,7 +81,7 @@
 						<div class="space-y-6">
 							<SelectMenu
 								id="city"
-								label="Canton"
+								label="Cantón"
 								name="city"
 								options={cantons}
 								form={searchForm}

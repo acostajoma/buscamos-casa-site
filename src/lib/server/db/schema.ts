@@ -18,6 +18,10 @@ export const userRelations = relations(user, ({ one, many }) => ({
 		fields: [user.id],
 		references: [userRoles.userId]
 	}),
+	agentOrBroker: one(agentOrBroker, {
+		fields: [user.id],
+		references: [agentOrBroker.userId]
+	}),
 	property: many(property)
 }));
 
@@ -262,28 +266,48 @@ export const sellerInformationRelations = relations(sellerInformation, ({ one })
 	}),
 	agentOrBroker: one(agentOrBroker, {
 		fields: [sellerInformation.id],
-		references: [agentOrBroker.sellerInformationId]
+		references: [agentOrBroker.userId]
 	})
 }));
 
 export const agentOrBroker = sqliteTable('agent_or_broker', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	sellerInformationId: integer('seller_information_id')
+	userId: text('user_id')
 		.notNull()
-		.references(() => sellerInformation.id, { onDelete: 'cascade' }),
+		.references(() => user.id, { onDelete: 'cascade' }),
+	displayName: text('display_name').notNull().unique(),
 	imageId: text('image_id'),
 	imageAlt: text('image_alt'),
 	instagramUserName: text('instagram_user_name')
 });
 
 export const agentOrBrokerRelations = relations(agentOrBroker, ({ one }) => ({
-	sellerInformation: one(sellerInformation, {
-		fields: [agentOrBroker.sellerInformationId],
-		references: [sellerInformation.id]
+	user: one(user, {
+		fields: [agentOrBroker.userId],
+		references: [user.id]
 	})
 }));
 
 export type AgentOrBroker = typeof agentOrBroker.$inferSelect;
+
+export const exclusiveVendor = sqliteTable(
+	'exclusive_vendor',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' })
+	},
+	(table) => ({
+		pk: primaryKey({ columns: [table.userId] })
+	})
+);
+
+export const exclusiveVendorRelations = relations(exclusiveVendor, ({ one }) => ({
+	user: one(user, {
+		fields: [exclusiveVendor.userId],
+		references: [user.id]
+	})
+}));
 
 export const photo = sqliteTable(
 	'photo',

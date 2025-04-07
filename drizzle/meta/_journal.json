@@ -57,6 +57,34 @@
       "when": 1743735295388,
       "tag": "0007_careless_tyger_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1743781918397,
+      "tag": "0008_long_hiroim",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1743782898033,
+      "tag": "0009_crazy_hitman",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1743783268144,
+      "tag": "0010_handy_turbo",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1743804556622,
+      "tag": "0011_eminent_harpoon",
+      "breakpoints": true
     }
   ]
 }
