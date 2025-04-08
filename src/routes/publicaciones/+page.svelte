@@ -3,6 +3,7 @@
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
 	import GridList from '$lib/components/GridList.svelte';
 	import MetaData from '$lib/components/MetaData.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import SidebarFilters from '$lib/components/SidebarFilters.svelte';
 	import { locationMap, states } from '$lib/utils/location/costaRicaData';
 	import { type MetaDataConfig } from '$lib/utils/metadata';
@@ -63,9 +64,6 @@
 		<div class="border-t border-gray-200 pt-4 pb-4">
 			<form action="/publicaciones" method="get">
 				<fieldset>
-					<!-- <legend class="w-full px-2">
-					<span class="text-sm font-lg text-gray-900 pl-2">Ubicación</span>
-				</legend> -->
 					<div class="px-4 pt-4 pb-2" id="filter-section-0">
 						<div class="space-y-6">
 							<SelectMenu
@@ -107,4 +105,10 @@
 		</div>
 	{/snippet}
 	<GridList posts={data.posts} />
+	<Pagination
+		pageQuantity={data.pageQuantity}
+		currentPage={data.currentPageNumber}
+		resultsPerPage={data.resultsPerPage}
+		resultsCount={data.postCount}
+	/>
 </SidebarFilters>

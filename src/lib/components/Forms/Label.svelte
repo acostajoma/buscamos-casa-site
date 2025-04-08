@@ -19,6 +19,6 @@
 		{@render children()}
 	</label>
 	{#if !required && inputName}
-		<span class="text-sm leading-6 text-gray-500" id={`${inputName}-optional`}>Optional</span>
+		<span class="text-sm leading-6 text-gray-500" id={`${inputName}-optional`}>Opcional</span>
 	{/if}
 </div>
