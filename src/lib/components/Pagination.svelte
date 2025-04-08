@@ -8,7 +8,15 @@
 		resultsCount: number;
 	}
 	let { pageQuantity, currentPage, resultsPerPage, resultsCount }: Props = $props();
+
 	const paginatorRangeSize = 1; // Number of pages to show on each side of the current page
+
+	const getHref = (pageNumber: number) => {
+		const newUrl = new URL(page.url);
+		newUrl.searchParams.set('pag', `${pageNumber}`);
+		return newUrl.href;
+	};
+
 	let paginatorRange: number[] = $derived.by(() => {
 		if (pageQuantity <= 1) return [];
 
@@ -23,8 +31,6 @@
 
 	const isFirstPage = $derived(currentPage === 1);
 	const isLastPage = $derived(currentPage === pageQuantity);
-
-	let urlPathName = $derived(page.url.pathname);
 </script>
 
 {#snippet paginatorButton(pageNumber: number)}
@@ -32,7 +38,7 @@
 		currentPage === pageNumber
 			? 'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
 			: 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0'}
-	<a href="{urlPathName}?pag={pageNumber}" class={paginatorStyles}>
+	<a href={getHref(pageNumber)} class={paginatorStyles}>
 		{pageNumber}
 	</a>
 {/snippet}
@@ -44,7 +50,7 @@
 		<div class="flex flex-1 sm:hidden">
 			{#if pageQuantity > 1 && currentPage > 1}
 				<a
-					href="{urlPathName}?pag={currentPage - 1}"
+					href={getHref(currentPage - 1)}
 					class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
 				>
 					Anterior
@@ -52,7 +58,7 @@
 			{/if}
 			{#if currentPage < pageQuantity && pageQuantity > 1}
 				<a
-					href="{urlPathName}?pag={currentPage + 1}"
+					href={getHref(currentPage + 1)}
 					class="relative ml-auto inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
 					>Siguiente</a
 				>
@@ -81,7 +87,7 @@
 						<!-- Previous Page Arrow -->
 						{#if !isFirstPage}
 							<a
-								href="{urlPathName}?pag={currentPage - 1}"
+								href={getHref(currentPage - 1)}
 								class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
 							>
 								<span class="sr-only">Anterior</span>
@@ -127,7 +133,7 @@
 						{@render paginatorButton(pageQuantity)}
 						{#if !isLastPage}
 							<a
-								href="{urlPathName}?pag={currentPage + 1}"
+								href={getHref(currentPage + 1)}
 								class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
 							>
 								<span class="sr-only">Siguiente</span>
