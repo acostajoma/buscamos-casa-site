@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const { searchParams } = url;
 
 	// Pagination
-	const pageNumber = searchParams.get('pag');
+	const currentPage = searchParams.get('pag');
 
 	// Price range and currency
 	// const maxPrice = searchParams.get('pmax');
@@ -74,11 +74,11 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const cacheKey = url.pathname + url.search;
 	const postsData = await getData(
 		cacheKey,
-		() => getPosts({ db, pageNumber, providedFilters: filters }),
+		() => getPosts({ db, pageNumber: currentPage, providedFilters: filters }),
 		cache
 	);
-	const { postCount, posts } = postsData;
+	const { postCount, posts, pageQuantity, currentPageNumber, limit: resultsPerPage } = postsData;
 	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
 
-	return { postCount, posts, form };
+	return { postCount, posts, form, pageQuantity, currentPageNumber, resultsPerPage };
 };

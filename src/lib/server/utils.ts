@@ -127,7 +127,10 @@ export const getPosts = async ({
 	]);
 
 	return {
+		currentPageNumber: page,
 		postCount: postCount[0].postCount,
+		pageQuantity: Math.ceil(postCount[0].postCount / limit),
+		limit,
 		posts: postsRaw.map((post) => ({
 			...post,
 			saleType: post.saleType ? JSON.parse(post.saleType as string) : []
