@@ -28,6 +28,7 @@ export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) =>
 type GetPostsOptions = {
 	db: App.Locals['db'];
 	pageNumber?: string | number | null;
+	limit?: number;
 } & (
 	| {
 			role?: 'owner' | 'admin';
@@ -46,9 +47,9 @@ export const getPosts = async ({
 	pageNumber = 1,
 	role = 'user',
 	userId,
-	providedFilters
+	providedFilters,
+	limit = 20
 }: GetPostsOptions) => {
-	const limit = 20;
 	const page = typeof pageNumber === 'string' ? parseInt(pageNumber) : pageNumber || 1;
 	const offset = page > 1 ? (page - 1) * limit : 0;
 

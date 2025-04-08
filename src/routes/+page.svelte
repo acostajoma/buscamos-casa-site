@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
+	import Divider from '$lib/components/Divider.svelte';
 	import GridContactList from '$lib/components/GridContactList.svelte';
 	import GridList from '$lib/components/GridList.svelte';
 	import MetaData from '$lib/components/MetaData.svelte';
@@ -54,4 +55,5 @@
 		Últimas Publicaciones
 	</h2>
 	<GridList posts={data.posts} />
+	<Divider><a href="/publicaciones">Ver más publicaciones</a></Divider>
 </Container>
