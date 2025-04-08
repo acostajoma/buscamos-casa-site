@@ -21,7 +21,8 @@ export const searchSchema = z
 		// currency: customEnum(currencies).nullish().default('Dólar'),
 		city: text(1, 200).nullish().default(null),
 		state: text(1, 200).nullish().default(null),
-		district: text(1, 200).nullish().default(null)
+		district: text(1, 200).nullish().default(null),
+		exclusiveSeller: text(1, 200).nullish().default(null)
 	})
 	.superRefine((data, ctx) => {
 		if (data.state && !locationMap.has(data.state)) {

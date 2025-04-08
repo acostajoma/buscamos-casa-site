@@ -1,6 +1,7 @@
-import { location } from '$lib/server/db/schema';
+import { location, property } from '$lib/server/db/schema';
 import { getPosts } from '$lib/server/utils';
 import { getData } from '$lib/server/utils/dataFetcher';
+import { getVendorId } from '$lib/server/utils/vendors';
 import { searchSchema } from '$lib/validation/search';
 import { error } from '@sveltejs/kit';
 import type { SQL } from 'drizzle-orm';
@@ -13,8 +14,24 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const { db, cache } = locals;
 	const { searchParams } = url;
 
+	const cacheKey = url.pathname + url.search;
+
 	// Pagination
 	const currentPage = searchParams.get('pag');
+
+	//Exclusive Seller
+	const exclusiveSellerName = searchParams.get('vendedor');
+
+	let exclusiveSellerId: string | undefined;
+	if (exclusiveSellerName) {
+		const sellerData = await getData(
+			cacheKey + ':vendor',
+			() => getVendorId(db, exclusiveSellerName),
+			cache
+		);
+		exclusiveSellerId = sellerData?.userId;
+		if (!exclusiveSellerId) error(404, 'Vendedor no encontrado');
+	}
 
 	// Price range and currency
 	// const maxPrice = searchParams.get('pmax');
@@ -38,7 +55,8 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		// currency,
 		city,
 		state,
-		district
+		district,
+		exclusiveSeller: exclusiveSellerId
 	});
 
 	if (!search.success) {
@@ -71,7 +89,10 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		filters.push(eq(location.district, district));
 	}
 
-	const cacheKey = url.pathname + url.search;
+	if (exclusiveSellerId) {
+		filters.push(eq(property.postOwnerId, exclusiveSellerId));
+	}
+
 	const postsData = await getData(
 		cacheKey,
 		() => getPosts({ db, pageNumber: currentPage, providedFilters: filters }),

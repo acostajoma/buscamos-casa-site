@@ -27,7 +27,7 @@
 			</div>
 
 			<a
-				href="/vendedores-exclusivos/{agentOrBroker.displayName}"
+				href="/publicaciones?vendedor={agentOrBroker.displayName}"
 				class="cursor-pointer text-sm font-semibold text-gray-900 my-4"
 			>
 				Ver Publicaciones
