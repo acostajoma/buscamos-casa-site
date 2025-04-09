@@ -38,7 +38,7 @@ type GetPostsOptions = {
 	| {
 			role?: 'user';
 			userId?: undefined;
-			providedFilters?: SQL<unknown>[];
+			providedFilters?: (SQL<unknown> | undefined)[];
 	  }
 );
 
