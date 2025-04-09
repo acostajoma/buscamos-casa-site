@@ -1,25 +1,25 @@
-import { maxNumberValue } from '$lib/utils/constants';
+import { maxAmountInColones, maxNumberValue } from '$lib/utils/constants';
 import { locationMap } from '$lib/utils/location/costaRicaData';
-import { currencies, saleTypes } from '$lib/utils/postConstants';
+import { currencies } from '$lib/utils/postConstants';
 import { greater_or_equal_than, less_or_equal_than } from '$lib/utils/zodErrorMessages';
 import { z } from 'zod';
 import { customEnum, text } from './generalZodTypes';
 
-const numberSchema = (defaultValue: number = 0) =>
+const numberSchema = (defaultValue: number = 0, maxValue: number = maxNumberValue) =>
 	z
 		.number()
 		.min(0, { message: greater_or_equal_than(0, true) })
-		.max(maxNumberValue, less_or_equal_than(maxNumberValue, true))
+		.max(maxValue, less_or_equal_than(maxValue, true))
 		.default(defaultValue);
 
 export const searchSchema = z
 	.object({
 		minPrice: numberSchema(0),
-		maxPrice: numberSchema(maxNumberValue),
-
-		// propertyType: customEnum(propertyTypes).array(),
-		saleType: z.array(customEnum(saleTypes)).nullish().default([]),
-		currency: customEnum(currencies).nullish().default(null),
+		maxPrice: numberSchema(maxAmountInColones),
+		isForSale: z.boolean().nullish().default(null),
+		isForRent: z.boolean().nullish().default(null),
+		isRentToBuy: z.boolean().nullish().default(null),
+		currency: customEnum(currencies).nullish().default('Dólar'),
 		city: text(1, 200).nullish().default(null),
 		state: text(1, 200).nullish().default(null),
 		district: text(1, 200).nullish().default(null),
@@ -61,6 +61,14 @@ export const searchSchema = z
 				path: ['minPrice'],
 				code: z.ZodIssueCode.custom,
 				message: 'El precio mínimo no puede ser mayor que el precio máximo'
+			});
+		}
+
+		if (data.isForSale && (data.isForRent || data.isRentToBuy)) {
+			ctx.addIssue({
+				path: ['isForRent'],
+				code: z.ZodIssueCode.custom,
+				message: 'No puedes seleccionar alquileres y venta a la vez'
 			});
 		}
 	});

@@ -2,8 +2,8 @@
 	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
-	import Fieldset from '$lib/components/Forms/Fieldset.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
+	import OptionsFieldset from '$lib/components/Forms/OptionsFieldset.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { getPropertyForm } from '$lib/utils/forms';
 	import { currencies } from '$lib/utils/postConstants';
@@ -48,16 +48,16 @@
 </svelte:head>
 {#snippet financeFields()}
 	<div class="sm:col-span-full">
-		<Fieldset
+		<OptionsFieldset
 			{form}
 			legend="Moneda"
 			description="Selecciona la moneda en la que se ofrece la propiedad."
 			name="currency"
 			options={currencies}
 			type="radio"
-		></Fieldset>
+		></OptionsFieldset>
 	</div>
-	{#if property.saleType.some(({ type }) => type === 'Venta' || type === 'Alquiler con opción a compra')}
+	{#if property.isForSale || property.isRentToBuy}
 		<div class="sm:col-span-3">
 			<Input
 				{form}
@@ -70,7 +70,7 @@
 		</div>
 	{/if}
 
-	{#if property.saleType.some(({ type }) => type === 'Alquiler' || type === 'Alquiler con opción a compra')}
+	{#if property.isForRent || property.isRentToBuy}
 		<div class="sm:col-span-3">
 			<Input
 				{form}

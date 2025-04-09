@@ -31,6 +31,7 @@
 		class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3"
 		{enctype}
 		{submitFunction}
+		debug
 	>
 		{#each items as { title, description, fields }, i (title)}
 			<div class="px-4 sm:px-0">

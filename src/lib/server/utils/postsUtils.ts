@@ -1,10 +1,16 @@
 import type { Feature, Location } from '$lib/server/db/schema';
-import { photo, property, saleType, userRoles, type Property } from '$lib/server/db/schema';
+import {
+	photo,
+	property,
+	propertyFinancialDetails,
+	userRoles,
+	type Property
+} from '$lib/server/db/schema';
 import { getPropertyForm } from '$lib/utils/forms';
-import { type ListingStates, type PropertyTypes } from '$lib/utils/postConstants';
+import { type Currencies, type ListingStates, type PropertyTypes } from '$lib/utils/postConstants';
 import { createFeaturesSchema, locationSchema, propertySchema } from '$lib/validation/post';
 import { error, fail, redirect, type Action } from '@sveltejs/kit';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq, gt, lt, or } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -43,7 +49,6 @@ const getPropertyData = async (locals: App.Locals, params: { publicacion: string
 	return await db.query.property.findFirst({
 		where: eq(property.id, Number(params.publicacion)),
 		with: {
-			saleType: { columns: { type: true } },
 			propertiesWithConstruction: true,
 			propertyFinancialDetails: true
 		}
@@ -59,7 +64,6 @@ export const getProperty = async (locals: App.Locals, params: { publicacion: str
 	if (newProperty.postOwnerId !== locals.user?.id) {
 		error(403, 'No tienes permisos para editar esta publicación');
 	}
-
 	return newProperty;
 };
 
@@ -124,7 +128,9 @@ export const validatePropertyForm = async (
 			description: newProperty?.description,
 			propertyType: newProperty?.propertyType || undefined,
 			size: newProperty?.size,
-			saleType: newProperty?.saleType.map((st) => st.type) as [string, ...string[]]
+			isForSale: newProperty?.isForSale,
+			isForRent: newProperty?.isForRent,
+			isRentToBuy: newProperty?.isRentToBuy
 		};
 
 		return { form: await superValidate(formData, zod(propertySchema)) };
@@ -156,7 +162,10 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 		postOwnerId: user?.id as string, // user is guaranteed to be defined as per validatePropertyForm function checks if user exists
 		listingStatus: 'Borrador' as ListingStates,
 		size: data.size,
-		id: params?.publicacion ? Number(params.publicacion) : undefined
+		id: params?.publicacion ? Number(params.publicacion) : undefined,
+		isForRent: data.isForRent,
+		isForSale: data.isForSale,
+		isRentToBuy: data.isRentToBuy
 	};
 	const [newProperty] = await db
 		.insert(property)
@@ -168,7 +177,10 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 				description: data.description,
 				propertyType: data.propertyType as PropertyTypes,
 				size: data.size,
-				listingStatus: 'Borrador'
+				listingStatus: 'Borrador',
+				isForRent: data.isForRent,
+				isForSale: data.isForSale,
+				isRentToBuy: data.isRentToBuy
 			}
 		})
 		.returning();
@@ -176,25 +188,6 @@ export const createProperty: Action = async ({ locals, request, params }) => {
 	const errorMessage = `Error al ${params?.publicacion ? 'actualizar' : 'crear'} la publicación`;
 
 	if (!newProperty) {
-		error(500, errorMessage);
-	}
-
-	const saleTypes = data.saleType.map((type) => ({
-		propertyId: newProperty.id,
-		type: type
-	}));
-
-	/**
-	 * Deletes sale types associated with the property.
-	 * Note: Using individual delete instead of batch/transaction because:
-	 * 1. Transactions are not supported by Cloudflare D1 yet
-	 * 2. Avoiding batch operations to prevent race conditions where multiple
-	 *    operations could interfere with each other
-	 */
-	const deleteSaleTypes = await db.delete(saleType).where(eq(saleType.propertyId, newProperty.id));
-	const result = await db.insert(saleType).values(saleTypes);
-
-	if (!result.success || result?.error || !deleteSaleTypes.success || deleteSaleTypes?.error) {
 		error(500, errorMessage);
 	}
 
@@ -354,8 +347,7 @@ export async function getOnePost(db: App.Locals['db'], postId: number) {
 					}
 				}
 			},
-			propertyFinancialDetails: true,
-			saleType: { columns: { type: true } }
+			propertyFinancialDetails: true
 		}
 	});
 }
@@ -376,4 +368,32 @@ export async function isAdmin(locals: App.Locals) {
 	}
 
 	return true;
+}
+
+export function getTypeAndPriceFilters(
+	currency: Currencies,
+	range: { min: number; max: number },
+	dollarToColon: number,
+	saleType: 'Sale' | 'Rent' // | 'RentToBuy' wiil be the same value as Rent
+) {
+	const financialPrice = saleType === 'Sale' ? 'salePrice' : 'rentPrice';
+
+	const isColon = currency === 'Colón';
+	const colonMin = isColon ? range.min : range.min * dollarToColon;
+	const colonMax = isColon ? range.max : range.max * dollarToColon;
+	const dollarMin = isColon ? range.min / dollarToColon : range.min;
+	const dollarMax = isColon ? range.max / dollarToColon : range.max;
+
+	return or(
+		and(
+			gt(propertyFinancialDetails[financialPrice], colonMin),
+			lt(propertyFinancialDetails[financialPrice], colonMax),
+			eq(propertyFinancialDetails.currency, 'Colón')
+		),
+		and(
+			gt(propertyFinancialDetails[financialPrice], dollarMin),
+			lt(propertyFinancialDetails[financialPrice], dollarMax),
+			eq(propertyFinancialDetails.currency, 'Dólar')
+		)
+	);
 }

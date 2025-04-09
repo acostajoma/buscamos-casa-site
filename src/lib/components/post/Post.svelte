@@ -35,7 +35,9 @@
 		propertyFeatures,
 		propertyFinancialDetails: { salePrice, currency, rentPrice, maintenanceCost },
 		sellerInformation,
-		saleType,
+		isForRent,
+		isForSale,
+		isRentToBuy,
 		title,
 		size,
 		propertyType
@@ -70,10 +72,10 @@
 	</h3>
 	<div class="mb-6 mt-3">
 		<p class="text-lg tracking-tight text-gray-900 sm:text-xl lg:text-2xl">
-			{#if salePrice && saleType.some((type) => type.type === 'Venta')}
+			{#if salePrice && isForSale}
 				Precio de venta: {formatCurrency(salePrice, currency)}<br />
 			{/if}
-			{#if rentPrice && saleType.some((type) => type.type === 'Alquiler')}
+			{#if rentPrice && (isForRent || isRentToBuy)}
 				Precio de alquiler: {formatCurrency(rentPrice, currency)}<br />
 			{/if}
 			{#if maintenanceCost && maintenanceCost > 0}

@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
-	import Fieldset from '$lib/components/Forms/Fieldset.svelte';
+	import OptionsFieldset from '$lib/components/Forms/OptionsFieldset.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { createFeaturesSchema } from '$lib/validation/post';
 	import { superForm } from 'sveltekit-superforms';
@@ -36,7 +36,7 @@
 </svelte:head>
 {#snippet featuresMultipleSelect()}
 	<div class="sm:col-span-full">
-		<Fieldset
+		<OptionsFieldset
 			{form}
 			legend="Características o beneficios de la propiedad"
 			description="Selecciona todas las modalidades que apliquen para la propiedad"
@@ -44,7 +44,7 @@
 			options={allFeatures}
 			type="checkbox"
 			doubleCol={true}
-		></Fieldset>
+		></OptionsFieldset>
 	</div>
 {/snippet}
 

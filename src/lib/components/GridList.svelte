@@ -7,6 +7,7 @@
 	import type { GetPosts } from '$lib/server/utils';
 	import { formatCurrency } from '$lib/utils/formatters';
 	import { getPhotoUrl } from '$lib/utils/photos';
+	import { type Currencies } from '$lib/utils/postConstants';
 	import { type Component } from 'svelte';
 	import Link from './Link.svelte';
 
@@ -34,6 +35,21 @@
 			{amount || 0}
 		</span>
 	</div>
+{/snippet}
+
+{#snippet typeAndPrice(type: string, price: number | null, currency: Currencies | null)}
+	<span
+		class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset nth-of-type-[2]:ml-1"
+	>
+		{type}:
+		{#if price && currency}
+			{formatCurrency(price, currency)}
+		{:else if owner}
+			No tiene precio
+		{:else}
+			Consultar precio
+		{/if}
+	</span>
 {/snippet}
 
 {#if posts.length > 0}
@@ -74,21 +90,12 @@
 
 								<dt class="sr-only">Tipos de venta</dt>
 								<dd class="mt-3">
-									{#each post.saleType as type (type)}
-										<span
-											class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset nth-of-type-[2]:ml-1"
-											>{type}:
-											{#if type === 'Venta' && post.salePrice && post.currency}
-												{formatCurrency(post.salePrice, post.currency)}
-											{:else if type === 'Alquiler' && post.rentPrice && post.currency}
-												{formatCurrency(post.rentPrice, post.currency)}
-											{:else if owner}
-												No tiene precio
-											{:else}
-												Consultar precio
-											{/if}
-										</span>
-									{/each}
+									{#if post.isForSale}
+										{@render typeAndPrice('Venta', post.salePrice, post.currency)}
+									{/if}
+									{#if post.isForRent || post.isRentToBuy}
+										{@render typeAndPrice('Alquiler', post.rentPrice, post.currency)}
+									{/if}
 								</dd>
 							</dl>
 						</div>

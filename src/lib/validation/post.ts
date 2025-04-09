@@ -1,6 +1,7 @@
+import type { ListingOptions } from '$lib/types';
 import { acceptedImageTypes, allowedImageTypes } from '$lib/utils/constants';
 import { locationMap } from '$lib/utils/location/costaRicaData';
-import { currencies, propertyTypes, saleTypes } from '$lib/utils/postConstants';
+import { currencies, propertyTypes } from '$lib/utils/postConstants';
 import { required_error } from '$lib/utils/zodErrorMessages';
 import { z } from 'zod';
 import { customEnum, numeric, text } from './generalZodTypes';
@@ -9,10 +10,9 @@ export const propertySchema = z.object({
 	title: text(5, 100),
 	description: text(5, 1000),
 	propertyType: customEnum(propertyTypes).default(propertyTypes[0]),
-	saleType: customEnum(saleTypes)
-		.array()
-		.nonempty({ message: required_error })
-		.default([saleTypes[0]]),
+	isForSale: z.boolean({ required_error }).default(false),
+	isForRent: z.boolean({ required_error }).default(false),
+	isRentToBuy: z.boolean({ required_error }).default(false),
 	size: numeric(0, 1000000000, 0.01, true)
 });
 
@@ -24,24 +24,18 @@ export const propertyDetailsSchema = z.object({
 });
 
 export const validateSaleTypePrice = (
-	saleType: { type: 'Venta' | 'Alquiler' | 'Alquiler con opción a compra' | null }[],
+	listingOptions: ListingOptions,
 	data: { salePrice?: number | null; rentPrice?: number | null; [key: string]: unknown },
 	ctx: z.RefinementCtx
 ) => {
-	if (saleType.some((type) => type.type === 'Venta' && !data.salePrice)) {
+	if (listingOptions.isForSale && !data.salePrice) {
 		ctx.addIssue({
 			path: ['salePrice'],
 			code: z.ZodIssueCode.custom,
 			message: 'Debe ingresar un precio de venta'
 		});
 	}
-	if (
-		saleType.some(
-			(type) =>
-				(type.type === 'Alquiler' || type.type === 'Alquiler con opción a compra') &&
-				!data.rentPrice
-		)
-	) {
+	if ((listingOptions.isForRent || listingOptions.isRentToBuy) && !data.rentPrice) {
 		ctx.addIssue({
 			path: ['rentPrice'],
 			code: z.ZodIssueCode.custom,
@@ -50,16 +44,12 @@ export const validateSaleTypePrice = (
 	}
 };
 
-export const createPropertyDetailsSchema = (
-	saleType: { type: 'Venta' | 'Alquiler' | 'Alquiler con opción a compra' | null }[]
-) =>
+export const createPropertyDetailsSchema = (listingOptions: ListingOptions) =>
 	propertyDetailsSchema.superRefine((data, ctx) => {
-		validateSaleTypePrice(saleType, data, ctx);
+		validateSaleTypePrice(listingOptions, data, ctx);
 	});
 
-export const createPropertyWithConstructionSchema = (
-	saleType: { type: 'Venta' | 'Alquiler' | 'Alquiler con opción a compra' | null }[]
-) =>
+export const createPropertyWithConstructionSchema = (listingOptions: ListingOptions) =>
 	z
 		.object({
 			numBedrooms: numeric(0, 100, 1, true),
@@ -70,7 +60,7 @@ export const createPropertyWithConstructionSchema = (
 		})
 		.merge(propertyDetailsSchema)
 		.superRefine((data, ctx) => {
-			validateSaleTypePrice(saleType, data, ctx);
+			validateSaleTypePrice(listingOptions, data, ctx);
 
 			if (data.yearBuilt > new Date().getFullYear()) {
 				ctx.addIssue({

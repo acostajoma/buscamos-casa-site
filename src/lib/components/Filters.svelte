@@ -1,13 +1,16 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	import Button from '$lib/components/Button.svelte';
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
+	import { maxAmountInColones, maxAmountInDollars } from '$lib/utils/constants';
 	import { locationMap, states } from '$lib/utils/location/costaRicaData';
-	import { currencies, saleTypes } from '$lib/utils/postConstants';
+	import { currencies } from '$lib/utils/postConstants';
 	import { searchSchema, type SearchSchema } from '$lib/validation/search';
-	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import SuperDebug, { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import DoubleRangeSlider from './DoubleRangeSlider.svelte';
-	import Fieldset from './Forms/Fieldset.svelte';
+	import Fieldset from './Fieldset.svelte';
+	import BoolCheckBox from './Forms/BoolCheckBox.svelte';
 
 	type Props = {
 		searchForm: SuperValidated<Infer<SearchSchema>>;
@@ -36,6 +39,32 @@
 			? Array.from(locationMap.get($formStores.state)?.get($formStores.city)?.keys() || [])
 			: districtEmptyState) || districtEmptyState
 	);
+
+	let maxAllowedNumberValue = $state.raw(
+		$formStores.currency === 'Dólar' ? maxAmountInDollars : maxAmountInColones
+	);
+
+	const handleCurrencyChange = () => {
+		if ($formStores.currency === 'Dólar') {
+			maxAllowedNumberValue = maxAmountInDollars;
+			$formStores.maxPrice = maxAmountInDollars;
+		} else {
+			maxAllowedNumberValue = maxAmountInColones;
+			$formStores.maxPrice = maxAmountInColones;
+		}
+	};
+
+	const onRentSelected = () => {
+		if ($formStores.isForRent || $formStores.isRentToBuy) {
+			$formStores.isForSale = false;
+		}
+	};
+	const onSaleSelected = () => {
+		if ($formStores.isForSale) {
+			$formStores.isForRent = false;
+			$formStores.isRentToBuy = false;
+		}
+	};
 </script>
 
 <div class="border-t border-gray-200 pt-4 pb-4">
@@ -76,13 +105,28 @@
 			</div>
 		</fieldset>
 		<div class="px-4 pt-4 pb-2">
-			<Fieldset
-				form={searchSuperForm}
-				legend="Modalidad"
-				name="saleType"
-				options={saleTypes}
-				type="checkbox"
-			></Fieldset>
+			<Fieldset legend="Modalidad">
+				<div class="space-y-2">
+					<BoolCheckBox
+						form={searchSuperForm}
+						name="isForSale"
+						label="Venta"
+						onchange={onSaleSelected}
+					/>
+					<BoolCheckBox
+						form={searchSuperForm}
+						name="isForRent"
+						label="Alquiler"
+						onchange={onRentSelected}
+					/>
+					<BoolCheckBox
+						form={searchSuperForm}
+						name="isRentToBuy"
+						label="Alquiler con opción a compra"
+						onchange={onRentSelected}
+					/>
+				</div>
+			</Fieldset>
 		</div>
 		<fieldset>
 			<div class="px-4 pt-4 pb-2">
@@ -92,13 +136,11 @@
 					name="currency"
 					form={searchSuperForm}
 					options={currencies}
+					onchange={handleCurrencyChange}
 				/>
 			</div>
 			<div class="px-4 pt-4 pb-2">
-				<DoubleRangeSlider
-					bind:initialValue={$formStores.minPrice}
-					bind:finalValue={$formStores.maxPrice}
-				/>
+				<DoubleRangeSlider form={searchSuperForm} {maxAllowedNumberValue} />
 			</div>
 		</fieldset>
 		<div class="px-4 pt-4 pb-2">
@@ -106,3 +148,7 @@
 		</div>
 	</form>
 </div>
+
+{#if dev}
+	<SuperDebug data={searchSuperForm.form} />
+{/if}
