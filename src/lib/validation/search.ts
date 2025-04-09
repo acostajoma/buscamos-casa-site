@@ -1,24 +1,25 @@
+import { maxNumberValue } from '$lib/utils/constants';
 import { locationMap } from '$lib/utils/location/costaRicaData';
+import { currencies, saleTypes } from '$lib/utils/postConstants';
+import { greater_or_equal_than, less_or_equal_than } from '$lib/utils/zodErrorMessages';
 import { z } from 'zod';
-import { text } from './generalZodTypes';
+import { customEnum, text } from './generalZodTypes';
 
-// const numberSchema = (defaultValue: number = 0) =>
-// 	z
-// 		.number()
-// 		.min(0, { message: greater_or_equal_than(0, true) })
-// 		.max(maxNumberValue, less_or_equal_than(maxNumberValue, true))
-// 		.default(defaultValue);
+const numberSchema = (defaultValue: number = 0) =>
+	z
+		.number()
+		.min(0, { message: greater_or_equal_than(0, true) })
+		.max(maxNumberValue, less_or_equal_than(maxNumberValue, true))
+		.default(defaultValue);
 
 export const searchSchema = z
 	.object({
-		// price: z.object({
-		// 	min: numberSchema(),
-		// 	max: numberSchema(maxNumberValue)
-		// }),
+		minPrice: numberSchema(0),
+		maxPrice: numberSchema(maxNumberValue),
 
 		// propertyType: customEnum(propertyTypes).array(),
-		// saleType: z.enum(['Compra', 'Alquiler']).nullish(),
-		// currency: customEnum(currencies).nullish().default('Dólar'),
+		saleType: z.array(customEnum(saleTypes)).nullish().default([]),
+		currency: customEnum(currencies).nullish().default(null),
 		city: text(1, 200).nullish().default(null),
 		state: text(1, 200).nullish().default(null),
 		district: text(1, 200).nullish().default(null),
@@ -55,13 +56,13 @@ export const searchSchema = z
 			}
 		}
 
-		// if (data.price.min && data.price.max && data.price.min > data.price.max) {
-		// 	ctx.addIssue({
-		// 		path: ['salePrice', 'min'],
-		// 		code: z.ZodIssueCode.custom,
-		// 		message: 'El precio mínimo no puede ser mayor que el precio máximo'
-		// 	});
-		// }
+		if (data.minPrice > data.maxPrice) {
+			ctx.addIssue({
+				path: ['minPrice'],
+				code: z.ZodIssueCode.custom,
+				message: 'El precio mínimo no puede ser mayor que el precio máximo'
+			});
+		}
 	});
 
 export type SearchSchema = typeof searchSchema;

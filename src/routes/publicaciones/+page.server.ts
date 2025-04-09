@@ -1,11 +1,12 @@
-import { location, property } from '$lib/server/db/schema';
+import { location, property, propertyFinancialDetails } from '$lib/server/db/schema';
 import { getPosts } from '$lib/server/utils';
 import { getData } from '$lib/server/utils/dataFetcher';
 import { getVendorId } from '$lib/server/utils/vendors';
+import { maxNumberValue } from '$lib/utils/constants';
+import type { Currencies } from '$lib/utils/postConstants';
 import { searchSchema } from '$lib/validation/search';
 import { error } from '@sveltejs/kit';
-import type { SQL } from 'drizzle-orm';
-import { eq } from 'drizzle-orm/mysql-core/expressions';
+import { and, eq, gt, lt, or } from 'drizzle-orm';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';
@@ -13,8 +14,9 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const { db, cache } = locals;
 	const { searchParams } = url;
-
 	const cacheKey = url.pathname + url.search;
+
+	// const dollarToColon = 516;
 
 	// Pagination
 	const currentPage = searchParams.get('pag');
@@ -34,9 +36,12 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	}
 
 	// Price range and currency
-	// const maxPrice = searchParams.get('pmax');
-	// const minPrice = searchParams.get('pmin');
-	// const currency = searchParams.get('moneda');
+	const maxPrice = searchParams.get('maxPrice');
+	const minPrice = searchParams.get('minPrice');
+	const parsedMinPrice = minPrice ? Number(minPrice) : 0;
+	const parsedMaxPrice = maxPrice ? Number(maxPrice) : maxNumberValue;
+
+	const currency = searchParams.get('currency');
 
 	// Location details
 	const state = searchParams.get('state');
@@ -44,15 +49,16 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const district = searchParams.get('district');
 
 	// Property details
-	// const saleType = searchParams.get('t');
+	const searchedSaleTypes = searchParams.getAll('saleType');
 	// const propertyTypesParam = searchParams.get('tipos');
 	// const parsedPropertyTypes = propertyTypesParam ? propertyTypesParam?.split(',') : propertyTypes;
 
 	const search = searchSchema.safeParse({
-		// price: { min: minPrice || 0, max: maxPrice || maxNumberValue },
+		minPrice: parsedMinPrice,
+		maxPrice: parsedMaxPrice,
 		// propertyType: parsedPropertyTypes,
-		// saleType,
-		// currency,
+		saleType: searchedSaleTypes,
+		currency,
 		city,
 		state,
 		district,
@@ -71,12 +77,30 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		{
 			state,
 			district,
-			city
+			city,
+			minPrice: parsedMinPrice,
+			maxPrice: parsedMaxPrice,
+			currency
 		},
 		zod(searchSchema)
 	);
 
-	const filters: SQL<unknown>[] = [];
+	const filters = [
+		or(
+			and(
+				gt(propertyFinancialDetails.salePrice, form.data.minPrice),
+				lt(propertyFinancialDetails.salePrice, form.data.maxPrice)
+			),
+			and(
+				gt(propertyFinancialDetails.rentPrice, form.data.minPrice),
+				lt(propertyFinancialDetails.rentPrice, form.data.maxPrice)
+			)
+		)
+	];
+
+	if (currency) {
+		filters.push(eq(propertyFinancialDetails.currency, currency as Currencies));
+	}
 	if (state) {
 		filters.push(eq(location.state, state));
 	}

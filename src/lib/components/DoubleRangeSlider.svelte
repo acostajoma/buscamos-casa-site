@@ -1,20 +1,28 @@
 <script lang="ts">
+	import { maxNumberValue } from '$lib/utils/constants';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
 	import clamp from '$lib/utils/numbers';
 	import type { Currencies } from '$lib/utils/postConstants';
 
 	type Props = {
-		start?: number;
-		end?: number;
-		min?: number;
-		max?: number;
+		initialValue?: number;
+		finalValue?: number;
 		currency?: Currencies;
 	};
 
-	let { start = $bindable(0), end = $bindable(1), min, max, currency }: Props = $props();
+	let {
+		currency,
+		initialValue = $bindable(0),
+		finalValue = $bindable(maxNumberValue)
+	}: Props = $props();
+
+	let start = $state(initialValue / maxNumberValue || 0);
+	let end = $state(finalValue / maxNumberValue || 1);
 	let leftHandle: HTMLDivElement | undefined = $state();
 	let body: HTMLDivElement | undefined = $state();
 	let slider: HTMLDivElement | undefined = $state();
+	let displayedInitialValue = $derived(formatValues(initialValue, 0));
+	let displayedFinalValue = $derived(formatValues(finalValue, 0));
 
 	function formatValues(value: number, toFixed: number) {
 		if (currency) {
@@ -108,8 +116,11 @@
 				start = Math.min(p, start);
 				end = p;
 			}
+			initialValue = start * maxNumberValue;
+			finalValue = end * maxNumberValue;
 		};
 	}
+
 	function setHandlesFromBody(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -124,10 +135,13 @@
 		const pEnd = pxEnd / parentWidth;
 		start = pStart;
 		end = pEnd;
+		initialValue = start * maxNumberValue;
+		finalValue = end * maxNumberValue;
 	}
 </script>
 
-<div class="w-full h-5 select-none box-border whitespace-nowrap">
+<p class="block text-sm font-semibold leading-6 text-gray-900">Rango de precio</p>
+<div class="px-2 h-5 select-none box-border whitespace-nowrap my-4">
 	<div
 		class="relative w-full h-1.5 top-1/2 -translate-y-1/2 bg-gray-200 rounded-xs"
 		bind:this={slider}
@@ -164,9 +178,11 @@
 		></div>
 	</div>
 	<div class="flex justify-between mt-5">
-		<span>{min !== undefined ? formatValues(min, 0) : start}</span>
-		<span>{max !== undefined ? formatValues(max, 0) : end}</span>
+		<span>{displayedInitialValue}</span>
+		<span>{displayedFinalValue}</span>
 	</div>
+	<input class="hidden" value={initialValue} name="minPrice" />
+	<input class="hidden" value={finalValue} name="maxPrice" />
 </div>
 
 <style>

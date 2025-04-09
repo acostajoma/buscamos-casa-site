@@ -2,9 +2,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
 	import { locationMap, states } from '$lib/utils/location/costaRicaData';
+	import { currencies, saleTypes } from '$lib/utils/postConstants';
 	import { searchSchema, type SearchSchema } from '$lib/validation/search';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
+	import DoubleRangeSlider from './DoubleRangeSlider.svelte';
+	import Fieldset from './Forms/Fieldset.svelte';
 
 	type Props = {
 		searchForm: SuperValidated<Infer<SearchSchema>>;
@@ -38,7 +41,7 @@
 <div class="border-t border-gray-200 pt-4 pb-4">
 	<form action="/publicaciones" method="get">
 		<fieldset>
-			<div class="px-4 pt-4 pb-2" id="filter-section-0">
+			<div class="px-4 pt-4 pb-2">
 				<div class="space-y-6">
 					<SelectMenu
 						id="state"
@@ -49,7 +52,7 @@
 					/>
 				</div>
 			</div>
-			<div class="px-4 pt-4 pb-2" id="filter-section-0">
+			<div class="px-4 pt-4 pb-2">
 				<div class="space-y-6">
 					<SelectMenu
 						id="city"
@@ -60,7 +63,7 @@
 					/>
 				</div>
 			</div>
-			<div class="px-4 pt-4 pb-2" id="filter-section-0">
+			<div class="px-4 pt-4 pb-2">
 				<div class="space-y-6">
 					<SelectMenu
 						id="district"
@@ -70,6 +73,32 @@
 						options={districts}
 					/>
 				</div>
+			</div>
+		</fieldset>
+		<div class="px-4 pt-4 pb-2">
+			<Fieldset
+				form={searchSuperForm}
+				legend="Modalidad"
+				name="saleType"
+				options={saleTypes}
+				type="checkbox"
+			></Fieldset>
+		</div>
+		<fieldset>
+			<div class="px-4 pt-4 pb-2">
+				<SelectMenu
+					id="currency"
+					label="Moneda"
+					name="currency"
+					form={searchSuperForm}
+					options={currencies}
+				/>
+			</div>
+			<div class="px-4 pt-4 pb-2">
+				<DoubleRangeSlider
+					bind:initialValue={$formStores.minPrice}
+					bind:finalValue={$formStores.maxPrice}
+				/>
 			</div>
 		</fieldset>
 		<div class="px-4 pt-4 pb-2">
