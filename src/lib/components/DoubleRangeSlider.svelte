@@ -1,32 +1,32 @@
 <script lang="ts">
-	import { maxNumberValue } from '$lib/utils/constants';
 	import { formatCurrency, formatNumber } from '$lib/utils/formatters';
 	import clamp from '$lib/utils/numbers';
 	import type { Currencies } from '$lib/utils/postConstants';
+	import type { SearchSchema } from '$lib/validation/search';
+	import { formFieldProxy, type Infer, type SuperForm } from 'sveltekit-superforms';
 
 	type Props = {
-		initialValue?: number;
-		finalValue?: number;
-		currency?: Currencies;
+		form: SuperForm<Infer<SearchSchema>>;
+		maxAllowedNumberValue: number;
 	};
 
-	let {
-		currency,
-		initialValue = $bindable(0),
-		finalValue = $bindable(maxNumberValue)
-	}: Props = $props();
+	let { form, maxAllowedNumberValue }: Props = $props();
 
-	let start = $state(initialValue / maxNumberValue || 0);
-	let end = $state(finalValue / maxNumberValue || 1);
+	const { value: currency } = formFieldProxy(form, 'currency');
+	const { value: minPrice } = formFieldProxy(form, 'minPrice');
+	const { value: maxPrice } = formFieldProxy(form, 'maxPrice');
+
+	let start = $state($minPrice / maxAllowedNumberValue || 0);
+	let end = $state($maxPrice / maxAllowedNumberValue || 1);
 	let leftHandle: HTMLDivElement | undefined = $state();
 	let body: HTMLDivElement | undefined = $state();
 	let slider: HTMLDivElement | undefined = $state();
-	let displayedInitialValue = $derived(formatValues(initialValue, 0));
-	let displayedFinalValue = $derived(formatValues(finalValue, 0));
+	let displayedMinPrice = $derived(formatValues($minPrice, 0));
+	let displayedMaxPrice = $derived(formatValues($maxPrice, 0));
 
 	function formatValues(value: number, toFixed: number) {
 		if (currency) {
-			return formatCurrency(value, currency, toFixed);
+			return formatCurrency(value, ($currency || 'Dólar') as Currencies, toFixed);
 		}
 		return formatNumber(value, toFixed);
 	}
@@ -116,8 +116,8 @@
 				start = Math.min(p, start);
 				end = p;
 			}
-			initialValue = start * maxNumberValue;
-			finalValue = end * maxNumberValue;
+			$minPrice = start * maxAllowedNumberValue;
+			$maxPrice = end * maxAllowedNumberValue;
 		};
 	}
 
@@ -135,8 +135,8 @@
 		const pEnd = pxEnd / parentWidth;
 		start = pStart;
 		end = pEnd;
-		initialValue = start * maxNumberValue;
-		finalValue = end * maxNumberValue;
+		$minPrice = start * maxAllowedNumberValue;
+		$maxPrice = end * maxAllowedNumberValue;
 	}
 </script>
 
@@ -178,11 +178,11 @@
 		></div>
 	</div>
 	<div class="flex justify-between mt-5">
-		<span>{displayedInitialValue}</span>
-		<span>{displayedFinalValue}</span>
+		<span>{displayedMinPrice}</span>
+		<span>{displayedMaxPrice}</span>
 	</div>
-	<input class="hidden" value={initialValue} name="minPrice" />
-	<input class="hidden" value={finalValue} name="maxPrice" />
+	<input class="hidden" value={$minPrice} name="minPrice" />
+	<input class="hidden" value={$maxPrice} name="maxPrice" />
 </div>
 
 <style>

@@ -10,7 +10,7 @@ export function formatNumber(value: number, toFixed: number = 2): string {
 }
 
 export function formatCurrency(value: number, currency: Currencies, toFixed: number = 2): string {
-	return `${currency === 'Colon' ? '₡' : '$'}${formatNumber(value, toFixed)}`;
+	return `${currency === 'Colón' ? '₡' : '$'}${formatNumber(value, toFixed)}`;
 }
 
 export function serializeSchema(object: object) {

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
+	import BoolCheckBox from '$lib/components/Forms/BoolCheckBox.svelte';
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
-	import Fieldset from '$lib/components/Forms/Fieldset.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
+	import OptionsFieldset from '$lib/components/Forms/OptionsFieldset.svelte';
 	import TextArea from '$lib/components/Forms/TextArea.svelte';
-	import { propertyTypes, saleTypes } from '$lib/utils/postConstants';
+	import { propertyTypes } from '$lib/utils/postConstants';
 	import { propertySchema } from '$lib/validation/post';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
@@ -37,23 +39,25 @@
 
 	<div class="sm:col-span-3">
 		<Fieldset
-			{form}
-			legend="Tipo de negocio"
 			description="Selecciona todas las modalidades que apliquen para la propiedad"
-			name="saleType"
-			options={saleTypes}
-			type="checkbox"
-		></Fieldset>
+			legend="Modalidad de negocio"
+		>
+			<div class="mt-6 space-y-6">
+				<BoolCheckBox {form} name="isForSale" label="Venta" />
+				<BoolCheckBox {form} name="isForRent" label="Alquiler" />
+				<BoolCheckBox {form} name="isRentToBuy" label="Alquiler con opción a compra" />
+			</div>
+		</Fieldset>
 	</div>
 	<div class="sm:col-span-3">
-		<Fieldset
+		<OptionsFieldset
 			{form}
 			legend="Tipo de propiedad"
 			description="Selecciona el tipo de propiedad que mejor describe lo que ofreces."
 			name="propertyType"
 			options={propertyTypes}
 			type="radio"
-		></Fieldset>
+		></OptionsFieldset>
 	</div>
 {/snippet}
 

@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import Banner from '$lib/components/Banner.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import type { AfterNavigate } from '@sveltejs/kit';
 	import type { Snippet } from 'svelte';
 	import '../app.css';
 	import type { PageData } from './$types';
@@ -13,8 +14,13 @@
 	};
 
 	let { children, data } = $props();
+	let showBanner = $state.raw(data.showBanner);
 
-	let { loggedUser, showBanner } = $derived(data);
+	afterNavigate(({ from, to }: AfterNavigate) => {
+		if (from && to && from.url.href !== to?.url.href) {
+			showBanner = false;
+		}
+	});
 </script>
 
 <svelte:window onerror={() => goto('/error')} />
@@ -28,12 +34,13 @@
 			>Descubre las propiedades de Inhaus en nuestra plataforma.
 		</p>
 		<a
-			href="/vendedores-exclusivos/Inhaus"
+			href="/publicaciones?vendedor=Inhaus"
 			class="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-xs hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
 			>Visitar publicaciones <span aria-hidden="true">&rarr;</span></a
 		>
 	</Banner>
 {/if}
-<Header {loggedUser} />
+
+<Header loggedUser={data.loggedUser} />
 {@render children()}
 <Footer />

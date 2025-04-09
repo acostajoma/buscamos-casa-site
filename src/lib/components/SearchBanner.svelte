@@ -33,11 +33,6 @@
 		if (!$formStores.district || $formStores.district === districtEmptyState[0]) return true;
 		return false;
 	});
-
-	// $effect(() => {
-	// 	$formStores.price.min = minSliderValue * maxNumberValue;
-	// 	$formStores.price.max = maxSliderValue * maxNumberValue;
-	// });
 </script>
 
 <div class="relative isolate px-6 py-10 sm:py-20 lg:px-8">
@@ -73,61 +68,7 @@
 					<SelectMenu id="district" label="Distrito" name="district" {form} options={districts}
 					></SelectMenu>
 				</div>
-				<!-- <div class="col-span-4 sm:col-span-3">
-					<Fieldset {form} name="propertyType" options={propertyTypes} type="checkbox" doubleCol>
-						{#snippet legendSnippet()}
-							<legend class="text-sm/6 font-semibold text-gray-900 text-left">
-								Tipo de propiedad que buscas
-							</legend>
-						{/snippet}
-					</Fieldset>
-				</div>
-				<div class="col-span-4 sm:col-span-3 sm:ml-8">
-					<Fieldset
-						{form}
-						legend="Tipo de contrato"
-						name="saleType"
-						options={['Compra', 'Alquiler']}
-						type="radio"
-					>
-						{#snippet legendSnippet()}
-							<legend class="text-sm/6 font-semibold text-gray-900 text-left">
-								Tipo de contrato
-							</legend>
-						{/snippet}
-					</Fieldset>
-				</div>
-				{#if $formStores.saleType}
-					<div class="col-span-2">
-						<SelectMenu id="currency" label="Moneda" name="currency" {form} options={currencies}
-						></SelectMenu>
-					</div>
 
-					<div class="col-span-4 mt-5 sm:mt-0">
-						<div class="flex flex-col gap-2">
-							<div class="flex flex-col sm:flex-row gap-2">
-								<p class="block text-sm font-semibold leading-6 text-gray-900 place-self-start">
-									Rango de precio
-								</p>
-								<p class="font-normal text-gray-600 place-self-start">
-									(
-									{formatCurrency($formStores.price.min, $formStores.currency as Currencies, 0)}
-									-
-									{formatCurrency($formStores.price.max, $formStores.currency as Currencies, 0)}
-									)
-								</p>
-							</div>
-
-							<DoubleRangeSlider
-								bind:start={minSliderValue}
-								bind:end={maxSliderValue}
-								min={0}
-								max={maxNumberValue}
-								currency="Colon"
-							/>
-						</div>
-					</div>
-				{/if} -->
 				<div class="col-start-2 col-span-2 sm:col-start-6 sm:col-span-1">
 					<Button type="submit" additionalClasses="w-full" {form} disabled={buttonDisabled}
 						>Buscar</Button

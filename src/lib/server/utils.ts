@@ -1,13 +1,12 @@
 import { CLOUDINARY_API_SECRET } from '$env/static/private';
 import { sha1 } from '@oslojs/crypto/sha1';
-import { and, count, desc, eq, ne, SQL, sql } from 'drizzle-orm';
+import { and, count, desc, eq, ne, SQL } from 'drizzle-orm';
 import {
 	location,
 	photo,
 	propertiesWithConstruction,
 	property,
-	propertyFinancialDetails,
-	saleType
+	propertyFinancialDetails
 } from './db/schema';
 
 export const getCloudinarySignature = (paramsToSign: Cloudinary.ParamsToSign) => {
@@ -71,16 +70,6 @@ export const getPosts = async ({
 		filters = eq(property.postOwnerId, userId as string);
 	}
 
-	// Combine sale types and photos into simpler subqueries
-	const saleTypeSub = db
-		.select({
-			propertyId: saleType.propertyId,
-			types: sql`json_group_array(distinct ${saleType.type})`.as('types')
-		})
-		.from(saleType)
-		.groupBy(saleType.propertyId)
-		.as('saleTypeSub');
-
 	const postSelect = {
 		id: property.id,
 		title: property.title,
@@ -91,7 +80,9 @@ export const getPosts = async ({
 		state: location.state,
 		district: location.district,
 		country: location.country,
-		saleType: saleTypeSub.types,
+		isForSale: property.isForSale,
+		isForRent: property.isForRent,
+		isRentToBuy: property.isRentToBuy,
 		currency: propertyFinancialDetails.currency,
 		salePrice: propertyFinancialDetails.salePrice,
 		rentPrice: propertyFinancialDetails.rentPrice,
@@ -104,12 +95,11 @@ export const getPosts = async ({
 	};
 
 	// Single queries for count & results in parallel
-	const [postCount, postsRaw] = await db.batch([
+	const [postCount, posts] = await db.batch([
 		db
 			.select({ postCount: count().as('postCount') })
 			.from(property)
 			.leftJoin(location, eq(property.id, location.propertyId))
-			.leftJoin(saleTypeSub, eq(property.id, saleTypeSub.propertyId))
 			.leftJoin(propertiesWithConstruction, eq(property.id, propertiesWithConstruction.propertyId))
 			.leftJoin(propertyFinancialDetails, eq(property.id, propertyFinancialDetails.propertyId))
 			.where(filters),
@@ -117,7 +107,6 @@ export const getPosts = async ({
 			.select(postSelect)
 			.from(property)
 			.leftJoin(location, eq(property.id, location.propertyId))
-			.leftJoin(saleTypeSub, eq(property.id, saleTypeSub.propertyId))
 			.leftJoin(photo, and(eq(property.id, photo.propertyId), eq(photo.order, 0)))
 			.leftJoin(propertiesWithConstruction, eq(property.id, propertiesWithConstruction.propertyId))
 			.leftJoin(propertyFinancialDetails, eq(property.id, propertyFinancialDetails.propertyId))
@@ -132,10 +121,7 @@ export const getPosts = async ({
 		postCount: postCount[0].postCount,
 		pageQuantity: Math.ceil(postCount[0].postCount / limit),
 		limit,
-		posts: postsRaw.map((post) => ({
-			...post,
-			saleType: post.saleType ? JSON.parse(post.saleType as string) : []
-		}))
+		posts
 	};
 };
 

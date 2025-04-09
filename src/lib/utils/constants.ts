@@ -12,3 +12,5 @@ export const companyPhoneNumber = '50664674972';
 export const companyMail = 'info@buscamos.casa';
 
 export const maxNumberValue = 1000000000;
+export const maxAmountInColones = 500000000;
+export const maxAmountInDollars = 49999999;

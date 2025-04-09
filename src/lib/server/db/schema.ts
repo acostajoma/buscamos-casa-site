@@ -1,6 +1,6 @@
 import { relations, sql } from 'drizzle-orm';
 import { index, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
-import { currencies, listingStates, propertyTypes, saleTypes } from '../../utils/postConstants';
+import { currencies, listingStates, propertyTypes } from '../../utils/postConstants';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -101,7 +101,10 @@ export const property = sqliteTable(
 			.default(sql`(current_timestamp)`),
 		updatedAt: text('updated_at'),
 		deletedAt: text('deleted_at'),
-		externalURL: text('external_url')
+		externalURL: text('external_url'),
+		isForSale: integer('is_for_sale', { mode: 'boolean' }).default(false).notNull(),
+		isForRent: integer('is_for_rent', { mode: 'boolean' }).default(false).notNull(),
+		isRentToBuy: integer('is_rent_to_buy', { mode: 'boolean' }).default(false).notNull()
 	},
 	(table) => ({
 		listingStatusIdx: index('idx_property_listing_status').on(table.listingStatus),
@@ -115,7 +118,6 @@ export const propertyRelations = relations(property, ({ one, many }) => ({
 		fields: [property.id],
 		references: [propertyFinancialDetails.propertyId]
 	}),
-	saleType: many(saleType),
 	propertyMetaData: one(propertyMetaData, {
 		fields: [property.id],
 		references: [propertyMetaData.propertyId]
@@ -149,30 +151,6 @@ export const propertyFinancialDetails = sqliteTable('property_financial_details'
 });
 
 export type PropertyFinancialDetails = typeof propertyFinancialDetails.$inferSelect;
-
-export const saleType = sqliteTable(
-	'sale_type',
-	{
-		id: integer('id').primaryKey({ autoIncrement: true }),
-		propertyId: integer('property_id')
-			.notNull()
-			.references(() => property.id, { onDelete: 'cascade' }),
-		type: text('type', { enum: saleTypes })
-	},
-	(table) => ({
-		propertyIdx: index('idx_saletype_property_id').on(table.propertyId),
-		typeIdx: index('idx_saletype_type').on(table.type)
-	})
-);
-
-export const saleTypeRelations = relations(saleType, ({ one }) => ({
-	property: one(property, {
-		fields: [saleType.propertyId],
-		references: [property.id]
-	})
-}));
-
-export type SaleType = typeof saleType.$inferSelect;
 
 export const propertyMetaData = sqliteTable('property_meta_data', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
