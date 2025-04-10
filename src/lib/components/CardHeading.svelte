@@ -9,9 +9,10 @@
 		sellerInformation: NonNullable<PropertyWithAllData>['sellerInformation'];
 		pageUrl: string;
 		externalUrl?: string | null;
+		agentOrBroker?: NonNullable<PropertyWithAllData>['agentOrBroker'];
 	};
-	let { sellerInformation, pageUrl, externalUrl }: Props = $props();
-	let { agentOrBroker, name } = $derived(sellerInformation);
+	let { sellerInformation, pageUrl, externalUrl, agentOrBroker }: Props = $props();
+	let { name } = $derived(sellerInformation);
 	let formattedPhoneNumber = $derived(
 		getFormattedPhoneNumber(sellerInformation?.phone, sellerInformation?.countryCode)
 	);

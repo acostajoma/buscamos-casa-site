@@ -135,7 +135,11 @@ export const propertyRelations = relations(property, ({ one, many }) => ({
 		fields: [property.id],
 		references: [propertiesWithConstruction.propertyId]
 	}),
-	propertyFeatures: many(propertyFeature)
+	propertyFeatures: many(propertyFeature),
+	agentOrBroker: one(agentOrBroker, {
+		fields: [property.postOwnerId],
+		references: [agentOrBroker.userId]
+	})
 }));
 
 export const propertyFinancialDetails = sqliteTable('property_financial_details', {
@@ -225,10 +229,7 @@ export const sellerInformation = sqliteTable(
 		phone: text('phone_number'),
 		countryCode: text('country_code'),
 		name: text('name'),
-		lastName: text('last_name'),
-		isRegisteredAgentOrBroker: integer('is_registered_agent_or_broker', {
-			mode: 'boolean'
-		}).default(false)
+		lastName: text('last_name')
 	},
 	(table) => ({
 		propertyIdx: index('idx_sellerinformation_property_id').on(table.propertyId)
@@ -243,7 +244,7 @@ export const sellerInformationRelations = relations(sellerInformation, ({ one })
 		references: [property.id]
 	}),
 	agentOrBroker: one(agentOrBroker, {
-		fields: [sellerInformation.id],
+		fields: [sellerInformation.propertyId],
 		references: [agentOrBroker.userId]
 	})
 }));
@@ -263,6 +264,10 @@ export const agentOrBrokerRelations = relations(agentOrBroker, ({ one }) => ({
 	user: one(user, {
 		fields: [agentOrBroker.userId],
 		references: [user.id]
+	}),
+	property: one(property, {
+		fields: [agentOrBroker.userId],
+		references: [property.postOwnerId]
 	})
 }));
 

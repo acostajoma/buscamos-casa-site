@@ -313,18 +313,8 @@ export async function validateLocation(
 export async function getOnePost(db: App.Locals['db'], postId: number) {
 	return await db.query.property.findFirst({
 		where: eq(property.id, postId),
+
 		with: {
-			sellerInformation: {
-				with: {
-					agentOrBroker: {
-						columns: {
-							imageAlt: true,
-							imageId: true,
-							instagramUserName: true
-						}
-					}
-				}
-			},
 			location: true,
 			photos: {
 				orderBy: asc(photo.order),
@@ -347,7 +337,19 @@ export async function getOnePost(db: App.Locals['db'], postId: number) {
 					}
 				}
 			},
-			propertyFinancialDetails: true
+			propertyFinancialDetails: true,
+			sellerInformation: {
+				columns: {
+					email: true,
+					phone: true,
+					countryCode: true,
+					name: true,
+					lastName: true
+				}
+			},
+			agentOrBroker: {
+				columns: { displayName: true, imageAlt: true, imageId: true, instagramUserName: true }
+			}
 		}
 	});
 }

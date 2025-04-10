@@ -40,7 +40,8 @@
 		isRentToBuy,
 		title,
 		size,
-		propertyType
+		propertyType,
+		agentOrBroker
 	} = $derived(post);
 
 	let pageUrl = $derived(page.url.toString());
@@ -117,7 +118,7 @@
 	<h3 class="my-10 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
 		Información de contacto
 	</h3>
-	<CardHeading {sellerInformation} {pageUrl} externalUrl={post.externalURL} />
+	<CardHeading {sellerInformation} {pageUrl} externalUrl={post.externalURL} {agentOrBroker} />
 
 	<div class="my-10">
 		<h3 class="mb-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">

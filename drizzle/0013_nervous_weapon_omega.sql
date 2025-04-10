@@ -1,0 +1,1 @@
+ALTER TABLE `seller_information` DROP COLUMN `is_registered_agent_or_broker`;
