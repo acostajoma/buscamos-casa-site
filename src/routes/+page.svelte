@@ -55,5 +55,7 @@
 		Últimas Publicaciones
 	</h2>
 	<GridList posts={data.posts} />
-	<Divider><a href="/publicaciones">Ver más publicaciones</a></Divider>
+	{#if data?.posts?.length}
+		<Divider><a href="/publicaciones">Ver más publicaciones</a></Divider>
+	{/if}
 </Container>

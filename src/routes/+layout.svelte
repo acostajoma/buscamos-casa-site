@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
+	import { PUBLIC_GTAG } from '$env/static/public';
 	import Banner from '$lib/components/Banner.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import { partytownSnippet } from '@qwik.dev/partytown/integration';
 	import type { AfterNavigate } from '@sveltejs/kit';
 	import type { Snippet } from 'svelte';
 	import '../app.css';
@@ -23,6 +25,32 @@
 	});
 </script>
 
+<svelte:head>
+	<!-- 
+		PARTY TOWN INTEGRATION
+		SEE https://partytown.qwik.dev/sveltekit/
+	-->
+	<script>
+		// Forward the necessary functions to the web worker layer
+		partytown = {
+			forward: ['dataLayer.push', 'gtag']
+		};
+	</script>
+
+	{@html '<script>' + partytownSnippet() + '</script>'}
+
+	<script
+		type="text/partytown"
+		src={`https://www.googletagmanager.com/gtag/js?id=${PUBLIC_GTAG}`}
+	></script>
+
+	{@html `<script type="text/partytown">
+				window.dataLayer = window.dataLayer || [];
+				function gtag() {dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', '${PUBLIC_GTAG}')
+			</script>`}
+</svelte:head>
 <svelte:window onerror={() => goto('/error')} />
 {#if showBanner}
 	<Banner>
