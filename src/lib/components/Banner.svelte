@@ -4,8 +4,9 @@
 
 	type Props = {
 		children: Snippet;
+		closeButtonOnClick: () => void;
 	};
-	let { children }: Props = $props();
+	let { children, closeButtonOnClick }: Props = $props();
 </script>
 
 <div
@@ -37,7 +38,7 @@
 		<button
 			type="button"
 			class="-m-3 p-3 focus-visible:outline-offset-[-4px] cursor-pointer"
-			onclick={() => (visible = false)}
+			onclick={closeButtonOnClick}
 		>
 			<span class="sr-only">Dismiss</span>
 			<svg

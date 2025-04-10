@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ locals: { session, cache }, cookies }) => {
@@ -8,5 +9,5 @@ export const load = (async ({ locals: { session, cache }, cookies }) => {
 	if (!hasBannerBeenShown && showBannerFlag === 'true') {
 		cookies.set('hasBannerBeenShown', 'true', { path: '/', httpOnly: false });
 	}
-	return { loggedUser: session !== null, showBanner: showBanner };
+	return { loggedUser: session !== null, showBanner: dev ? true : showBanner };
 }) satisfies LayoutServerLoad;

@@ -69,7 +69,7 @@
 				</div>
 				<Link href="/crear-publicacion">Crear Post</Link>
 			{:else}
-				<Link href="/inicia-sesion">Inicia Sesión</Link>
+				<Link href="/inicia-sesion">Registrate</Link>
 			{/if}
 		</div>
 	</nav>
@@ -95,7 +95,7 @@
 					{#if loggedUser}
 						<Link href="/crear-publicacion">Crear Post</Link>
 					{:else}
-						<Link href="/inicia-sesion">Inicia Sesión</Link>
+						<Link href="/inicia-sesion">Regístrate</Link>
 					{/if}
 				</div>
 			</div>
