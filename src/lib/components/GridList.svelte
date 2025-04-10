@@ -52,7 +52,7 @@
 	</span>
 {/snippet}
 
-{#if posts.length > 0}
+{#if posts && posts.length > 0}
 	<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 2xl:grid-cols-3">
 		{#each posts as post (post.id)}
 			<li>
@@ -71,10 +71,10 @@
 									<source srcset={getPhotoUrl(post.photoId, 580)} media="(min-width: 450px)" />
 									<source srcset={getPhotoUrl(post.photoId, 400)} media="(max-width: 450px)" />
 									<img
+										loading="lazy"
 										class="mx-auto w-full aspect-4/3 hrink-0"
 										src={getPhotoUrl(post.photoId, 400)}
 										alt="imagen post {post.id}"
-										loading="lazy"
 									/>
 								</picture>
 							{:else}
