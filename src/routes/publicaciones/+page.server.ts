@@ -24,10 +24,11 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	const currentPage = searchParams.get('pag');
 
 	//Exclusive Seller
-	const exclusiveSellerName = searchParams.get('vendedor');
+	const exclusiveSellerName = searchParams.get('exclusiveSeller') || 'Todos';
 
 	let exclusiveSellerId: string | undefined;
-	if (exclusiveSellerName) {
+
+	if (exclusiveSellerName && exclusiveSellerName !== 'Todos') {
 		const sellerData = await getData(
 			cacheKey + ':vendor',
 			() => getVendorId(db, exclusiveSellerName),
@@ -65,7 +66,7 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		city,
 		state,
 		district,
-		exclusiveSeller: exclusiveSellerId,
+		exclusiveSeller: exclusiveSellerName,
 		isForRent,
 		isForSale,
 		isRentToBuy

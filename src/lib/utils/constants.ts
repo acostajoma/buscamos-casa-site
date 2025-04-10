@@ -14,3 +14,9 @@ export const companyMail = 'info@buscamos.casa';
 export const maxNumberValue = 1000000000;
 export const maxAmountInColones = 500000000;
 export const maxAmountInDollars = 49999999;
+
+export type ExclusiveSellerNames = 'Todos' | 'Inhaus';
+export const exclusiveSellerNames: [ExclusiveSellerNames, ...ExclusiveSellerNames[]] = [
+	'Todos',
+	'Inhaus'
+];

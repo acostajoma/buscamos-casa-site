@@ -1,4 +1,4 @@
-import { maxAmountInColones, maxNumberValue } from '$lib/utils/constants';
+import { exclusiveSellerNames, maxAmountInColones, maxNumberValue } from '$lib/utils/constants';
 import { locationMap } from '$lib/utils/location/costaRicaData';
 import { currencies } from '$lib/utils/postConstants';
 import { greater_or_equal_than, less_or_equal_than } from '$lib/utils/zodErrorMessages';
@@ -23,7 +23,7 @@ export const searchSchema = z
 		city: text(1, 200).nullish().default(null),
 		state: text(1, 200).nullish().default(null),
 		district: text(1, 200).nullish().default(null),
-		exclusiveSeller: text(1, 200).nullish().default(null)
+		exclusiveSeller: customEnum(exclusiveSellerNames).nullish().default(null)
 	})
 	.superRefine((data, ctx) => {
 		if (data.state && !locationMap.has(data.state)) {

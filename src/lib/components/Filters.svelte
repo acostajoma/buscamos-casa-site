@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
+	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
 	import SelectMenu from '$lib/components/Forms/SelectMenu.svelte';
-	import { maxAmountInColones, maxAmountInDollars } from '$lib/utils/constants';
+	import {
+		exclusiveSellerNames,
+		maxAmountInColones,
+		maxAmountInDollars
+	} from '$lib/utils/constants';
 	import { locationMap, states } from '$lib/utils/location/costaRicaData';
 	import { currencies } from '$lib/utils/postConstants';
 	import { searchSchema, type SearchSchema } from '$lib/validation/search';
@@ -18,6 +23,7 @@
 
 	let { searchForm }: Props = $props();
 
+	const debug = true;
 	const searchSuperForm = superForm(searchForm, {
 		validationMethod: 'onblur',
 		validators: zod(searchSchema),
@@ -39,6 +45,11 @@
 			? Array.from(locationMap.get($formStores.state)?.get($formStores.city)?.keys() || [])
 			: districtEmptyState) || districtEmptyState
 	);
+
+	let showExclusiveSellerFilter = $derived.by(() => {
+		const exclusiveSellerParamValue = page.url.searchParams.get('exclusiveSeller');
+		return typeof exclusiveSellerParamValue === 'string' && exclusiveSellerParamValue !== 'Todos';
+	});
 
 	let maxAllowedNumberValue = $state.raw(
 		$formStores.currency === 'Dólar' ? maxAmountInDollars : maxAmountInColones
@@ -143,12 +154,26 @@
 				<DoubleRangeSlider form={searchSuperForm} {maxAllowedNumberValue} />
 			</div>
 		</fieldset>
+		{#if showExclusiveSellerFilter}
+			<fieldset>
+				<div class="px-4 pt-4 pb-2">
+					<SelectMenu
+						id="exclusiveSeller"
+						label="Filtrar por Vendedores"
+						name="exclusiveSeller"
+						form={searchSuperForm}
+						options={exclusiveSellerNames}
+					/>
+				</div>
+			</fieldset>
+		{/if}
+
 		<div class="px-4 pt-4 pb-2">
 			<Button type="submit" form={searchSuperForm}>Buscar</Button>
 		</div>
 	</form>
 </div>
 
-{#if dev}
+{#if dev && debug}
 	<SuperDebug data={searchSuperForm.form} />
 {/if}
