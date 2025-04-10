@@ -4,8 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "pnpm partytown && vite dev",
+		"build": "pnpm partytown && vite build",
 		"build:preview": "vite build --mode preview",
 		"build:production": "vite build --mode production",
 		"preview": "vite preview",
@@ -25,7 +25,8 @@
 		"apply:production": "wrangler d1 migrations apply DB --env production --remote",
 		"db:apply": "pnpm run db:generate && pnpm run apply",
 		"deploy:preview": "pnpm build:preview && wrangler pages deploy --branch preview",
-		"deploy:prod": "pnpm build:production && wrangler pages deploy"
+		"deploy:prod": "pnpm build:production && wrangler pages deploy",
+		"partytown": "partytown copylib 'static/~partytown' --no-debug"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.4",
@@ -74,6 +75,7 @@
 		"@googlemaps/js-api-loader": "^1.16.8",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"@qwik.dev/partytown": "^0.11.0",
 		"@sentry/sveltekit": "^9",
 		"arctic": "^2.3.4",
 		"dotenv": "^16.4.7",
