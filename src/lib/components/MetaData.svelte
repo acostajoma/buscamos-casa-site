@@ -10,7 +10,7 @@
 		pageConfig: MetaDataConfig;
 	}
 	let { pageConfig }: Props = $props();
-	let meta: GeneratedMetaData = $derived(generateMetaData(pageConfig, page.url.href));
+	let meta: GeneratedMetaData = $derived(generateMetaData(pageConfig, page.url));
 </script>
 
 <svelte:head>

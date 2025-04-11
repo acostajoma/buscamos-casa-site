@@ -41,14 +41,14 @@ const DEFAULT_LOCALE = 'es_CR'; // Default language/region
 /**
  * Generates standard metadata objects for use in <svelte:head>.
  * @param config - Page-specific metadata configuration.
- * @param pageUrl - The full, current URL of the page (e.g., from page.url.href).
+ * @param pageUrl - The full, current URL of the page (e.g., from page.url.pathname).
  * @returns An object containing calculated metadata values.
  */
-export function generateMetaData(config: MetaDataConfig, pageUrl: string): GeneratedMetaData {
+export function generateMetaData(config: MetaDataConfig, pageUrl: URL): GeneratedMetaData {
 	const fullTitle = `${config.title} | ${SITE_NAME}`;
 	const robots = config.robots || 'index, follow'; // Default to indexable
 	const description = config.description;
-	const canonical = config.canonicalUrl || pageUrl;
+	const canonical = config.canonicalUrl || pageUrl.origin + pageUrl.pathname;
 	const ogLocale = config.ogLocale || DEFAULT_LOCALE;
 	const ogType = config.ogType || 'website'; // Default to website
 

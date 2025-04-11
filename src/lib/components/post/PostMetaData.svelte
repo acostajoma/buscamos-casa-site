@@ -30,7 +30,7 @@
 
 	let primaryPhoto = orderedPhotos ? orderedPhotos[0] : null;
 
-	let url = $derived(page.url.toString());
+	let url = $derived(page.url.origin + page.url.pathname);
 	// Generate JSON-LD structured data for the listing.
 	let structuredData = $derived.by(() => {
 		return serializeSchema(createPostMetadataSchema(post, url, primaryPhoto?.id));
