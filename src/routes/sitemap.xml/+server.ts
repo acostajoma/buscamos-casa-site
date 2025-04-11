@@ -4,68 +4,66 @@ import type { RequestHandler } from './$types';
 
 export const prerender = false;
 
-// Do not add HP "/" as it will have a separate treatment
-const staticPaths: string[] = [
-	'/inicia-sesion',
-	'/privacidad',
-	'/terminos-y-condiciones',
-	'/publicaciones'
+const staticPaths: { path: string; lastmod: string }[] = [
+	{ path: '/', lastmod: '2025-04-11' },
+	{ path: '/inicia-sesion', lastmod: '2025-04-11' },
+	{ path: '/privacidad', lastmod: '2025-04-11' },
+	{ path: '/terminos-y-condiciones', lastmod: '2025-04-11' },
+	{ path: '/publicaciones', lastmod: '2025-04-11' }
 ];
+
+function generateStaticSitemapUrlsAsText(baseUrl: string) {
+	return staticPaths.reduce((acc, { path, lastmod }) => {
+		return (
+			acc +
+			`<url>
+				<loc>${baseUrl}${path}</loc>
+				<lastmod>${lastmod}</lastmod>
+			</url>
+		`
+		);
+	}, '');
+}
+
+async function generatePostsSitemapUrlsAsText(baseUrl: string, db: App.Locals['db']) {
+	const posts = await db.query.property.findMany({
+		columns: {
+			id: true,
+			createdAt: true
+		},
+		where: eq(property.listingStatus, 'Publicado')
+	});
+
+	return posts.reduce((acc, { id, createdAt }) => {
+		return (
+			acc +
+			`<url>
+				<loc>${baseUrl}/publicaciones/${id}</loc>
+				<lastmod>${createdAt.split(' ')[0]}</lastmod>
+			</url>
+		`
+		);
+	}, '');
+}
 
 export const GET: RequestHandler = async ({ url, locals: { db } }) => {
 	const baseUrl = url.origin;
-	const postData = await db.query.property.findMany({
-		where: eq(property.listingStatus, 'Publicado'),
-		columns: {
-			id: true,
-			updatedAt: true,
-			createdAt: true
-		},
-		orderBy: (property, { desc }) => [desc(property.updatedAt), desc(property.createdAt)]
-	});
+	const staticContent = generateStaticSitemapUrlsAsText(baseUrl);
+	const postContent = await generatePostsSitemapUrlsAsText(baseUrl, db);
 	return new Response(
 		`<?xml version="1.0" encoding="UTF-8" ?>
-		<urlset
-			xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
-			xmlns:xhtml="https://www.w3.org/1999/xhtml"
-			xmlns:mobile="https://www.google.com/schemas/sitemap-mobile/1.0"
-			xmlns:news="https://www.google.com/schemas/sitemap-news/0.9"
-			xmlns:image="https://www.google.com/schemas/sitemap-image/1.1"
-			xmlns:video="https://www.google.com/schemas/sitemap-video/1.1"
-		>
-			<url>
-				<loc>${baseUrl}/</loc>
-				<changefreq>weekly</changefreq>
-				<priority>1</priority>
-			</url>
-			${staticPaths
-				.map(
-					(path) => `<url>
-					<loc>${baseUrl}${path}</loc>
-					<changefreq>weekly</changefreq>
-					<priority>0.7</priority>
-				</url>`
-				)
-				.join('')}
-			${postData
-				.map(
-					(post) => `<url>
-					<loc>${baseUrl}/publicacion/${post.id}</loc>
-					<lastmod>${new Date(post.updatedAt || post.createdAt).toISOString()}</lastmod>
-					<changefreq>daily</changefreq>
-					<priority>0.8</priority>
-				</url>`
-				)
-				.join('')}
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+			${staticContent}
+			${postContent}
 		</urlset>`.trim(),
 		{
 			headers: {
-				'Content-Type': 'application/xml',
-				'Cache-Control': 'public, max-age=86400, s-maxage=86400' // cache for a day
+				'Content-Type': 'application/xml; charset=utf-8',
+				'Cache-Control': 'public, max-age=14400, s-maxage=14400' // cache for 4 hours
 			},
 			cf: {
 				cacheTtlByStatus: {
-					'200-299': 86400,
+					'200-299': 14400,
 					'404': 1,
 					'500-599': 0
 				}
