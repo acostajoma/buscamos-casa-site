@@ -58,8 +58,9 @@ export const GET: RequestHandler = async ({ url, locals: { db } }) => {
 		</urlset>`.trim(),
 		{
 			headers: {
-				'Content-Type': 'application/xml; charset=utf-8',
-				'Cache-Control': 'public, max-age=14400, s-maxage=14400' // cache for 4 hours
+				'Content-Type': 'application/xml',
+				'Cache-Control': 'public, max-age=14400, s-maxage=14400', // cache for 4 hours,
+				'Access-Control-Allow-Origin': '*'
 			},
 			cf: {
 				cacheTtlByStatus: {
