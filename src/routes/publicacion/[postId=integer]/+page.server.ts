@@ -1,15 +1,19 @@
-import { getData } from '$lib/server/utils/dataFetcher';
+import { getDataWithCloudflareCache } from '$lib/server/utils/dataFetcher';
 import { getOnePost } from '$lib/server/utils/postsUtils';
 
 import type { ListingStates } from '$lib/utils/postConstants';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params, locals, setHeaders, url }) => {
-	const { db, cache } = locals;
+export const load: PageServerLoad = async ({ params, locals, setHeaders, url, platform }) => {
+	const { db } = locals;
 	const { postId } = params;
 
-	const post = await getData(url.pathname, () => getOnePost(db, parseInt(postId)), cache);
+	const { postData: post } = await getDataWithCloudflareCache(
+		url,
+		{ postData: () => getOnePost(db, parseInt(postId)) },
+		platform
+	);
 
 	const deniedAccessStates: ListingStates[] = [
 		'Borrador',
