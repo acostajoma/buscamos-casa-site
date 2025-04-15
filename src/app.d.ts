@@ -20,7 +20,7 @@ declare global {
 				CACHE_KV: KVNamespace;
 				LOGS_BUCKET: R2Bucket;
 			};
-			ctx: ExecutionContext;
+			context: ExecutionContext;
 			caches: CacheStorage & { default: Cache };
 			cf: CfProperties;
 		}
