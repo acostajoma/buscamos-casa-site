@@ -1,6 +1,6 @@
 import { location, property } from '$lib/server/db/schema';
 import { getPosts } from '$lib/server/utils';
-import { getData } from '$lib/server/utils/dataFetcher';
+import { getDataWithCloudflareCache } from '$lib/server/utils/dataFetcher';
 import { getTypeAndPriceFilters } from '$lib/server/utils/postsUtils';
 import { getVendorId } from '$lib/server/utils/vendors';
 import { maxAmountInDollars } from '$lib/utils/constants';
@@ -13,10 +13,9 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
-	const { db, cache } = locals;
+export const load: PageServerLoad = async ({ url, locals, setHeaders, platform }) => {
+	const { db } = locals;
 	const { searchParams } = url;
-	const cacheKey = url.pathname + url.search;
 
 	const dollarToColon = 516;
 
@@ -29,13 +28,16 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 	let exclusiveSellerId: string | undefined;
 
 	if (exclusiveSellerName && exclusiveSellerName !== 'Todos') {
-		const sellerData = await getData(
-			cacheKey + ':vendor',
-			() => getVendorId(db, exclusiveSellerName),
-			cache
+		const { sellerData } = await getDataWithCloudflareCache(
+			url,
+			{ sellerData: () => getVendorId(db, exclusiveSellerName) },
+			platform,
+			'custom:cache:sellers'
 		);
 		exclusiveSellerId = sellerData?.userId;
-		if (!exclusiveSellerId) error(404, 'Vendedor no encontrado');
+		if (!exclusiveSellerId) {
+			error(404, 'Vendedor no encontrado');
+		}
 	}
 
 	// Price range and currency
@@ -142,10 +144,10 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders }) => {
 		filters.push(eq(property.postOwnerId, exclusiveSellerId));
 	}
 
-	const postsData = await getData(
-		cacheKey,
-		() => getPosts({ db, pageNumber: currentPage, providedFilters: filters }),
-		cache
+	const { postsData } = await getDataWithCloudflareCache(
+		url,
+		{ postsData: () => getPosts({ db, pageNumber: currentPage, providedFilters: filters }) },
+		platform
 	);
 	const { postCount, posts, pageQuantity, currentPageNumber, limit: resultsPerPage } = postsData;
 	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });

@@ -10,7 +10,9 @@ import { sequence } from '@sveltejs/kit/hooks';
 const handleAuth: Handle = async ({ event, resolve }) => {
 	if (dev) {
 		const { getPlatformProxy } = await import('wrangler');
-		event.platform = (await getPlatformProxy()) as unknown as App.Platform;
+		const proxiedPlatform = await getPlatformProxy({ persist: true });
+		const mockedPlatform = { ...proxiedPlatform, context: proxiedPlatform.ctx, ctx: undefined };
+		event.platform = mockedPlatform as unknown as App.Platform;
 	}
 	const { platform } = event;
 	if (!platform) {
