@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals: { db }, url, platform, setH
 	if (!exclusiveVendors) {
 		error(500, 'Error al obtener los vendedores exclusivos');
 	}
-	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
+	setHeaders({ 'Cache-Control': 'private, max-age=300' });
 
 	return { exclusiveVendors };
 };

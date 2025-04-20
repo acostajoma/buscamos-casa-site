@@ -150,7 +150,7 @@ export const load: PageServerLoad = async ({ url, locals, setHeaders, platform }
 		platform
 	);
 	const { postCount, posts, pageQuantity, currentPageNumber, limit: resultsPerPage } = postsData;
-	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
+	setHeaders({ 'Cache-Control': 'private, max-age=300' });
 
 	return { postCount, posts, form, pageQuantity, currentPageNumber, resultsPerPage };
 };

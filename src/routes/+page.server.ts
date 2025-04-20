@@ -18,6 +18,6 @@ export const load: PageServerLoad = async ({ url, locals, platform, setHeaders }
 		exclusiveVendorsData,
 		postsData: { postCount, posts }
 	} = result;
-	setHeaders({ 'Cache-Control': 'public, max-age=300, s-maxage=300' });
+	setHeaders({ 'Cache-Control': 'private, max-age=300' });
 	return { postCount, posts, form, exclusiveVendors: exclusiveVendorsData };
 };
