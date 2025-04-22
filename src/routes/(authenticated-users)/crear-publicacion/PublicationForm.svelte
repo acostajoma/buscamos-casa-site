@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
+	import ErrorText from '$lib/components/ErrorText.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import BoolCheckBox from '$lib/components/Forms/BoolCheckBox.svelte';
 	import DoubleColForm from '$lib/components/Forms/DoubleColForm.svelte';
@@ -23,6 +24,7 @@
 		customValidity: false
 	});
 
+	let { errors } = $derived(form);
 	let { valid } = data.form;
 </script>
 
@@ -46,6 +48,9 @@
 				<BoolCheckBox {form} name="isForSale" label="Venta" />
 				<BoolCheckBox {form} name="isForRent" label="Alquiler" />
 				<BoolCheckBox {form} name="isRentToBuy" label="Alquiler con opción a compra" />
+				{#if $errors.isRentToBuy}
+					<ErrorText name="SaleType">{$errors.isRentToBuy}</ErrorText>
+				{/if}
 			</div>
 		</Fieldset>
 	</div>

@@ -153,7 +153,7 @@
 	});
 </script>
 
-<div id="maps" bind:this={mapElement} class="w-full h-full">
+<div id="maps" bind:this={mapElement} class="w-full h-11/12">
 	<div bind:this={controlDiv}>
 		<button
 			type="button"
@@ -164,10 +164,9 @@
 			Rellenar datos de Ubicación con los datos del mapa
 		</button>
 	</div>
-
-	{#if $latitudeErrors || $longitudeErrors || errorMessage}
-		<p class="mt-2 text-sm text-red-600" id={`map-error`}>
-			{$latitudeErrors || $longitudeErrors || errorMessage}
-		</p>
-	{/if}
 </div>
+{#if $latitudeErrors || $longitudeErrors || errorMessage}
+	<p class="mt-2 text-sm text-red-600" id={`map-error`}>
+		{$latitudeErrors || $longitudeErrors || errorMessage}
+	</p>
+{/if}

@@ -18,14 +18,20 @@ export const text = (min: number = 2, max: number = 30) =>
 		.min(min, min_length_error(min))
 		.max(max, max_length_error(max));
 
-export const numeric = (min: number, max: number, step: number, formatNumber = true) =>
+export const numeric = (
+	min: number,
+	max: number,
+	step: number,
+	formatNumber = true,
+	greaterThanCero = false
+) =>
 	z
 		.number({
 			required_error,
 			invalid_type_error
 		})
 		.multipleOf(step, { message: multiple_of_error(step) })
-		.min(min, { message: greater_than(min, formatNumber) })
+		.min(greaterThanCero ? min + step : min, { message: greater_than(min, formatNumber) })
 		.max(max, less_or_equal_than(max, formatNumber));
 
 export const coordinates = (min: number, max: number) =>

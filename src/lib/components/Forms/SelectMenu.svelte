@@ -33,6 +33,6 @@
 		</select>
 	</div>
 	{#if $errors}
-		<p class="mt-2 text-sm text-red-600" id={`${name}-error`}>{$errors}</p>
+		<p class="mt-2 text-sm text-red-600" id={`${name}-error`}>{$errors.join(' ')}</p>
 	{/if}
 </div>

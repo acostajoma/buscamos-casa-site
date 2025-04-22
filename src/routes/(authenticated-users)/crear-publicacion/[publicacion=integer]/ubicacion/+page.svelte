@@ -15,9 +15,8 @@
 
 	let { data }: { data: PageData } = $props();
 	const form = superForm(data.form, {
-		validationMethod: 'onblur',
+		validationMethod: 'oninput',
 		validators: zod(locationSchema),
-		customValidity: false,
 		dataType: 'json'
 	});
 	let { valid } = data.form; // used in updating scenarios
