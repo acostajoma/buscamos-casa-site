@@ -52,79 +52,82 @@
 	</span>
 {/snippet}
 
+{#snippet itemContent(post: GetPosts['posts'][number])}
+	<div class="flex flex-1 flex-col py-8 px-2">
+		{#if post.photoId}
+			{@const { photoId } = post}
+			<picture>
+				<source srcset={getPhotoUrl(post.photoId, 375)} media="(min-width: 1280px)" />
+				<source srcset={getPhotoUrl(post.photoId, 340)} media="(min-width: 640px)" />
+				<source srcset={getPhotoUrl(post.photoId, 300)} media="(min-width: 640px)" />
+				<source srcset={getPhotoUrl(post.photoId, 580)} media="(min-width: 450px)" />
+				<source srcset={getPhotoUrl(post.photoId, 400)} media="(max-width: 450px)" />
+				<img
+					loading="lazy"
+					class="mx-auto w-full aspect-4/3 hrink-0"
+					src={getPhotoUrl(post.photoId, 400)}
+					alt="imagen post {post.id}"
+				/>
+			</picture>
+		{:else}
+			<div class="mx-auto w-full aspect-4/3 bg-gray-200">
+				<p class="mt-10">Esta publicación no tiene imagen</p>
+			</div>
+		{/if}
+
+		<h3 class="mt-6 text-sm font-medium text-gray-900">{post.title}</h3>
+		<dl class="mt-1 flex grow flex-col justify-between">
+			<dt class="sr-only">Ubicación</dt>
+			<dd class="text-sm text-gray-500">{post.district}, {post.city}, {post.state}</dd>
+
+			<dt class="sr-only">Tipos de venta</dt>
+			<dd class="mt-3">
+				{#if post.isForSale}
+					{@render typeAndPrice('Venta', post.salePrice, post.currency)}
+				{/if}
+				{#if post.isForRent || post.isRentToBuy}
+					{@render typeAndPrice('Alquiler', post.rentPrice, post.currency)}
+				{/if}
+			</dd>
+		</dl>
+	</div>
+	<div>
+		<div class="-mt-px flex divide-x divide-gray-200 font-normal text-gray-900 text-xs">
+			{#if post.propertyType !== 'Finca' && post.propertyType !== 'Lote'}
+				{@render propertyInfoItem(Bathroom, post.numBathrooms, 'Cantidad de baños')}
+				{@render propertyInfoItem(Bedroom, post.numBedrooms, 'Cantidad de cuartos')}
+				{@render propertyInfoItem(Garage, post.garageSpace, 'Cantidad de garages')}
+				{@render propertyInfoItem(Construction, post.constructionSize, 'Metros de construcción')}
+			{/if}
+			{@render propertyInfoItem(Area, post.size, 'Metros cuadrados del lote')}
+		</div>
+	</div>
+{/snippet}
+
 {#if posts && posts.length > 0}
 	<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 2xl:grid-cols-3">
 		{#each posts as post (post.id)}
 			<li>
 				<div class="shadow-sm bg-white flex flex-col divide-y divide-gray-200 rounded-b-lg">
-					<a
-						href="/{admin ? 'admin' : 'publicacion'}/{post.id}"
-						class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-t-lg text-center"
-					>
-						<div class="flex flex-1 flex-col py-8 px-2">
-							{#if post.photoId}
-								{@const { photoId } = post}
-								<picture>
-									<source srcset={getPhotoUrl(post.photoId, 375)} media="(min-width: 1280px)" />
-									<source srcset={getPhotoUrl(post.photoId, 340)} media="(min-width: 640px)" />
-									<source srcset={getPhotoUrl(post.photoId, 300)} media="(min-width: 640px)" />
-									<source srcset={getPhotoUrl(post.photoId, 580)} media="(min-width: 450px)" />
-									<source srcset={getPhotoUrl(post.photoId, 400)} media="(max-width: 450px)" />
-									<img
-										loading="lazy"
-										class="mx-auto w-full aspect-4/3 hrink-0"
-										src={getPhotoUrl(post.photoId, 400)}
-										alt="imagen post {post.id}"
-									/>
-								</picture>
-							{:else}
-								<div class="mx-auto w-full aspect-4/3 bg-gray-200">
-									<p class="mt-10">Esta publicación no tiene imagen</p>
-								</div>
-							{/if}
-
-							<h3 class="mt-6 text-sm font-medium text-gray-900">{post.title}</h3>
-							<dl class="mt-1 flex grow flex-col justify-between">
-								<dt class="sr-only">Ubicación</dt>
-								<dd class="text-sm text-gray-500">{post.district}, {post.city}, {post.state}</dd>
-
-								<dt class="sr-only">Tipos de venta</dt>
-								<dd class="mt-3">
-									{#if post.isForSale}
-										{@render typeAndPrice('Venta', post.salePrice, post.currency)}
-									{/if}
-									{#if post.isForRent || post.isRentToBuy}
-										{@render typeAndPrice('Alquiler', post.rentPrice, post.currency)}
-									{/if}
-								</dd>
-							</dl>
-						</div>
-						<div>
-							<div class="-mt-px flex divide-x divide-gray-200 font-normal text-gray-900 text-xs">
-								{#if post.propertyType !== 'Finca' && post.propertyType !== 'Lote'}
-									{@render propertyInfoItem(Bathroom, post.numBathrooms, 'Cantidad de baños')}
-									{@render propertyInfoItem(Bedroom, post.numBedrooms, 'Cantidad de cuartos')}
-									{@render propertyInfoItem(Garage, post.garageSpace, 'Cantidad de garages')}
-									{@render propertyInfoItem(
-										Construction,
-										post.constructionSize,
-										'Metros de construcción'
-									)}
-								{/if}
-								{@render propertyInfoItem(Area, post.size, 'Metros cuadrados del lote')}
-							</div>
-						</div>
-					</a>
-
-					{#if owner}
-						<p class="py-2 text-sm font-medium text-gray-900 text-center">
-							Estado: {post.listingStatus}
-						</p>
-						<Link
-							href="/crear-publicacion/{post.id}"
-							class="rounded-md bg-yellow-500 px-2.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 text-center"
-							>Editar Publicación</Link
+					{#if !owner}
+						<a
+							href="/{admin ? 'admin' : 'publicacion'}/{post.id}"
+							class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-t-lg text-center"
 						>
+							{@render itemContent(post)}
+						</a>
+					{:else}
+						<div class="col-span-1 flex flex-col divide-y divide-gray-200 rounded-t-lg text-center">
+							{@render itemContent(post)}
+							<p class="py-2 text-sm font-medium text-gray-900 text-center">
+								Estado: {post.listingStatus}
+							</p>
+							<Link
+								href="/crear-publicacion/{post.id}"
+								class="rounded-md bg-yellow-500 px-2.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 text-center"
+								>Editar Publicación</Link
+							>
+						</div>
 					{/if}
 				</div>
 			</li>
