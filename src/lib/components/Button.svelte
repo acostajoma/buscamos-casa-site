@@ -8,6 +8,7 @@
 		class?: string;
 		disabled?: boolean;
 		form?: SuperForm<any>;
+		colorClass?: string;
 	};
 
 	type ButtonProps = BaseProps & {
@@ -27,8 +28,9 @@
 		children,
 		disabled: _disabled = undefined,
 		additionalClasses,
+		colorClass = 'bg-brand-1 hover:bg-brand-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-1',
 		class:
-			_class = `rounded-md bg-brand-1 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-1 disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed hover:cursor-pointer${additionalClasses ? ` ${additionalClasses}` : ''}`,
+			_class = `rounded-md px-2.5 py-2.5 text-sm font-semibold text-white shadow-xs disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed hover:cursor-pointer ${additionalClasses ? `${additionalClasses + colorClass}` : colorClass}`,
 		form = undefined,
 		onclick = undefined
 	}: Props = $props();
