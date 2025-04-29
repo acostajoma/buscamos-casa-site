@@ -74,7 +74,7 @@ export function createPostMetadataSchema(
 			priceCurrency: post.propertyFinancialDetails?.currency === 'Dólar' ? 'USD' : 'CRC',
 			availability: mapStatusToAvailability(post.listingStatus),
 			seller: {
-				'@type': post.sellerInformation?.agentOrBroker ? 'RealEstateAgent' : 'Person',
+				'@type': post?.agentOrBroker?.displayName ? 'RealEstateAgent' : 'Person',
 				name: post.sellerInformation
 					? `${post.sellerInformation.name} ${post.sellerInformation.lastName || ''}`.trim()
 					: 'Buscamos.casa',
