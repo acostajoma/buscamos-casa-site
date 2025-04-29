@@ -122,11 +122,7 @@
 							<p class="py-2 text-sm font-medium text-gray-900 text-center">
 								Estado: {post.listingStatus}
 							</p>
-							<Link
-								href="/crear-publicacion/{post.id}"
-								class="rounded-md bg-yellow-500 px-2.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-yellow-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500 text-center"
-								>Editar Publicación</Link
-							>
+							<Link href="/crear-publicacion/{post.id}">Editar Publicación</Link>
 						</div>
 					{/if}
 				</div>
