@@ -26,5 +26,6 @@
 		posts={data.posts}
 		owner
 		noPostsMessage="Aún no has publicado contenido, crea una publicacion para vender o alquilar tu propiedad!"
+		deleteAction="?/delete"
 	/>
 </Container>

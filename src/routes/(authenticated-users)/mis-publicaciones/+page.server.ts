@@ -1,5 +1,6 @@
 import { getPosts } from '$lib/server/utils';
-import type { PageServerLoad } from './$types';
+import { deleteProperty } from '$lib/server/utils/postsUtils';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
 	const { db } = locals;
@@ -12,3 +13,7 @@ export const load = (async ({ locals }) => {
 	});
 	return { ...posts };
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	delete: deleteProperty
+};
