@@ -1,9 +1,6 @@
 -- Disable foreign key checks temporarily to allow table modifications
 PRAGMA foreign_keys=off;
 
--- Begin transaction for atomicity
-BEGIN TRANSACTION;
-
 -- Migration for 'properties_with_construction' table (Change onDelete to CASCADE)
 
 -- 1. Create a new table with the desired schema (including ON DELETE CASCADE)
@@ -56,9 +53,6 @@ ALTER TABLE property_features_new RENAME TO property_features;
 -- 5. Recreate any indexes that were on the old table (besides PK)
 CREATE INDEX idx_property_feature_property_id ON property_features (property_id);
 
-
--- Commit the transaction
-COMMIT;
 
 -- Re-enable foreign key checks
 PRAGMA foreign_keys=on;
