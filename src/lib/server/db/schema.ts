@@ -172,7 +172,7 @@ export const propertiesWithConstruction = sqliteTable('properties_with_construct
 	propertyId: integer('property_id')
 		.notNull()
 		.unique()
-		.references(() => property.id, { onDelete: 'restrict' }),
+		.references(() => property.id, { onDelete: 'cascade' }),
 	numBedrooms: integer('num_bedrooms').default(1).notNull(),
 	numBathrooms: real('num_bathrooms').default(1).notNull(),
 	constructionSize: real('construction_size').notNull(),
@@ -331,7 +331,7 @@ export const propertyFeature = sqliteTable(
 	{
 		propertyId: integer('property_id')
 			.notNull()
-			.references(() => property.id),
+			.references(() => property.id, { onDelete: 'cascade' }),
 		featureId: integer('feature_id')
 			.notNull()
 			.references(() => feature.id, { onDelete: 'cascade' })

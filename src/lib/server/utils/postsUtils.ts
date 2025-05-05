@@ -399,3 +399,32 @@ export function getTypeAndPriceFilters(
 		)
 	);
 }
+
+export const deleteProperty: Action = async ({ locals, request }) => {
+	const { user } = locals;
+	if (!user) {
+		error(401, 'No estás autorizado para eliminar esta publicación');
+	}
+	const formData = await request.formData();
+	const postToDelete = Number(formData.get('postToDelete')?.toString());
+
+	if (!postToDelete || isNaN(postToDelete)) {
+		error(404, 'Publicación no encontrada');
+	}
+	console.log(typeof postToDelete);
+	const ownerId = await getPropertyPostOwnerId(
+		locals,
+		{ publicacion: postToDelete.toString() },
+		false
+	);
+	if (ownerId !== user.id) {
+		error(403, 'No tienes permisos para eliminar esta publicación');
+	}
+	const { db } = locals;
+
+	const response = await db.delete(property).where(eq(property.id, Number(postToDelete)));
+
+	console.log('response', response);
+
+	return { success: true };
+};
